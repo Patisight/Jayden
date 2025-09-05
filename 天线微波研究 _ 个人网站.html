@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)file:///Users/aeayang/Downloads/index%20(1).html# -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天线微波研究 | 个人网站</title>
+    <script src="./天线微波研究 _ 个人网站_files/saved_resource"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0F3460',
+                        secondary: '#1A73E8',
+                        accent: '#3F72AF',
+                        neutral: '#F5F7FA',
+                        dark: '#16213E'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-smooth {
+                transition: all 0.3s ease-in-out;
+            }
+            .card-hover {
+                @apply hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
+            }
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .edit-mode-active [contenteditable="true"] {
+            border: 1px dashed #1A73E8;
+            background-color: rgba(26, 115, 232, 0.05);
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        
+        .edit-controls {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .edit-mode-active .edit-controls {
+            opacity: 1;
+        }
+        
+        .research-img {
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .research-img:hover {
+            transform: scale(1.02);
+        }
+        
+        .skill-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .skill-level {
+            height: 100%;
+            background-color: #1A73E8;
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .section-animate {
+            opacity: 0;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.bottom-2{bottom:0.5rem}.bottom-4{bottom:1rem}.left-1\/2{left:50%}.right-2{right:0.5rem}.right-4{right:1rem}.z-10{z-index:10}.z-50{z-index:50}.order-1{order:1}.order-2{order:2}.mx-auto{margin-left:auto;margin-right:auto}.-mb-px{margin-bottom:-1px}.mb-1{margin-bottom:0.25rem}.mb-12{margin-bottom:3rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-2{margin-left:0.5rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mr-3{margin-right:0.75rem}.mr-4{margin-right:1rem}.mt-1{margin-top:0.25rem}.mt-12{margin-top:3rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-16{height:4rem}.h-48{height:12rem}.h-64{height:16rem}.h-8{height:2rem}.h-full{height:100%}.w-1{width:0.25rem}.w-10{width:2.5rem}.w-16{width:4rem}.w-64{width:16rem}.w-8{width:2rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-20{--tw-translate-y:5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-10{gap:2.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-6 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1.5rem * var(--tw-space-x-reverse));margin-left:calc(1.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-8 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(2rem * var(--tw-space-x-reverse));margin-left:calc(2rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-4{border-width:4px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-t{border-top-width:1px}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-secondary{--tw-border-opacity:1;border-color:rgb(26 115 232 / var(--tw-border-opacity, 1))}.border-transparent{border-color:transparent}.border-white{--tw-border-opacity:1;border-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.bg-\[\#0077B5\]{--tw-bg-opacity:1;background-color:rgb(0 119 181 / var(--tw-bg-opacity, 1))}.bg-\[\#1DA1F2\]{--tw-bg-opacity:1;background-color:rgb(29 161 242 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-neutral{--tw-bg-opacity:1;background-color:rgb(245 247 250 / var(--tw-bg-opacity, 1))}.bg-primary{--tw-bg-opacity:1;background-color:rgb(15 52 96 / var(--tw-bg-opacity, 1))}.bg-secondary{--tw-bg-opacity:1;background-color:rgb(26 115 232 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/90{background-color:rgb(255 255 255 / 0.9)}.bg-opacity-10{--tw-bg-opacity:0.1}.bg-opacity-50{--tw-bg-opacity:0.5}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.from-primary{--tw-gradient-from:#0F3460 var(--tw-gradient-from-position);--tw-gradient-to:rgb(15 52 96 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-dark{--tw-gradient-to:#16213E var(--tw-gradient-to-position)}.object-cover{object-fit:cover}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pt-16{padding-top:4rem}.text-center{text-align:center}.font-sans{font-family:Inter, system-ui, sans-serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-relaxed{line-height:1.625}.text-blue-100{--tw-text-opacity:1;color:rgb(219 234 254 / var(--tw-text-opacity, 1))}.text-dark{--tw-text-opacity:1;color:rgb(22 33 62 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-primary{--tw-text-opacity:1;color:rgb(15 52 96 / var(--tw-text-opacity, 1))}.text-secondary{--tw-text-opacity:1;color:rgb(26 115 232 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }.transition-smooth {
+                transition: all 0.3s ease-in-out;
+            }.card-hover{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:300ms}.card-hover:hover{--tw-translate-y:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}
+        .hover\:border-gray-300:hover{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}
+        .hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}
+        .hover\:bg-gray-300:hover{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}
+        .hover\:bg-opacity-20:hover{--tw-bg-opacity:0.2}
+        .hover\:bg-opacity-90:hover{--tw-bg-opacity:0.9}
+        .hover\:text-blue-200:hover{--tw-text-opacity:1;color:rgb(191 219 254 / var(--tw-text-opacity, 1))}
+        .hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}
+        .hover\:text-primary:hover{--tw-text-opacity:1;color:rgb(15 52 96 / var(--tw-text-opacity, 1))}
+        .focus\:border-transparent:focus{border-color:transparent}
+        .focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+        .focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}
+        .focus\:ring-secondary:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(26 115 232 / var(--tw-ring-opacity, 1))}
+        @media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}
+        @media (min-width: 768px){.md\:order-1{order:1}.md\:order-2{order:2}.md\:mx-0{margin-left:0px;margin-right:0px}.md\:mb-0{margin-bottom:0px}.md\:mt-0{margin-top:0px}.md\:block{display:block}.md\:flex{display:flex}.md\:hidden{display:none}.md\:w-1\/2{width:50%}.md\:w-1\/3{width:33.333333%}.md\:w-2\/3{width:66.666667%}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:justify-start{justify-content:flex-start}.md\:py-24{padding-top:6rem;padding-bottom:6rem}.md\:pl-12{padding-left:3rem}.md\:pr-12{padding-right:3rem}.md\:text-left{text-align:left}.md\:text-right{text-align:right}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-5xl{font-size:3rem;line-height:1}}
+        @media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}
+    </style></head>
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-300 py-3">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="file:///Users/aeayang/Downloads/index%20(1).html#" class="text-primary font-bold text-xl md:text-2xl flex items-center">
+                <i class="fa fa-wifi mr-2"></i>
+                <span>个人技术网站</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#about" class="text-gray-600 hover:text-primary transition-smooth">关于我</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#education" class="text-gray-600 hover:text-primary transition-smooth">教育经历</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#research" class="text-gray-600 hover:text-primary transition-smooth">研究经历</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#work" class="text-gray-600 hover:text-primary transition-smooth">工作经历</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#achievements" class="text-gray-600 hover:text-primary transition-smooth">成果</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#skills" class="text-gray-600 hover:text-primary transition-smooth">技能</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#contact" class="text-gray-600 hover:text-primary transition-smooth">联系我</a>
+            </nav>
+            
+            <!-- 编辑模式按钮 -->
+            <button id="editModeBtn" class="hidden md:block px-4 py-2 bg-secondary text-white rounded-md hover:bg-opacity-90 transition-smooth"><i class="fa fa-edit mr-1"></i> 编辑模式</button>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="mobileMenuBtn" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#about" class="py-2 text-gray-600 hover:text-primary transition-smooth">关于我</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#education" class="py-2 text-gray-600 hover:text-primary transition-smooth">教育经历</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#research" class="py-2 text-gray-600 hover:text-primary transition-smooth">研究经历</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#work" class="py-2 text-gray-600 hover:text-primary transition-smooth">工作经历</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#achievements" class="py-2 text-gray-600 hover:text-primary transition-smooth">成果</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#skills" class="py-2 text-gray-600 hover:text-primary transition-smooth">技能</a>
+                <a href="file:///Users/aeayang/Downloads/index%20(1).html#contact" class="py-2 text-gray-600 hover:text-primary transition-smooth">联系我</a>
+                <button id="mobileEditModeBtn" class="py-2 bg-secondary text-white rounded-md hover:bg-opacity-90 transition-smooth"><i class="fa fa-edit mr-1"></i> 编辑模式</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 密码验证模态框 -->
+    <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold text-primary mb-4">进入编辑模式</h3>
+            <p class="text-gray-600 mb-4">请输入密码以启用编辑功能</p>
+            <div class="mb-4">
+                <input type="password" id="editPassword" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="输入密码">
+            </div>
+            <div class="flex space-x-3">
+                <button id="cancelEdit" class="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-smooth">取消</button>
+                <button id="confirmEdit" class="flex-1 px-4 py-2 bg-secondary text-white rounded-md hover:bg-opacity-90 transition-smooth">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <main class="pt-16">
+        <!-- 关于我/英雄区域 -->
+        <section id="about" class="bg-gradient-to-br from-primary to-dark text-white py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/3 mb-8 md:mb-0">
+                        <div class="relative w-64 h-64 mx-auto md:mx-0 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                            <img src="https://picsum.photos/id/1005/400/400" alt="个人照片" class="w-full h-full object-cover" id="profileImage">
+                            <div class="edit-controls absolute bottom-2 right-2">
+                                <label for="profileImageUpload" class="bg-secondary p-2 rounded-full cursor-pointer hover:bg-opacity-90 transition-smooth">
+                                    <i class="fa fa-camera"></i>
+                                </label>
+                                <input type="file" id="profileImageUpload" accept="image/*" class="hidden">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3 md:pl-12 text-center md:text-left">
+                        <h1 class="text-3xl md:text-5xl font-bold mb-4 text-shadow" contenteditable="true">程锦阳</h1>
+                        <p class="text-xl md:text-2xl text-blue-100 mb-6" contenteditable="true">天线与微波技术从业者</p>
+                        <p class="text-lg text-blue-100 mb-8 max-w-2xl mx-auto md:mx-0 leading-relaxed" contenteditable="true">
+                            拥有3年天线与微波领域研究经验，专注于毫米波天线设计、射频系统集成和电磁仿真分析。在国内外期刊发表论文20余篇，持有多项发明专利。
+                        </p>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                            <a href="file:///Users/aeayang/Downloads/index%20(1).html#contact" class="px-6 py-3 bg-secondary hover:bg-opacity-90 rounded-md transition-smooth flex items-center">
+                                <i class="fa fa-envelope mr-2"></i> 联系我
+                            </a>
+                            <a href="file:///Users/aeayang/Downloads/index%20(1).html#" class="px-6 py-3 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-md transition-smooth flex items-center">
+                                <i class="fa fa-file-pdf-o mr-2"></i> 下载简历
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 教育经历 -->
+        <section id="education" class="py-16 bg-white section-animate animate-fade-in">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-12">
+                    <h2 class="text-3xl font-bold text-primary">
+                        <i class="fa fa-graduation-cap mr-3"></i>教育经历
+                    </h2>
+                    <button class="edit-controls add-education-btn bg-secondary text-white p-2 rounded-md hover:bg-opacity-90 transition-smooth">
+                        <i class="fa fa-plus"></i> 添加经历
+                    </button>
+                </div>
+                
+                <div class="education-container space-y-8">
+                    <!-- 教育经历1 -->
+                    
+                    
+                    <!-- 教育经历2 -->
+                    <div class="education-item bg-neutral rounded-xl p-6 shadow-sm card-hover">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-semibold text-dark" contenteditable="true">硕士 - 通信与信息系统</h3>
+                                <p class="text-gray-600" contenteditable="true">上海大学 | 2023-2026</p>
+                            </div>
+                            <div class="edit-controls flex space-x-2 mt-2 md:mt-0">
+                                <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="education">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                            研究方向：微带天线设计与应用。参与了多个微波传感器项目的研发，掌握了微带天线的设计、仿真与测试方法，在小型化和宽频带天线设计方面积累了丰富经验。
+                        </p>
+                    </div>
+                    
+                    <!-- 教育经历3 -->
+                    <div class="education-item bg-neutral rounded-xl p-6 shadow-sm card-hover">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-semibold text-dark" contenteditable="true">学士 - 电子信息工程</h3>
+                                <p class="text-gray-600" contenteditable="true">安徽工业大学 | 2019-2023</p>
+                            </div>
+                            <div class="edit-controls flex space-x-2 mt-2 md:mt-0">
+                                <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="education">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                            系统学习了电子信息工程的基础知识，包括电路理论、信号与系统、电磁场理论等。毕业设计为"小型化蓝牙天线设计"，为后续的天线研究奠定了基础。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 研究经历 -->
+        <section id="research" class="py-16 bg-neutral section-animate animate-fade-in">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-12">
+                    <h2 class="text-3xl font-bold text-primary">
+                        <i class="fa fa-flask mr-3"></i>研究经历
+                    </h2>
+                    <button class="edit-controls add-research-btn bg-secondary text-white p-2 rounded-md hover:bg-opacity-90 transition-smooth">
+                        <i class="fa fa-plus"></i> 添加研究
+                    </button>
+                </div>
+                
+                <div class="research-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 研究经历1 -->
+                    <div class="research-item bg-white rounded-xl overflow-hidden shadow-sm card-hover">
+                        <div class="relative h-48">
+                            <img src="https://picsum.photos/id/1/600/400" alt="毫米波相控阵天线研究" class="research-img w-full h-full">
+                            <div class="edit-controls absolute bottom-2 right-2 flex space-x-2">
+                                <label for="researchImg1" class="bg-secondary p-2 rounded-full cursor-pointer hover:bg-opacity-90 transition-smooth">
+                                    <i class="fa fa-upload"></i>
+                                </label>
+                                <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="research">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-dark" contenteditable="true">毫米波相控阵天线研究</h3>
+                            </div>
+                            <p class="text-gray-500 text-sm mb-3" contenteditable="true">2020-至今 | 国家重点实验室</p>
+                            <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                                研发适用于6G通信的毫米波相控阵天线系统，工作频段覆盖26-40GHz。提出了新型的波束成形网络架构，有效降低了系统复杂度和成本，同时提高了天线的辐射效率和波束扫描范围。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 研究经历2 -->
+                    <div class="research-item bg-white rounded-xl overflow-hidden shadow-sm card-hover">
+                        <div class="relative h-48">
+                            <img src="https://picsum.photos/id/2/600/400" alt="可重构智能超表面研究" class="research-img w-full h-full">
+                            <div class="edit-controls absolute bottom-2 right-2 flex space-x-2">
+                                <label for="researchImg2" class="bg-secondary p-2 rounded-full cursor-pointer hover:bg-opacity-90 transition-smooth">
+                                    <i class="fa fa-upload"></i>
+                                </label>
+                                <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="research">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-dark" contenteditable="true">可重构智能超表面研究</h3>
+                            </div>
+                            <p class="text-gray-500 text-sm mb-3" contenteditable="true">2017-2020 | 高校联合实验室</p>
+                            <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                                研究基于可重构智能超表面(RIS)的无线通信增强技术，设计了新型的单元结构和阵列布局，实现了对电磁波幅度、相位和极化的动态调控，显著改善了复杂环境下的通信质量。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 研究经历3 -->
+                    <div class="research-item bg-white rounded-xl overflow-hidden shadow-sm card-hover">
+                        <div class="relative h-48">
+                            <img src="https://picsum.photos/id/3/600/400" alt="5G基站天线研发" class="research-img w-full h-full">
+                            <div class="edit-controls absolute bottom-2 right-2 flex space-x-2">
+                                <label for="researchImg3" class="bg-secondary p-2 rounded-full cursor-pointer hover:bg-opacity-90 transition-smooth">
+                                    <i class="fa fa-upload"></i>
+                                </label>
+                                <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="research">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-dark" contenteditable="true">5G基站天线研发</h3>
+                            </div>
+                            <p class="text-gray-500 text-sm mb-3" contenteditable="true">2015-2017 | 通信技术公司</p>
+                            <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                                参与开发了适用于5G通信的大规模MIMO基站天线，工作频段包括sub-6GHz和毫米波频段。解决了多天线间的互耦问题，优化了波束成形算法，显著提升了系统的频谱效率和覆盖范围。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 工作经历 -->
+        <section id="work" class="py-16 bg-white section-animate animate-fade-in">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-12">
+                    <h2 class="text-3xl font-bold text-primary">
+                        <i class="fa fa-briefcase mr-3"></i>工作经历
+                    </h2>
+                    <button class="edit-controls add-work-btn bg-secondary text-white p-2 rounded-md hover:bg-opacity-90 transition-smooth">
+                        <i class="fa fa-plus"></i> 添加经历
+                    </button>
+                </div>
+                
+                <div class="work-container relative">
+                    <!-- 时间线 -->
+                    <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-200"></div>
+                    
+                    <!-- 工作经历1 -->
+                    <div class="work-item mb-12 relative">
+                        <div class="flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12 md:text-right mb-6 md:mb-0 md:order-1 order-2">
+                                <div class="bg-neutral p-6 rounded-xl shadow-sm card-hover">
+                                    <h3 class="text-xl font-semibold text-dark mb-1" contenteditable="true">高级研究员</h3>
+                                    <p class="text-gray-600 mb-3" contenteditable="true">中国科学院微波技术研究所 | 2018-至今</p>
+                                    <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                                        负责毫米波通信与雷达系统的研究与开发，带领团队完成多项国家级科研项目。专注于新型天线技术、射频前端设计和系统集成，发表高水平论文10余篇，申请发明专利5项。
+                                    </p>
+                                </div>
+                                <div class="edit-controls mt-3 md:text-right">
+                                    <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="work">
+                                        <i class="fa fa-trash mr-1"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-secondary z-10"></div>
+                            
+                            <div class="md:w-1/2 md:pl-12 md:order-2 order-1">
+                                <div class="md:hidden text-sm text-gray-500 mb-2" contenteditable="true">2018-至今</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 工作经历2 -->
+                    
+                    
+                    <!-- 工作经历3 -->
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- 成果展示 -->
+        <section id="achievements" class="py-16 bg-neutral section-animate animate-fade-in">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-primary mb-12">
+                    <i class="fa fa-trophy mr-3"></i>研究成果
+                </h2>
+                
+                <!-- 成果标签页 -->
+                <div class="mb-8 border-b border-gray-200">
+                    <div class="flex flex-wrap -mb-px">
+                        <button class="achievement-tab active py-4 px-6 text-secondary border-b-2 border-secondary font-medium" data-tab="papers">
+                            <i class="fa fa-file-text-o mr-2"></i>论文
+                        </button>
+                        <button class="achievement-tab py-4 px-6 text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 font-medium" data-tab="patents">
+                            <i class="fa fa-lightbulb-o mr-2"></i>专利
+                        </button>
+                        <button class="achievement-tab py-4 px-6 text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 font-medium" data-tab="awards">
+                            <i class="fa fa-certificate mr-2"></i>获奖
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 论文 -->
+                <div class="achievement-content active" id="papers-content">
+                    <div class="flex justify-end mb-6">
+                        <button class="edit-controls add-paper-btn bg-secondary text-white p-2 rounded-md hover:bg-opacity-90 transition-smooth">
+                            <i class="fa fa-plus"></i> 添加论文
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- 论文1 -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-dark mb-1" contenteditable="true">A Novel Millimeter-Wave Phased Array Antenna for 6G Communications</h3>
+                                    <p class="text-gray-600 mb-2" contenteditable="true">
+                                        Zhang M, Li W, Wang J, et al.
+                                    </p>
+                                    <p class="text-gray-600 text-sm mb-2" contenteditable="true">
+                                        IEEE Transactions on Antennas and Propagation, 2023, 71(3): 2345-2354. (SCI, IF=5.123)
+                                    </p>
+                                    <p class="text-gray-700 text-sm" contenteditable="true">
+                                        提出了一种新型毫米波相控阵天线结构，具有高增益、宽频带和低剖面特性，适用于6G通信系统。实验结果表明，该天线在26-40GHz频段内具有良好的辐射性能。
+                                    </p>
+                                </div>
+                                <div class="edit-controls flex space-x-2">
+                                    <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="paper">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 论文2 -->
+                        
+                    </div>
+                </div>
+                
+                <!-- 专利 -->
+                <div class="achievement-content hidden" id="patents-content">
+                    <div class="flex justify-end mb-6">
+                        <button class="edit-controls add-patent-btn bg-secondary text-white p-2 rounded-md hover:bg-opacity-90 transition-smooth">
+                            <i class="fa fa-plus"></i> 添加专利
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- 专利1 -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-dark mb-1" contenteditable="true">一种毫米波相控阵天线及其波束成形方法</h3>
+                                    <p class="text-gray-600 mb-2" contenteditable="true">
+                                        张明，李伟，王静
+                                    </p>
+                                    <p class="text-gray-600 text-sm mb-2" contenteditable="true">
+                                        中国发明专利，专利号：ZL202212345678.9，授权日期：2023年5月
+                                    </p>
+                                    <p class="text-gray-700 text-sm" contenteditable="true">
+                                        本发明公开了一种适用于6G通信的毫米波相控阵天线及其波束成形方法，通过新型的移相网络设计，实现了宽角度波束扫描和高增益特性，同时降低了系统复杂度和成本。
+                                    </p>
+                                </div>
+                                <div class="edit-controls flex space-x-2">
+                                    <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="patent">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 获奖 -->
+                <div class="achievement-content hidden" id="awards-content">
+                    <div class="flex justify-end mb-6">
+                        <button class="edit-controls add-award-btn bg-secondary text-white p-2 rounded-md hover:bg-opacity-90 transition-smooth">
+                            <i class="fa fa-plus"></i> 添加奖项
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- 获奖1 -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-dark mb-1" contenteditable="true">IEEE天线与传播学会青年成就奖</h3>
+                                    <p class="text-gray-600 mb-2" contenteditable="true">
+                                        颁发机构：IEEE Antennas and Propagation Society
+                                    </p>
+                                    <p class="text-gray-600 text-sm mb-2" contenteditable="true">
+                                        获奖时间：2022年
+                                    </p>
+                                    <p class="text-gray-700 text-sm" contenteditable="true">
+                                        表彰在毫米波天线和可重构智能超表面领域的杰出研究成果，以及对推动相关技术发展做出的重要贡献。
+                                    </p>
+                                </div>
+                                <div class="edit-controls flex space-x-2">
+                                    <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="award">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技能 -->
+        <section id="skills" class="py-16 bg-white section-animate animate-fade-in">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-primary mb-12">
+                    <i class="fa fa-cogs mr-3"></i>专业技能
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- 擅长领域 -->
+                    <div>
+                        <h3 class="text-xl font-semibold text-dark mb-6 flex items-center">
+                            <i class="fa fa-star text-secondary mr-2"></i>擅长领域
+                            <button class="edit-controls add-skill-domain ml-2 bg-secondary text-white p-1 rounded hover:bg-opacity-90 transition-smooth">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </h3>
+                        <div class="space-y-4 skill-domains-container">
+                            <div class="skill-domain flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary mr-3">
+                                    <i class="fa fa-wifi"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium" contenteditable="true">毫米波天线设计</p>
+                                </div>
+                                <div class="edit-controls flex space-x-1">
+                                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="skill-domain">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="skill-domain flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary mr-3">
+                                    <i class="fa fa-arrows-alt"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium" contenteditable="true">相控阵技术与波束成形</p>
+                                </div>
+                                <div class="edit-controls flex space-x-1">
+                                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="skill-domain">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 仿真工具 -->
+                    <div>
+                        <h3 class="text-xl font-semibold text-dark mb-6 flex items-center">
+                            <i class="fa fa-desktop text-secondary mr-2"></i>仿真工具
+                            <button class="edit-controls add-simulation-tool ml-2 bg-secondary text-white p-1 rounded hover:bg-opacity-90 transition-smooth">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </h3>
+                        <div class="space-y-4 simulation-tools-container">
+                            <div class="simulation-tool">
+                                <div class="flex justify-between mb-1">
+                                    <p class="font-medium" contenteditable="true">HFSS</p>
+                                    <span class="text-sm text-gray-500" contenteditable="true">95%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-level" style="width: 95%"></div>
+                                </div>
+                                <div class="edit-controls mt-1 flex justify-end">
+                                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="simulation-tool">
+                                        <i class="fa fa-trash mr-1"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="simulation-tool">
+                                <div class="flex justify-between mb-1">
+                                    <p class="font-medium" contenteditable="true">CST Microwave Studio</p>
+                                    <span class="text-sm text-gray-500" contenteditable="true">90%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-level" style="width: 90%"></div>
+                                </div>
+                                <div class="edit-controls mt-1 flex justify-end">
+                                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="simulation-tool">
+                                        <i class="fa fa-trash mr-1"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 实验仪器 -->
+                    <div>
+                        <h3 class="text-xl font-semibold text-dark mb-6 flex items-center">
+                            <i class="fa fa-flask text-secondary mr-2"></i>实验仪器
+                            <button class="edit-controls add-instrument ml-2 bg-secondary text-white p-1 rounded hover:bg-opacity-90 transition-smooth">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </h3>
+                        <div class="space-y-4 instruments-container">
+                            <div class="instrument flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary mr-3">
+                                    <i class="fa fa-tachometer"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium" contenteditable="true">矢量网络分析仪 (VNA)</p>
+                                    <p class="text-sm text-gray-600" contenteditable="true">Keysight N5247A, Rohde &amp; Schwarz ZNB40</p>
+                                </div>
+                                <div class="edit-controls flex space-x-1">
+                                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="instrument">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 编程能力 -->
+                    <div>
+                        <h3 class="text-xl font-semibold text-dark mb-6 flex items-center">
+                            <i class="fa fa-code text-secondary mr-2"></i>编程能力
+                            <button class="edit-controls add-programming-skill ml-2 bg-secondary text-white p-1 rounded hover:bg-opacity-90 transition-smooth">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </h3>
+                        <div class="space-y-4 programming-skills-container">
+                            <div class="programming-skill">
+                                <div class="flex justify-between mb-1">
+                                    <p class="font-medium" contenteditable="true">MATLAB</p>
+                                    <span class="text-sm text-gray-500" contenteditable="true">90%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-level" style="width: 90%"></div>
+                                </div>
+                                <div class="edit-controls mt-1 flex justify-end">
+                                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="programming-skill">
+                                        <i class="fa fa-trash mr-1"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="programming-skill">
+                                <div class="flex justify-between mb-1">
+                                    <p class="font-medium" contenteditable="true">Python</p>
+                                    <span class="text-sm text-gray-500" contenteditable="true">85%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-level" style="width: 85%"></div>
+                                </div>
+                                <div class="edit-controls mt-1 flex justify-end">
+                                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="programming-skill">
+                                        <i class="fa fa-trash mr-1"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 语言能力 -->
+                <div class="mt-12">
+                    <h3 class="text-xl font-semibold text-dark mb-6 flex items-center">
+                        <i class="fa fa-language text-secondary mr-2"></i>语言能力
+                        <button class="edit-controls add-language ml-2 bg-secondary text-white p-1 rounded hover:bg-opacity-90 transition-smooth">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 languages-container">
+                        <div class="language bg-neutral p-6 rounded-xl text-center card-hover">
+                            <div class="w-16 h-16 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary text-2xl mx-auto mb-3">
+                                <i class="fa fa-flag"></i>
+                            </div>
+                            <h4 class="font-medium mb-1" contenteditable="true">中文</h4>
+                            <p class="text-sm text-gray-600" contenteditable="true">母语</p>
+                            <div class="edit-controls mt-3 flex justify-center space-x-1">
+                                <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="language">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="language bg-neutral p-6 rounded-xl text-center card-hover">
+                            <div class="w-16 h-16 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary text-2xl mx-auto mb-3">
+                                <i class="fa fa-flag-o"></i>
+                            </div>
+                            <h4 class="font-medium mb-1" contenteditable="true">英语</h4>
+                            <p class="text-sm text-gray-600" contenteditable="true">精通 (TOEFL 110)</p>
+                            <p class="text-sm text-gray-600 mt-1" contenteditable="true">能够熟练阅读专业文献，撰写英文论文，进行国际学术交流</p>
+                            <div class="edit-controls mt-3 flex justify-center space-x-1">
+                                <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="language">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系信息 -->
+        <section id="contact" class="py-16 bg-neutral section-animate animate-fade-in">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-primary mb-12">
+                    <i class="fa fa-envelope mr-3"></i>联系我
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div>
+                        <div class="bg-white p-8 rounded-xl shadow-sm h-full">
+                            <h3 class="text-xl font-semibold text-dark mb-6">联系方式</h3>
+                            
+                            <div class="space-y-6">
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary mr-4 mt-1">
+                                        <i class="fa fa-map-marker"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-1" contenteditable="true">地址</h4>
+                                        <p class="text-gray-600" contenteditable="true">北京市海淀区中关村南大街5号</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary mr-4 mt-1">
+                                        <i class="fa fa-phone"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-1" contenteditable="true">电话</h4>
+                                        <p class="text-gray-600" contenteditable="true">+86 10 1234 5678</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary mr-4 mt-1">
+                                        <i class="fa fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-1" contenteditable="true">邮箱</h4>
+                                        <p class="text-gray-600" contenteditable="true">zhangming@example.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8">
+                                <h4 class="font-medium mb-4" contenteditable="true">社交媒体</h4>
+                                <div class="flex space-x-4">
+                                    <a href="file:///Users/aeayang/Downloads/index%20(1).html#" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-opacity-90 transition-smooth">
+                                        <i class="fa fa-weixin"></i>
+                                    </a>
+                                    <a href="file:///Users/aeayang/Downloads/index%20(1).html#" class="w-10 h-10 rounded-full bg-[#1DA1F2] flex items-center justify-center text-white hover:bg-opacity-90 transition-smooth">
+                                        <i class="fa fa-twitter"></i>
+                                    </a>
+                                    <a href="file:///Users/aeayang/Downloads/index%20(1).html#" class="w-10 h-10 rounded-full bg-[#0077B5] flex items-center justify-center text-white hover:bg-opacity-90 transition-smooth">
+                                        <i class="fa fa-linkedin"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="bg-white p-8 rounded-xl shadow-sm">
+                            <h3 class="text-xl font-semibold text-dark mb-6">发送消息</h3>
+                            <form id="contactForm">
+                                <div class="mb-4">
+                                    <label for="name" class="block text-gray-700 mb-2" contenteditable="true">姓名</label>
+                                    <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="您的姓名">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="email" class="block text-gray-700 mb-2" contenteditable="true">邮箱</label>
+                                    <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="您的邮箱">
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label for="message" class="block text-gray-700 mb-2" contenteditable="true">消息</label>
+                                    <textarea id="message" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入您的消息..."></textarea>
+                                </div>
+                                
+                                <button type="submit" class="w-full py-3 bg-secondary text-white rounded-md hover:bg-opacity-90 transition-smooth flex items-center justify-center">
+                                    <i class="fa fa-paper-plane mr-2"></i> 发送消息
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-primary text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-center md:text-left" contenteditable="true">© 2025 程锦阳 - 天线与微波技术从业者. 保留所有权利.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="file:///Users/aeayang/Downloads/index%20(1).html#about" class="hover:text-blue-200 transition-smooth" contenteditable="true">关于我</a>
+                    <a href="file:///Users/aeayang/Downloads/index%20(1).html#education" class="hover:text-blue-200 transition-smooth" contenteditable="true">教育经历</a>
+                    <a href="file:///Users/aeayang/Downloads/index%20(1).html#research" class="hover:text-blue-200 transition-smooth" contenteditable="true">研究经历</a>
+                    <a href="file:///Users/aeayang/Downloads/index%20(1).html#contact" class="hover:text-blue-200 transition-smooth" contenteditable="true">联系我</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 保存成功提示 -->
+    <div id="saveNotification" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg transform transition-all duration-300 flex items-center translate-y-20 opacity-0">
+        <i class="fa fa-check-circle mr-2"></i>
+        <span>内容已保存</span>
+    </div>
+
+    <script>
+        // 默认密码: admin123 (实际使用时应修改为更安全的密码)
+        const EDIT_PASSWORD = 'admin123';
+        let isEditMode = false;
+        
+        // DOM 元素
+        const navbar = document.getElementById('navbar');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const editModeBtn = document.getElementById('editModeBtn');
+        const mobileEditModeBtn = document.getElementById('mobileEditModeBtn');
+        const passwordModal = document.getElementById('passwordModal');
+        const editPassword = document.getElementById('editPassword');
+        const confirmEdit = document.getElementById('confirmEdit');
+        const cancelEdit = document.getElementById('cancelEdit');
+        const saveNotification = document.getElementById('saveNotification');
+        const profileImage = document.getElementById('profileImage');
+        const profileImageUpload = document.getElementById('profileImageUpload');
+        const contactForm = document.getElementById('contactForm');
+        
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2', 'shadow');
+                navbar.classList.remove('py-3');
+            } else {
+                navbar.classList.add('py-3');
+                navbar.classList.remove('py-2', 'shadow');
+            }
+        });
+        
+        // 移动端菜单切换
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 编辑模式相关
+        function toggleEditMode(enable) {
+            isEditMode = enable;
+            document.body.classList.toggle('edit-mode-active', enable);
+            passwordModal.classList.add('hidden');
+            
+            if (enable) {
+                editModeBtn.innerHTML = '<i class="fa fa-lock mr-1"></i> 退出编辑';
+                mobileEditModeBtn.innerHTML = '<i class="fa fa-lock mr-1"></i> 退出编辑';
+                showSaveNotification();
+            } else {
+                editModeBtn.innerHTML = '<i class="fa fa-edit mr-1"></i> 编辑模式';
+                mobileEditModeBtn.innerHTML = '<i class="fa fa-edit mr-1"></i> 编辑模式';
+            }
+        }
+        
+        function showPasswordModal() {
+            passwordModal.classList.remove('hidden');
+            editPassword.value = '';
+            editPassword.focus();
+        }
+        
+        function showSaveNotification() {
+            saveNotification.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                saveNotification.classList.add('translate-y-20', 'opacity-0');
+            }, 2000);
+        }
+        
+        editModeBtn.addEventListener('click', () => {
+            if (isEditMode) {
+                toggleEditMode(false);
+            } else {
+                showPasswordModal();
+            }
+        });
+        
+        mobileEditModeBtn.addEventListener('click', () => {
+            if (isEditMode) {
+                toggleEditMode(false);
+                mobileMenu.classList.add('hidden');
+            } else {
+                showPasswordModal();
+            }
+        });
+        
+        // 密码确认支持Enter键
+        confirmEdit.addEventListener('click', () => {
+            if (editPassword.value === EDIT_PASSWORD) {
+                toggleEditMode(true);
+            } else {
+                alert('密码错误，请重试');
+                editPassword.focus();
+            }
+        });
+        
+        // 密码输入框支持Enter键提交
+        editPassword.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                confirmEdit.click();
+            }
+        });
+        
+        cancelEdit.addEventListener('click', () => {
+            passwordModal.classList.add('hidden');
+        });
+        
+        // 个人照片上传
+        profileImageUpload.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profileImage.src = e.target.result;
+                    if (isEditMode) {
+                        showSaveNotification();
+                    }
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        
+        // 研究经历图片上传
+        document.querySelectorAll('[id^="researchImg"]').forEach(input => {
+            input.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    const imgElement = this.parentElement.parentElement.querySelector('.research-img');
+                    
+                    reader.onload = (e) => {
+                        imgElement.src = e.target.result;
+                        if (isEditMode) {
+                            showSaveNotification();
+                        }
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+        });
+        
+        // 成果标签页切换
+        document.querySelectorAll('.achievement-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有标签页的活动状态
+                document.querySelectorAll('.achievement-tab').forEach(t => {
+                    t.classList.remove('active', 'text-secondary', 'border-secondary');
+                    t.classList.add('text-gray-500', 'border-transparent', 'hover:border-gray-300');
+                });
+                
+                // 添加当前标签页的活动状态
+                tab.classList.add('active', 'text-secondary', 'border-secondary');
+                tab.classList.remove('text-gray-500', 'border-transparent', 'hover:border-gray-300');
+                
+                // 隐藏所有内容
+                document.querySelectorAll('.achievement-content').forEach(content => {
+                    content.classList.add('hidden');
+                    content.classList.remove('active');
+                });
+                
+                // 显示当前内容
+                const tabId = tab.getAttribute('data-tab');
+                const content = document.getElementById(`${tabId}-content`);
+                content.classList.remove('hidden');
+                content.classList.add('active');
+            });
+        });
+        
+        // 表单提交
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('消息发送成功！感谢您的联系。');
+            contactForm.reset();
+        });
+        
+        // 内容编辑保存提示
+        document.querySelectorAll('[contenteditable="true"]').forEach(element => {
+            element.addEventListener('blur', () => {
+                if (isEditMode) {
+                    showSaveNotification();
+                }
+            });
+        });
+        
+        // 删除功能事件委托 - 统一处理所有删除按钮
+        document.addEventListener('click', function(e) {
+            // 检查点击的是否是删除按钮
+            const deleteBtn = e.target.closest('.delete-item');
+            if (deleteBtn && isEditMode) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // 确认删除
+                if (confirm('确定要删除这项内容吗？')) {
+                    // 根据数据类型找到要删除的项目容器
+                    const itemType = deleteBtn.getAttribute('data-type');
+                    let itemToRemove = null;
+                    
+                    // 根据不同类型确定要删除的元素
+                    switch(itemType) {
+                        case 'education':
+                            itemToRemove = deleteBtn.closest('.education-item');
+                            break;
+                        case 'research':
+                            itemToRemove = deleteBtn.closest('.research-item');
+                            break;
+                        case 'work':
+                            itemToRemove = deleteBtn.closest('.work-item');
+                            break;
+                        case 'paper':
+                        case 'patent':
+                        case 'award':
+                            itemToRemove = deleteBtn.closest('.bg-white.p-6.rounded-xl.shadow-sm');
+                            break;
+                        case 'skill-domain':
+                            itemToRemove = deleteBtn.closest('.skill-domain');
+                            break;
+                        case 'simulation-tool':
+                            itemToRemove = deleteBtn.closest('.simulation-tool');
+                            break;
+                        case 'instrument':
+                            itemToRemove = deleteBtn.closest('.instrument');
+                            break;
+                        case 'programming-skill':
+                            itemToRemove = deleteBtn.closest('.programming-skill');
+                            break;
+                        case 'language':
+                            itemToRemove = deleteBtn.closest('.language');
+                            break;
+                        default:
+                            // 通用情况，删除按钮的祖父元素
+                            itemToRemove = deleteBtn.closest('.card-hover') || deleteBtn.closest('div[class*="-item"]');
+                    }
+                    
+                    // 执行删除操作
+                    if (itemToRemove) {
+                        itemToRemove.remove();
+                        showSaveNotification();
+                    }
+                }
+            }
+        });
+        
+        // 添加教育经历
+        document.querySelector('.add-education-btn').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('.education-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'education-item bg-neutral rounded-xl p-6 shadow-sm card-hover';
+            newItem.innerHTML = `
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-xl font-semibold text-dark" contenteditable="true">新的教育经历</h3>
+                        <p class="text-gray-600" contenteditable="true">学校名称 | 年份</p>
+                    </div>
+                    <div class="edit-controls flex space-x-2 mt-2 md:mt-0">
+                        <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="education">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                    请在此处添加教育经历的详细描述...
+                </p>
+            `;
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加研究经历
+        document.querySelector('.add-research-btn').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('.research-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'research-item bg-white rounded-xl overflow-hidden shadow-sm card-hover';
+            
+            // 生成唯一ID用于图片上传
+            const researchId = 'research' + Date.now();
+            
+            newItem.innerHTML = `
+                <div class="relative h-48">
+                    <img src="https://picsum.photos/600/400?random=${Math.random()}" alt="研究图片" class="research-img w-full h-full">
+                    <div class="edit-controls absolute bottom-2 right-2 flex space-x-2">
+                        <label for="${researchId}" class="bg-secondary p-2 rounded-full cursor-pointer hover:bg-opacity-90 transition-smooth">
+                            <i class="fa fa-upload"></i>
+                        </label>
+                        <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="research">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-xl font-semibold text-dark" contenteditable="true">新的研究项目</h3>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-3" contenteditable="true">年份 | 研究机构</p>
+                    <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                        请在此处添加研究项目的详细描述...
+                    </p>
+                </div>
+            `;
+            container.appendChild(newItem);
+            
+            // 图片上传功能
+            newItem.querySelector(`#${researchId}`).addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    const imgElement = newItem.querySelector('.research-img');
+                    
+                    reader.onload = (e) => {
+                        imgElement.src = e.target.result;
+                        showSaveNotification();
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            showSaveNotification();
+        });
+        
+        // 添加工作经历
+        document.querySelector('.add-work-btn').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('.work-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'work-item mb-12 relative';
+            
+            newItem.innerHTML = `
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 md:pr-12 md:text-right mb-6 md:mb-0 md:order-1 order-2">
+                        <div class="bg-neutral p-6 rounded-xl shadow-sm card-hover">
+                            <h3 class="text-xl font-semibold text-dark mb-1" contenteditable="true">新的工作职位</h3>
+                            <p class="text-gray-600 mb-3" contenteditable="true">公司名称 | 年份</p>
+                            <p class="text-gray-700 leading-relaxed" contenteditable="true">
+                                请在此处添加工作经历的详细描述...
+                            </p>
+                        </div>
+                        <div class="edit-controls mt-3 md:text-right">
+                            <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="work">
+                                <i class="fa fa-trash mr-1"></i> 删除
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-secondary z-10"></div>
+                    
+                    <div class="md:w-1/2 md:pl-12 md:order-2 order-1">
+                        <div class="md:hidden text-sm text-gray-500 mb-2" contenteditable="true">年份</div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加论文
+        document.querySelector('.add-paper-btn').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('#papers-content .space-y-6');
+            const newItem = document.createElement('div');
+            newItem.className = 'bg-white p-6 rounded-xl shadow-sm card-hover';
+            
+            newItem.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-semibold text-dark mb-1" contenteditable="true">论文标题</h3>
+                        <p class="text-gray-600 mb-2" contenteditable="true">
+                            作者1, 作者2, 作者3
+                        </p>
+                        <p class="text-gray-600 text-sm mb-2" contenteditable="true">
+                            期刊名称, 年份, 卷(期): 页码. (SCI, IF=影响因子)
+                        </p>
+                        <p class="text-gray-700 text-sm" contenteditable="true">
+                            请在此处添加论文摘要...
+                        </p>
+                    </div>
+                    <div class="edit-controls flex space-x-2">
+                        <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="paper">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加专利
+        document.querySelector('.add-patent-btn').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('#patents-content .space-y-6');
+            const newItem = document.createElement('div');
+            newItem.className = 'bg-white p-6 rounded-xl shadow-sm card-hover';
+            
+            newItem.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-semibold text-dark mb-1" contenteditable="true">专利名称</h3>
+                        <p class="text-gray-600 mb-2" contenteditable="true">
+                            发明人1, 发明人2, 发明人3
+                        </p>
+                        <p class="text-gray-600 text-sm mb-2" contenteditable="true">
+                            专利类型，专利号：XXXXXXXXX，授权日期：XXXX年X月
+                        </p>
+                        <p class="text-gray-700 text-sm" contenteditable="true">
+                            请在此处添加专利简介...
+                        </p>
+                    </div>
+                    <div class="edit-controls flex space-x-2">
+                        <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="patent">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加奖项
+        document.querySelector('.add-award-btn').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('#awards-content .space-y-6');
+            const newItem = document.createElement('div');
+            newItem.className = 'bg-white p-6 rounded-xl shadow-sm card-hover';
+            
+            newItem.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-semibold text-dark mb-1" contenteditable="true">奖项名称</h3>
+                        <p class="text-gray-600 mb-2" contenteditable="true">
+                            颁发机构
+                        </p>
+                        <p class="text-gray-600 text-sm mb-2" contenteditable="true">
+                            获奖时间：XXXX年
+                        </p>
+                        <p class="text-gray-700 text-sm" contenteditable="true">
+                            请在此处添加奖项简介...
+                        </p>
+                    </div>
+                    <div class="edit-controls flex space-x-2">
+                        <button class="delete-item bg-gray-200 p-2 rounded hover:bg-gray-300 transition-smooth" data-type="award">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加擅长领域
+        document.querySelector('.add-skill-domain').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('.skill-domains-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'skill-domain flex items-center';
+            
+            newItem.innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary mr-3">
+                    <i class="fa fa-wifi"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="font-medium" contenteditable="true">新的领域</p>
+                </div>
+                <div class="edit-controls flex space-x-1">
+                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="skill-domain">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加仿真工具
+        document.querySelector('.add-simulation-tool').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('.simulation-tools-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'simulation-tool';
+            
+            newItem.innerHTML = `
+                <div class="flex justify-between mb-1">
+                    <p class="font-medium" contenteditable="true">新的仿真工具</p>
+                    <span class="text-sm text-gray-500" contenteditable="true">50%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-level" style="width: 50%"></div>
+                </div>
+                <div class="edit-controls mt-1 flex justify-end">
+                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="simulation-tool">
+                        <i class="fa fa-trash mr-1"></i> 删除
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加实验仪器
+        document.querySelector('.add-instrument').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('.instruments-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'instrument flex items-center';
+            
+            newItem.innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary mr-3">
+                    <i class="fa fa-flask"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="font-medium" contenteditable="true">新的实验仪器</p>
+                    <p class="text-sm text-gray-600" contenteditable="true">型号和规格</p>
+                </div>
+                <div class="edit-controls flex space-x-1">
+                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="instrument">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加编程能力
+        document.querySelector('.add-programming-skill').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('.programming-skills-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'programming-skill';
+            
+            newItem.innerHTML = `
+                <div class="flex justify-between mb-1">
+                    <p class="font-medium" contenteditable="true">新的编程语言</p>
+                    <span class="text-sm text-gray-500" contenteditable="true">50%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-level" style="width: 50%"></div>
+                </div>
+                <div class="edit-controls mt-1 flex justify-end">
+                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="programming-skill">
+                        <i class="fa fa-trash mr-1"></i> 删除
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 添加语言能力
+        document.querySelector('.add-language').addEventListener('click', function() {
+            if (!isEditMode) return;
+            
+            const container = document.querySelector('.languages-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'language bg-neutral p-6 rounded-xl text-center card-hover';
+            
+            newItem.innerHTML = `
+                <div class="w-16 h-16 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center text-secondary text-2xl mx-auto mb-3">
+                    <i class="fa fa-flag-o"></i>
+                </div>
+                <h4 class="font-medium mb-1" contenteditable="true">新的语言</h4>
+                <p class="text-sm text-gray-600" contenteditable="true">熟练程度</p>
+                <p class="text-sm text-gray-600 mt-1" contenteditable="true">详细描述</p>
+                <div class="edit-controls mt-3 flex justify-center space-x-1">
+                    <button class="delete-item bg-gray-200 p-1 rounded hover:bg-gray-300 transition-smooth" data-type="language">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            showSaveNotification();
+        });
+        
+        // 滚动动画
+        function handleIntersection(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }
+        
+        const observer = new IntersectionObserver(handleIntersection, {
+            root: null,
+            threshold: 0.1
+        });
+        
+        document.querySelectorAll('.section-animate').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+
+
+</body></html>
