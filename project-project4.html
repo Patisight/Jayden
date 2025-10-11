@@ -1,0 +1,788 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>算法辅助全波电磁仿真优化 - 程锦阳</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #ecf0f1;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: #ecf0f1;
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ecf0f1;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .project-info {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(52, 152, 219, 0.2);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #bdc3c7;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .meta-item.time {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ecf0f1;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid #3498db;
+            padding-left: 0.8rem;
+        }
+
+        .description {
+            color: #bdc3c7;
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .specs-list {
+            list-style: none;
+            margin-bottom: 1.2rem;
+        }
+
+        .specs-list li {
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(189, 195, 199, 0.2);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+
+        .specs-list li:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: 500;
+            color: #ecf0f1;
+        }
+
+        .spec-value {
+            color: #3498db;
+            font-weight: 500;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 8px;
+            background: rgba(44, 62, 80, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-in;
+        }
+
+        .gallery-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            object-position: center;
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-image:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-image.active {
+            display: block;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(52, 152, 219, 0.8);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .gallery-nav:hover {
+            background: rgba(52, 152, 219, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .gallery-nav.prev {
+            left: 15px;
+        }
+
+        .gallery-nav.next {
+            right: 15px;
+        }
+
+        .gallery-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(189, 195, 199, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: #3498db;
+            transform: scale(1.2);
+        }
+
+        .indicator:hover {
+            background: #3498db;
+        }
+
+        /* Achievements */
+        .achievements {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .achievement-item {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .achievement-item:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .achievement-item h4 {
+            color: #ecf0f1;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .achievement-item p {
+            color: #bdc3c7;
+            font-size: 0.75rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .project-info,
+            .image-gallery {
+                padding: 1.5rem;
+            }
+
+            .gallery-container {
+                height: 300px;
+            }
+
+            .achievement-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Image Modal Styles */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-image:active {
+            cursor: grabbing;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #3498db;
+        }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(52, 152, 219, 0.8);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .modal-nav:hover {
+            background: rgba(52, 152, 219, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .modal-nav.prev {
+            left: 30px;
+        }
+
+        .modal-nav.next {
+            right: 30px;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1001;
+        }
+
+        .zoom-btn {
+            background: rgba(52, 152, 219, 0.8);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            background: rgba(52, 152, 219, 1);
+            transform: scale(1.1);
+        }
+
+        .image-info {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .modal-nav {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .modal-nav.prev {
+                left: 15px;
+            }
+
+            .modal-nav.next {
+                right: 15px;
+            }
+
+            .modal-close {
+                top: 15px;
+                right: 20px;
+                font-size: 30px;
+            }
+
+            .zoom-controls {
+                bottom: 60px;
+            }
+
+            .zoom-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="nav">
+                <a href="index.html?direction=ai#projects" class="back-btn">
+                    ← 返回主页
+                </a>
+                <div class="project-title">算法辅助全波电磁仿真优化</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Project Info -->
+            <div class="project-info">
+                <div class="project-meta">
+                    <span class="meta-item time">2023.03 - 2023.11</span>
+                    <span class="meta-item">电磁仿真</span>
+                    <span class="meta-item">算法优化</span>
+                </div>
+
+                <h2 class="section-title">项目概述</h2>
+                <p class="description">
+                    开发了一套基于机器学习的全波电磁仿真优化算法，通过智能算法辅助天线设计过程，显著提高了仿真效率和设计精度。该系统集成了遗传算法、粒子群优化等多种智能优化方法。
+                </p>
+
+                <h2 class="section-title">技术规格</h2>
+                <ul class="specs-list">
+                    <li>
+                        <span class="spec-label">优化算法</span>
+                        <span class="spec-value">GA/PSO/DE</span>
+                    </li>
+                    <li>
+                        <span class="spec-label">仿真软件</span>
+                        <span class="spec-value">HFSS/CST</span>
+                    </li>
+                    <li>
+                        <span class="spec-label">效率提升</span>
+                        <span class="spec-value">60%</span>
+                    </li>
+                    <li>
+                        <span class="spec-label">精度改善</span>
+                        <span class="spec-value">15%</span>
+                    </li>
+                    <li>
+                        <span class="spec-label">开发语言</span>
+                        <span class="spec-value">Python/MATLAB</span>
+                    </li>
+                </ul>
+
+                <h2 class="section-title">技术创新</h2>
+                <p class="description">
+                    • 多目标优化算法集成<br>
+                    • 自适应参数调节机制<br>
+                    • 并行计算加速技术<br>
+                    • 智能收敛判断策略<br>
+                    • 可视化分析界面
+                </p>
+            </div>
+
+            <!-- Image Gallery -->
+            <div class="image-gallery">
+                <h2 class="section-title">项目图片</h2>
+                <div class="gallery-container" onclick="openImageModal()">
+                    <img src="myself.jpg" alt="算法流程" class="gallery-image active">
+                    <img src="myself.jpg" alt="优化结果" class="gallery-image">
+                    <img src="myself.jpg" alt="收敛曲线" class="gallery-image">
+                    <img src="myself.jpg" alt="仿真界面" class="gallery-image">
+                    <img src="myself.jpg" alt="性能对比" class="gallery-image">
+                    <img src="myself.jpg" alt="代码结构" class="gallery-image">
+                    
+                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
+                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
+                </div>
+                
+                <div class="gallery-indicators">
+                    <span class="indicator active" onclick="currentImage(1)"></span>
+                    <span class="indicator" onclick="currentImage(2)"></span>
+                    <span class="indicator" onclick="currentImage(3)"></span>
+                    <span class="indicator" onclick="currentImage(4)"></span>
+                    <span class="indicator" onclick="currentImage(5)"></span>
+                    <span class="indicator" onclick="currentImage(6)"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="achievements">
+            <h2 class="section-title">项目成果</h2>
+            <div class="achievement-grid">
+                <div class="achievement-item">
+                    <h4>效率提升</h4>
+                    <p>仿真时间减少60%</p>
+                </div>
+                <div class="achievement-item">
+                    <h4>精度改善</h4>
+                    <p>设计精度提升15%</p>
+                </div>
+                <div class="achievement-item">
+                    <h4>算法创新</h4>
+                    <p>多目标优化算法集成</p>
+                </div>
+                <div class="achievement-item">
+                    <h4>工程应用</h4>
+                    <p>成功应用于多个项目</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeImageModal()">&times;</span>
+            <img id="modalImage" class="modal-image" alt="">
+            <button class="modal-nav prev" onclick="changeModalImage(-1)">‹</button>
+            <button class="modal-nav next" onclick="changeModalImage(1)">›</button>
+            <div class="zoom-controls">
+                <button class="zoom-btn" onclick="zoomImage(-0.2)">-</button>
+                <button class="zoom-btn" onclick="resetZoom()">重置</button>
+                <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
+            </div>
+            <div class="image-info" id="imageInfo">1 / 6</div>
+        </div>
+    </div>
+
+    <script>
+        let currentImageIndex = 0;
+        let currentZoom = 1;
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+        
+        const images = document.querySelectorAll('.gallery-image');
+        const indicators = document.querySelectorAll('.indicator');
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const imageInfo = document.getElementById('imageInfo');
+
+        // 图片源数组
+        const imageSources = [
+            'myself.jpg',
+            'myself.jpg',
+            'myself.jpg',
+            'myself.jpg',
+            'myself.jpg',
+            'myself.jpg'
+        ];
+
+        const imageAlts = [
+            '算法流程',
+            '优化结果',
+            '收敛曲线',
+            '仿真界面',
+            '性能对比',
+            '代码结构'
+        ];
+
+        function showImage(index) {
+            // Hide all images
+            images.forEach(img => img.classList.remove('active'));
+            indicators.forEach(ind => ind.classList.remove('active'));
+            
+            // Show current image
+            images[index].classList.add('active');
+            indicators[index].classList.add('active');
+        }
+
+        function changeImage(direction) {
+            currentImageIndex += direction;
+            
+            if (currentImageIndex >= images.length) {
+                currentImageIndex = 0;
+            } else if (currentImageIndex < 0) {
+                currentImageIndex = images.length - 1;
+            }
+            
+            showImage(currentImageIndex);
+        }
+
+        function currentImage(index) {
+            currentImageIndex = index - 1;
+            showImage(currentImageIndex);
+        }
+
+        // 打开图片模态框
+        function openImageModal() {
+            modal.style.display = 'block';
+            modalImage.src = imageSources[currentImageIndex];
+            modalImage.alt = imageAlts[currentImageIndex];
+            updateImageInfo();
+            resetZoom();
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭图片模态框
+        function closeImageModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 模态框中切换图片
+        function changeModalImage(direction) {
+            currentImageIndex += direction;
+            
+            if (currentImageIndex >= imageSources.length) {
+                currentImageIndex = 0;
+            } else if (currentImageIndex < 0) {
+                currentImageIndex = imageSources.length - 1;
+            }
+            
+            modalImage.src = imageSources[currentImageIndex];
+            modalImage.alt = imageAlts[currentImageIndex];
+            showImage(currentImageIndex);
+            updateImageInfo();
+            resetZoom();
+        }
+
+        // 更新图片信息
+        function updateImageInfo() {
+            imageInfo.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
+        }
+
+        // 缩放图片
+        function zoomImage(delta) {
+            currentZoom += delta;
+            currentZoom = Math.max(0.5, Math.min(3, currentZoom));
+            updateImageTransform();
+        }
+
+        // 重置缩放
+        function resetZoom() {
+            currentZoom = 1;
+            translateX = 0;
+            translateY = 0;
+            updateImageTransform();
+        }
+
+        // 更新图片变换
+        function updateImageTransform() {
+            modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+        }
+
+        // 鼠标拖拽功能
+        modalImage.addEventListener('mousedown', (e) => {
+            if (currentZoom > 1) {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                modalImage.style.cursor = 'grabbing';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateImageTransform();
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            modalImage.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
+        });
+
+        // 鼠标滚轮缩放
+        modalImage.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            zoomImage(delta);
+        });
+
+        // 键盘控制
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'block') {
+                switch(e.key) {
+                    case 'Escape':
+                        closeImageModal();
+                        break;
+                    case 'ArrowLeft':
+                        changeModalImage(-1);
+                        break;
+                    case 'ArrowRight':
+                        changeModalImage(1);
+                        break;
+                    case '+':
+                    case '=':
+                        zoomImage(0.2);
+                        break;
+                    case '-':
+                        zoomImage(-0.2);
+                        break;
+                    case '0':
+                        resetZoom();
+                        break;
+                }
+            }
+        });
+
+        // 点击模态框背景关闭
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeImageModal();
+            }
+        });
+
+        // Handle image load errors
+        images.forEach((img, index) => {
+            img.onerror = function() {
+                this.style.display = 'flex';
+                this.style.alignItems = 'center';
+                this.style.justifyContent = 'center';
+                this.style.background = '#f0f0f0';
+                this.style.color = '#999';
+                this.innerHTML = '<div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div><div>图片加载中...</div></div>';
+            };
+        });
+    </script>
+</body>
+</html>
+
+
