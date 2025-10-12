@@ -548,17 +548,18 @@
             <div class="image-gallery">
                 <h2 class="section-title">项目图片</h2>
                 <div class="image-title-display">
-                    <span class="image-title">5G天线</span>
+                    <span class="image-title">产品实物图</span>
                     <span class="image-counter">1 / 7</span>
                 </div>
                 <div class="gallery-container" onclick="openImageModal()">    
-                    <img src="files/5gAntenna.jpg" alt="5G天线" class="gallery-image active">
+                    <img src="files/productPysical.jpg" alt="产品实物图" class="gallery-image active">
+                    <img src="files/productReport.jpg" alt="产品报告图" class="gallery-image">
+                    <img src="files/5gAntenna.jpg" alt="5G天线" class="gallery-image">
+                    <img src="files/mimoAntenna.jpg" alt="MIMO天线" class="gallery-image">
                     <img src="files/wifiAntenna.jpg" alt="WiFi天线" class="gallery-image">
                     <img src="files/btAntenna.jpg" alt="蓝牙天线" class="gallery-image">
-                    <img src="files/mimoAntenna.jpg" alt="MIMO天线" class="gallery-image">
                     <img src="files/v2xAntenna.jpg" alt="V2X天线" class="gallery-image">
-                    <img src="files/productPysical.jpg" alt="产品实物" class="gallery-image">
-                    <img src="files/productReport.jpg" alt="测试报告" class="gallery-image">
+
                     
                     <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
                     <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
@@ -630,23 +631,25 @@
 
         // 图片源数据
         const imageSources = [
-            'files/5gAntenna.jpg',
-            'files/wifiAntenna.jpg',
-            'files/btAntenna.jpg',
-            'files/mimoAntenna.jpg',
-            'files/v2xAntenna.jpg',
             'files/productPysical.jpg',
             'files/productReport.jpg',
+            'files/5gAntenna.jpg',
+            'files/mimoAntenna.jpg',
+            'files/wifiAntenna.jpg',
+            'files/btAntenna.jpg',
+            'files/v2xAntenna.jpg',
+
         ];
 
         const imageAlts = [
+            '产品实物图',
+            '产品报告图',
             '5G天线',
-            'WiFi天线',
-            '蓝牙天线',
             'MIMO天线',
+            'Wi-Fi 6E天线',
+            '蓝牙天线',
             'V2X天线',
-            '产品实物',
-            '测试报告'
+
         ];
 
         function showImage(index) {

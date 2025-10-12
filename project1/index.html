@@ -222,23 +222,122 @@
         }
 
         .indicator {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: rgba(189, 195, 199, 0.5);
+            background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .indicator.active {
-            background: #3498db;
+        .indicator:hover {
+            background: rgba(52, 152, 219, 0.7);
             transform: scale(1.2);
         }
 
-        .indicator:hover {
+        .indicator.active {
             background: #3498db;
+            transform: scale(1.3);
         }
 
+        /* Image Details Section */
+        .image-details {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(44, 62, 80, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .details-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #3498db;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .details-title::before {
+            content: "📋";
+            font-size: 1rem;
+        }
+
+        .image-description {
+            margin-bottom: 1rem;
+        }
+
+        .image-description p {
+            color: #bdc3c7;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .image-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .spec-item .spec-label {
+            font-weight: 500;
+            color: #ecf0f1;
+            font-size: 0.9rem;
+        }
+
+        .spec-item .spec-value {
+            color: #3498db;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Reference Section */
+        .reference-section {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .reference-section .main-content {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .reference-section .section-title {
+            color: #ecf0f1;
+            margin-bottom: 1rem;
+        }
+
+        .reference-section .description {
+            color: #bdc3c7;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .reference-section .description a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .reference-section .description a:hover {
+            color: #ecf0f1;
+            text-decoration: underline;
+        }
+        
         /* Image Title Display */
         .image-title-display {
             display: flex;
@@ -463,33 +562,40 @@
             <!-- Project Info -->
             <div class="project-info">
                 <div class="project-meta">
-                    <span class="meta-item time">2023.03 - 2023.12</span>
+                    <span class="meta-item time">2023.10 - 2024.8</span>
                     <span class="meta-item">天线设计</span>
                     <span class="meta-item">5G MIMO</span>
                 </div>
 
                 <h2 class="section-title">项目概述</h2>
                 <p class="description">
-                    设计了一款紧凑型车载5G MIMO天线，实现了高隔离度和宽频带特性。该天线采用创新的结构设计，在保持紧凑尺寸的同时，实现了优异的发射和接收性能，满足车联网和5G通信的严格要求。                
+                    提出并实现了一款紧凑低剖面的车载5G 2×2 MIMO天线系统，由两副主天线与两副分集天线组成。主天线覆盖700–960 MHz与1710–6000 MHz，分集天线覆盖1710–6000 MHz；通过在不同频段呈现差异化的极化方向并使相邻天线极化互相正交，实现低互耦合与图形/极化双重分集。整体尺寸仅为74 × 74 × 11 mm，端口间隔离均超过10 dB，满足车载5G/LTE工程应用需求。
                 </p>
 
                 <h2 class="section-title">技术规格</h2>
                 <ul class="specs-list">
                     <li>
                         <span class="spec-label">工作频段</span>
-                        <span class="spec-value">3.3-3.8 GHz</span>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span class="spec-value">主天线：700–960 MHz & 1710–6000 MHz</span>
+                            <span class="spec-value">分集天线：1710–6000 MHz</span>
+                        </div>
                     </li>
                     <li>
                         <span class="spec-label">天线尺寸</span>
-                        <span class="spec-value">74×74×11 mm</span>
+                        <span class="spec-value">74 mm × 74 mm × 11 mm</span>
                     </li>
                     <li>
                         <span class="spec-label">隔离度</span>
-                        <span class="spec-value">>10 dB</span>
+                        <span class="spec-value">>10 dB（高频段 >15 dB）</span>
                     </li>
                     <li>
                         <span class="spec-label">效率</span>
-                        <span class="spec-value">>40%</span>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span class="spec-value">各天线>40%</span>
+                            <span class="spec-value">仿真平均效率≈64.8%</span>
+                            <span class="spec-value">实测平均效率≈53.1%</span>
+                        </div>
                     </li>
                     <li>
                         <span class="spec-label">VSWR</span>
@@ -499,11 +605,13 @@
 
                 <h2 class="section-title">技术创新</h2>
                 <p class="description">
-                    • 紧凑型低剖面设计，优化空间利用率<br>
-                    • 实现低互耦合技术，提高MIMO性能<br>
-                    • 宽频带特性，满足5G多频段需求<br>
-                    • 优化的辐射方向图，适合车载应用场景
+                    • 新型多频段主天线结构：金属枝与地板开槽组合，分别在低/中/高频段形成不同的辐射机理（金属枝、窄槽、宽槽）<br>
+                    • 频段相关的极化方向：主天线在不同频段呈现差异化极化，使相邻天线极化互为正交，显著降低耦合<br>
+                    • 图形与极化双分集：四天线在低频与中高频实现全向覆盖与分集，提高链路稳定性<br>
+                    • 紧凑低剖面与工程可实现性：整体仅74 mm × 74 mm × 11 mm，端口隔离10–15 dB，满足车载5G/LTE应用<br>
+                    • FR4印制实现与一致性验证：仿真与实测结果一致，ECC<0.5，效率>40%
                 </p>
+
             </div>
 
             <!-- Image Gallery -->
@@ -516,14 +624,14 @@
                 </div>
                 <div class="gallery-container" onclick="openImageModal()">
                     <img src="files/productPhysical.jpg" alt="产品实物图" class="gallery-image active">
-                    <img src="files/productReport.jpg" alt="产品报告" class="gallery-image">
+                    <img src="files/productReport.jpg" alt="产品报告图" class="gallery-image">
                     <img src="files/structure1.jpg" alt="天线结构图1" class="gallery-image">
                     <img src="files/strucutre2.jpg" alt="天线结构图2" class="gallery-image">
                     <img src="files/structureEvolution.jpg" alt="结构演进图" class="gallery-image">
-                    <img src="files/antennaEfficiency1.jpg" alt="天线效率图1" class="gallery-image">
-                    <img src="files/antennaEfficiency2.jpg" alt="天线效率图2" class="gallery-image">
                     <img src="files/returnLoss.jpg" alt="回波损耗图" class="gallery-image">
                     <img src="files/isolation.jpg" alt="隔离度图" class="gallery-image">
+                    <img src="files/antennaEfficiency1.jpg" alt="天线效率图1" class="gallery-image">
+                    <img src="files/antennaEfficiency2.jpg" alt="天线效率图2" class="gallery-image">
                     <img src="files/currentDistribution1.jpg" alt="电流分布图1" class="gallery-image">
                     <img src="files/currentDistribution2.jpg" alt="电流分布图2" class="gallery-image">
                     <img src="files/currentDistribution3.jpg" alt="电流分布图3" class="gallery-image">
@@ -552,6 +660,24 @@
                     <span class="indicator" onclick="currentImage(14)"></span>
                     <span class="indicator" onclick="currentImage(15)"></span>
                 </div>
+
+                <!-- Image Details Section -->
+                <div class="image-details">
+                    <h3 class="details-title">图片说明</h3>
+                    <div class="image-description">
+                        <p id="current-image-description">展示了紧凑型车载5G MIMO天线的实物产品，体现了74×74×11 mm的紧凑设计和精密的工程制造工艺。</p>
+                    </div>
+                    <div class="image-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">图片类型</span>
+                            <span class="spec-value" id="current-image-type">产品实物</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">相关技术</span>
+                            <span class="spec-value" id="current-image-tech">MIMO天线设计</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -565,11 +691,11 @@
                 </div>
                 <div class="achievement-item">
                     <h4>性能指标</h4>
-                    <p>所有技术指标均达到设计要求</p>
+                    <p>端口隔离>10 dB（高频段>15 dB），ECC<0.5，效率>40%</p>
                 </div>
                 <div class="achievement-item">
                     <h4>工程应用</h4>
-                    <p>设计方案具备实际工程应用价�?/p>
+                    <p>设计方案具备实际工程应用价值</p>
                 </div>
                 <div class="achievement-item">
                     <h4>技术创新</h4>
@@ -614,10 +740,10 @@
             'files/structure1.jpg',
             'files/strucutre2.jpg',
             'files/structureEvolution.jpg',
-            'files/antennaEfficiency1.jpg',
-            'files/antennaEfficiency2.jpg',
             'files/returnLoss.jpg',
             'files/isolation.jpg',
+            'files/antennaEfficiency1.jpg',
+            'files/antennaEfficiency2.jpg',
             'files/currentDistribution1.jpg',
             'files/currentDistribution2.jpg',
             'files/currentDistribution3.jpg',
@@ -628,20 +754,99 @@
 
         const imageAlts = [
             '产品实物图',
-            '产品报告',
+            '产品报告图',
             '天线结构图1',
             '天线结构图2',
             '结构演进图',
-            '天线效率图1',
-            '天线效率图2',
             '回波损耗图',
             '隔离度图',
-            '电流分布图1',
-            '电流分布图2',
-            '电流分布图3',
-            '极化方向图1',
-            '极化方向图2',
-            '极化方向图3'
+            '天线效率图-主/副',
+            '天线效率图-MIMO',
+            '电流分布图-低频段',
+            '电流分布图-中频段',
+            '电流分布图-高频段',
+            '极化方向图-低频段',
+            '极化方向图-中频段',
+            '极化方向图-高频段'
+        ];
+
+        // 图片详情数据
+        const imageDetails = [
+            {
+                description: '展示了紧凑型车载5G MIMO天线的实物产品，体现了74×74×11 mm的紧凑设计和精密的工程制造工艺。',
+                type: '产品实物',
+                tech: 'MIMO天线设计'
+            },
+            {
+                description: '详细的产品技术报告，包含完整的性能参数、测试结果和技术规格说明。',
+                type: '技术报告',
+                tech: '性能测试'
+            },
+            {
+                description: '天线的三维结构设计图，展示了金属枝与地板开槽的创新组合结构。',
+                type: '结构设计',
+                tech: '结构创新'
+            },
+            {
+                description: '天线结构的另一视角，清晰展示了各个组件的空间布局和连接方式。',
+                type: '结构设计',
+                tech: '空间布局'
+            },
+            {
+                description: '天线结构的演进过程，从初始设计到最终优化的完整发展历程。',
+                type: '设计演进',
+                tech: '优化过程'
+            },
+            {
+                description: '回波损耗测试结果，验证了天线在700-960MHz和1710-6000MHz频段的优异性能。',
+                type: '性能测试',
+                tech: '回波损耗'
+            },
+            {
+                description: '端口隔离度测试数据，显示全频段>10dB，高频段>15dB的优秀隔离性能。',
+                type: '性能测试',
+                tech: '端口隔离'
+            },
+            {
+                description: '天线效率测试结果第一部分，展示各天线效率均>40%的优异表现。',
+                type: '效率测试',
+                tech: '辐射效率'
+            },
+            {
+                description: '天线效率测试结果第二部分，仿真平均效率≈64.8%，实测平均效率≈53.1%。',
+                type: '效率测试',
+                tech: '效率对比'
+            },
+            {
+                description: '低频段电流分布仿真结果，展示了金属枝辐射机理的工作原理。',
+                type: '仿真分析',
+                tech: '电流分布'
+            },
+            {
+                description: '中频段电流分布仿真结果，显示了窄槽辐射机理的特性。',
+                type: '仿真分析',
+                tech: '电流分布'
+            },
+            {
+                description: '高频段电流分布仿真结果，体现了宽槽辐射机理的工作模式。',
+                type: '仿真分析',
+                tech: '电流分布'
+            },
+            {
+                description: '低频段极化方向图，展示了天线在该频段的极化特性和辐射方向性。',
+                type: '极化分析',
+                tech: '极化方向'
+            },
+            {
+                description: '中频段极化方向图，显示了不同频段间极化的差异化特性。',
+                type: '极化分析',
+                tech: '极化方向'
+            },
+            {
+                description: '高频段极化方向图，验证了相邻天线极化互为正交的设计目标。',
+                type: '极化分析',
+                tech: '极化方向'
+            }
         ];
 
         function showImage(index) {
@@ -655,6 +860,9 @@
             
             // Update image title and counter
             updateImageTitle(index);
+            
+            // Update image details
+            updateImageDetails(index);
         }
 
         function updateImageTitle(index) {
@@ -664,6 +872,18 @@
             if (titleElement && counterElement) {
                 titleElement.textContent = imageAlts[index];
                 counterElement.textContent = `${index + 1} / ${images.length}`;
+            }
+        }
+
+        function updateImageDetails(index) {
+            const descriptionElement = document.getElementById('current-image-description');
+            const typeElement = document.getElementById('current-image-type');
+            const techElement = document.getElementById('current-image-tech');
+            
+            if (descriptionElement && typeElement && techElement && imageDetails[index]) {
+                descriptionElement.textContent = imageDetails[index].description;
+                typeElement.textContent = imageDetails[index].type;
+                techElement.textContent = imageDetails[index].tech;
             }
         }
 
@@ -819,4 +1039,20 @@
         });
     </script>
 </body>
+
+<div class="container reference-section">
+    <div class="main-content">
+        <h2 class="section-title">引用</h2>
+        <div class="description" style="margin-left: -6rem; margin-right: 1.5rem; text-align: justify;">
+            <p>
+                [article] <strong>J. Cheng</strong>* et al., "A Compact Low-Profile Vehicular 5G MIMO Antenna System," in IEEE Antennas and Wireless Propagation Letters, vol. 24, no. 8, pp. 2422-2426, Aug. 2025.   论文链接：
+                <a href="https://ieeexplore.ieee.org/document/10979809" target="_blank" rel="noopener">IEEE Xplore</a>
+            </p>
+            <p>
+                [patent] <strong>"一种集成式低剖面5G天线"</strong> CN119297580A. 专利链接：
+                <a href="https://pss-system.cponline.cnipa.gov.cn/documents/detail?prevPageTit=changgui" target="_blank" rel="noopener">发明专利</a>
+            </p>
+        </div>
+    </div>
+</div>
 </html>

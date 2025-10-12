@@ -518,16 +518,16 @@
             <div class="image-gallery">
                 <h2 class="section-title">项目图片</h2>
                 <div class="image-title-display">
-                    <span class="image-title">雷达阵列</span>
+                    <span class="image-title">4G和WiFi天线</span>
                     <span class="image-counter">1 / 6</span>
                 </div>
                 <div class="gallery-container" onclick="openImageModal()">
-                    <img src="./files/radar-array.svg" alt="雷达阵列" class="gallery-image active">
-                    <img src="./files/antenna-pattern.svg" alt="天线方向图" class="gallery-image">
-                    <img src="./files/simulation-results.svg" alt="仿真结果" class="gallery-image">
-                    <img src="./files/test-environment.svg" alt="测试环境" class="gallery-image">
-                    <img src="./files/performance-chart.svg" alt="性能图表" class="gallery-image">
-                    <img src="./files/product-photo.svg" alt="产品照片" class="gallery-image">
+                    <img src="files/productPysical.jpg" alt="产品实物图" class="gallery-image active">
+                    <img src="files/productReport.jpg" alt="产品报告" class="gallery-image">
+                    <img src="files/4GndWiFi.png" alt="4G和WiFi天线正面图" class="gallery-image">
+                    <img src="files/4GndWiFi2.png" alt="4G和WiFi天线背面图" class="gallery-image">
+                    <img src="files/btAntenna.png" alt="蓝牙天线" class="gallery-image">
+                    <img src="files/v2xAntenna.png" alt="V2X天线" class="gallery-image">
                     
                     <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
                     <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
@@ -598,21 +598,21 @@
 
         // 图片源数据
         const imageSources = [
-            './files/radar-array.svg',
-            './files/antenna-pattern.svg',
-            './files/simulation-results.svg',
-            './files/test-environment.svg',
-            './files/performance-chart.svg',
-            './files/product-photo.svg'
+            'files/productPysical.jpg',
+            'files/productReport.jpg',
+            'files/4GndWiFi.png',
+            'files/4GndWiFi2.png',
+            'files/btAntenna.png',
+            'files/v2xAntenna.png'
         ];
 
         const imageAlts = [
-            '雷达阵列',
-            '天线方向图',
-            '仿真结果',
-            '测试环境',
-            '性能图表',
-            '产品照片'
+            '产品实物图',
+            '产品报告',
+            '4G和WiFi天线',
+            '4G和WiFi天线2',
+            '蓝牙天线',
+            'V2X天线'
         ];
 
         function showImage(index) {
