@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 
-def compress_image(image_path, output_path, target_size_kb=200, quality=90):
+def compress_image(image_path, output_path, target_size_kb=100, quality=90):
     """
     Compresses an image to a target size (in KB) while trying to maintain quality.
     Uses a binary search approach to find the optimal quality setting.
