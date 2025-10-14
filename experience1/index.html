@@ -494,11 +494,16 @@
 
             <div class="experience-gallery">
                 <div class="gallery-container" onclick="openImageModal(0)">
-                    <img src="../myself.jpg" alt="江苏骅盛办公环境" class="gallery-image active">
-                    <img src="../myself.jpg" alt="天线设计工作" class="gallery-image">
-                    <img src="../myself.jpg" alt="实验室测试" class="gallery-image">
-                    <img src="../myself.jpg" alt="专利证书" class="gallery-image">
-                    <img src="../myself.jpg" alt="IEEE论文发表" class="gallery-image">
+                    <img src="files/workID.webp" alt="江苏骅盛工作ID" class="gallery-image active">
+                    <img src="files/internshipProof.webp" alt="江苏骅盛实习证明" class="gallery-image">
+                    <img src="files/antenna1Pysical.webp" alt="天线1物理结构" class="gallery-image">
+                    <img src="files/antenna1Report.webp" alt="天线1设计报告" class="gallery-image">
+                    <img src="files/antenna2Pysical.webp" alt="天线2物理结构" class="gallery-image">
+                    <img src="files/antenna2Report.webp" alt="天线2设计报告" class="gallery-image">
+                    <img src="files/antenna3Pysical.webp" alt="天线3物理结构" class="gallery-image">
+                    <img src="files/antenna3Report.webp" alt="天线3设计报告" class="gallery-image">
+                    <img src="files/antenna4Pysical.webp" alt="天线4物理结构" class="gallery-image">
+                    <img src="files/antenna4Report.webp" alt="天线4设计报告" class="gallery-image">
                     
                     <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(0, -1)">‹</button>
                     <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(0, 1)">›</button>
@@ -510,6 +515,11 @@
                     <span class="indicator" onclick="currentImage(0, 3)"></span>
                     <span class="indicator" onclick="currentImage(0, 4)"></span>
                     <span class="indicator" onclick="currentImage(0, 5)"></span>
+                    <span class="indicator" onclick="currentImage(0, 6)"></span>
+                    <span class="indicator" onclick="currentImage(0, 7)"></span>
+                    <span class="indicator" onclick="currentImage(0, 8)"></span>
+                    <span class="indicator" onclick="currentImage(0, 9)"></span>
+                    <span class="indicator" onclick="currentImage(0, 10)"></span>
                 </div>
             </div>
         </div>
@@ -545,19 +555,29 @@
 
         // 图片源数据
         const imageSources = [
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg'
+            'files/workID.webp',
+            'files/internshipProof.webp',
+            'files/antenna1Pysical.webp',
+            'files/antenna1Report.webp',
+            'files/antenna2Pysical.webp',
+            'files/antenna2Report.webp',
+            'files/antenna3Pysical.webp',
+            'files/antenna3Report.webp',
+            'files/antenna4Pysical.webp',
+            'files/antenna4Report.webp',
         ];
 
         const imageAlts = [
-            '江苏骅盛办公环境',
-            '天线设计工作',
-            '实验室测试',
-            '专利证书',
-            'IEEE论文发表'
+            '江苏骅盛工作ID',
+            '江苏骅盛实习证明',
+            '天线1物理结构',
+            '天线1设计报告',
+            '天线2物理结构',
+            '天线2设计报告',
+            '天线3物理结构',
+            '天线3设计报告',
+            '天线4物理结构',
+            '天线4设计报告',
         ];
 
         function changeImage(galleryIndex, direction) {
