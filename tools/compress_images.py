@@ -7,8 +7,8 @@ def compress_image(
     target_size_kb=100,
     max_dimension=1920,  # 网页图片最佳上限（1920px宽）
     output_format=None,  # 自动判断格式（优先WebP）
-    min_quality=40,      # 最低质量阈值（避免模糊）
-    png_compress_level=4 # PNG无损压缩等级（1=快/大，9=慢/小）
+    min_quality=10,      # 最低质量阈值（避免模糊）
+    png_compress_level=2 # PNG无损压缩等级（1=快/大，9=慢/小）
 ):
     # 0. 先检查原图文件大小，如果已达标，直接返回（不压缩、不缩放）
     original_size_kb = os.path.getsize(image_path) / 1024
@@ -138,9 +138,9 @@ def compress_image(
           f"格式={output_format} | 质量={best_quality}")
     return final_size, output_path
 
-def process_directory(
+def process_directory(  # 批量处理文件夹，自动备份原图
     directory_path,
-    target_size_kb=200,
+    target_size_kb=60,
     max_dimension=1920,
     output_format="webp"
 ):
@@ -167,7 +167,9 @@ def process_directory(
                     backup_path = f"{file_path}.backup"
                     if not os.path.exists(backup_path):
                         with Image.open(file_path) as backup_img:
-                            backup_img.save(backup_path)
+                            # 修复：指定格式保存备份，避免未知扩展名错误
+                            backup_format = backup_img.format or 'PNG'  # 默认PNG如果无法识别
+                            backup_img.save(backup_path, format=backup_format)
                         print(f"📁 已备份原图：{os.path.basename(backup_path)}")
 
                     # 执行压缩（覆盖原文件）
@@ -194,10 +196,11 @@ def process_directory(
 
 if __name__ == "__main__":
     target_path = input("请输入要压缩的文件夹路径或图片文件路径: ")
+    #target_path = r"C:\Users\16438\Desktop\myWebsite\project3\files\productPysical.webp"
     
     if os.path.isdir(target_path):
-        print(f"🚀 开始处理目录: {target_path}（格式=WebP，目标={200}KB，最大边长={1920}px）")
-        process_directory(target_path, target_size_kb=200, max_dimension=1920)
+        print(f"🚀 开始处理目录: {target_path}（格式=WebP，目标=60KB，最大边长=1920px）")
+        process_directory(target_path, target_size_kb=30, max_dimension=1920)
         print("🎉 所有图片处理完成！")
     
     elif os.path.isfile(target_path):
@@ -206,7 +209,7 @@ if __name__ == "__main__":
         compress_image(
             target_path,
             output_path=target_path,  # 覆盖原文件，扩展名不变，但内容为WebP
-            target_size_kb=100,
+            target_size_kb=30,
             max_dimension=1920,
             output_format="webp"
         )
