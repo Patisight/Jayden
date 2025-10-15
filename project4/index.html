@@ -490,7 +490,7 @@
     <div class="header">
         <div class="container">
             <div class="nav">
-                <a href="../index.html?direction=ai#research" class="back-btn">
+                <a href="../index.html#research-ai" class="back-btn">
                     ← 返回主页
                 </a>
                 <div class="project-title">算法驱动全频段天线优化</div>
@@ -511,7 +511,10 @@
 
                 <h2 class="section-title">项目概述</h2>
                 <p class="description">
-                    开发了一套基于机器学习的全频段天线优化算法。通过智能算法驱动设计过程，大幅提升了仿真效率和设计精度。系统集成了遗传算法、粒子群优化等多种智能优化算法。
+                    ·开发了一套基于机器学习的全频段天线优化算法。通过智能算法驱动设计过程，大幅提升了仿真效率和设计精度。系统集成了遗传算法、粒子群优化等多种智能优化算法。
+                </p>
+                <p class="description">
+                    ·尝试采用BNN作为代理模型，结合主动学习策略加快对微波结构的学习，进一步地探索物理先验嵌入的强化学习微波结构参数优化及学习架构。
                 </p>
 
                 <h2 class="section-title">技术规格</h2>
@@ -522,7 +525,7 @@
                     </li>
                     <li>
                         <span class="spec-label">仿真软件</span>
-                        <span class="spec-value">HFSS/CST</span>
+                        <span class="spec-value">HFSS</span>
                     </li>
                     <li>
                         <span class="spec-label">效率提升</span>
@@ -542,7 +545,6 @@
                 <p class="description">
                     • 多目标优化算法融合<br>
                     • 自适应参数调节机制<br>
-                    • 并行计算加速技术<br>
                     • 智能收敛判断策略<br>
                     • 可视化结果分析
                 </p>
@@ -553,15 +555,13 @@
                 <h2 class="section-title">项目图片</h2>
                 <div class="image-title-display">
                     <span class="image-title">算法流程</span>
-                    <span class="image-counter">1 / 6</span>
+                    <span class="image-counter">1 / 3</span>
                 </div>
                 <div class="gallery-container" onclick="openImageModal()">
-                    <img src="../myself.jpg" alt="算法流程" class="gallery-image active">
-                    <img src="../myself.jpg" alt="优化结果" class="gallery-image">
-                    <img src="../myself.jpg" alt="性能对比" class="gallery-image">
-                    <img src="../myself.jpg" alt="收敛曲线" class="gallery-image">
-                    <img src="../myself.jpg" alt="性能对比" class="gallery-image">
-                    <img src="../myself.jpg" alt="系统结构" class="gallery-image">
+                    <img src="files/py1.webp" alt="算法流程" class="gallery-image active">
+                    <img src="files/py2.webp" alt="优化过程" class="gallery-image">
+                    <img src="files/py3.webp" alt="优化结果" class="gallery-image">
+
                     
                     <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
                     <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
@@ -571,9 +571,7 @@
                     <span class="indicator active" onclick="currentImage(1)"></span>
                     <span class="indicator" onclick="currentImage(2)"></span>
                     <span class="indicator" onclick="currentImage(3)"></span>
-                    <span class="indicator" onclick="currentImage(4)"></span>
-                    <span class="indicator" onclick="currentImage(5)"></span>
-                    <span class="indicator" onclick="currentImage(6)"></span>
+
                 </div>
             </div>
         </div>
@@ -596,7 +594,7 @@
                 </div>
                 <div class="achievement-item">
                     <h4>产业应用</h4>
-                    <p>成功应用于多个项目</p>
+                    <p>成功应用于工程项目</p>
                 </div>
             </div>
         </div>
@@ -614,7 +612,7 @@
                 <button class="zoom-btn" onclick="resetZoom()">重置</button>
                 <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
             </div>
-            <div class="image-info" id="imageInfo">1 / 6</div>
+            <div class="image-info" id="imageInfo">1 / 3</div>
         </div>
     </div>
 
@@ -632,21 +630,17 @@
 
         // 图片源数据
         const imageSources = [
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg'
+            'files/py1.webp',
+            'files/py2.webp',
+            'files/py3.webp',
+
         ];
 
         const imageAlts = [
             '算法流程',
+            '优化过程',
             '优化结果',
-            '性能对比',
-            '收敛曲线',
-            '性能对比',
-            '系统结构'
+
         ];
 
         function showImage(index) {

@@ -1112,7 +1112,7 @@
                     <p>平均成绩 84/100，GPA 3.6</p>
                     
                     <h3>专业技能</h3>
-                    <p><strong>专业软件/工程：</strong>HFSS、CST、ADS、AD、CAD，熟练掌握小型化、多频段、宽带天线设计及隔离方案</p>
+                    <p><strong>专业软件/工程：</strong>HFSS、CST、ADS、AD、CAD，熟练掌握各种类型天线设计，熟悉射频电路设计与调试，参与多个企业横向项目</p>
                     <p><strong>数据分析/编程：</strong>Python、Java、C、MATLAB，熟练使用Origin处理数据分析与绘图</p>
                     <p><strong>语言能力：</strong>英语六级，可熟练阅读专业外文文献，独立完成专业英文文章投稿</p>
                 </div>
@@ -1555,20 +1555,35 @@
             }
         }
 
-        // Handle URL parameters on page load
+        // Handle URL parameters and hash on page load
         window.addEventListener('load', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const direction = urlParams.get('direction');
             const hash = window.location.hash;
             
+            // Handle old URL parameter format
             if (direction && ['antenna', 'rf', 'ai'].includes(direction)) {
-                if (hash === '#projects') {
-                    // Scroll to projects section first
-                    document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+                if (hash === '#research') {
+                    // Scroll to research section first
+                    document.getElementById('research').scrollIntoView({ behavior: 'smooth' });
                     
                     // Wait a bit for scroll to complete, then expand the direction
                     setTimeout(() => {
                         selectResearchDirection(direction);
+                    }, 500);
+                }
+            }
+            
+            // Handle new hash format (#research-antenna, #research-rf, #research-ai)
+            if (hash && hash.startsWith('#research-')) {
+                const hashDirection = hash.replace('#research-', '');
+                if (['antenna', 'rf', 'ai'].includes(hashDirection)) {
+                    // Scroll to research section first
+                    document.getElementById('research').scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Wait a bit for scroll to complete, then expand the direction
+                    setTimeout(() => {
+                        selectResearchDirection(hashDirection);
                     }, 500);
                 }
             }

@@ -488,7 +488,7 @@
     <div class="header">
         <div class="container">
             <div class="nav">
-                <a href="../index.html?direction=ai#research" class="back-btn">
+                <a href="../index.html#research-ai" class="back-btn">
                     ← 返回主页
                 </a>
                 <div class="project-title">高增益全向阵列天线</div>
@@ -509,26 +509,22 @@
 
                 <h2 class="section-title">项目概述</h2>
                 <p class="description">
-                    设计并实现了一款高增益全向阵列天线系统，采用创新的阵列排布和馈电网络设计，在保持全向辐射特性的同时实现了高增益性能。该天线系统在无线通信和雷达应用中表现优异。
+                    设计并实现了一款高增益全向阵列天线系统，采用创新的交错阵列排布，在保持全向辐射特性的同时实现了高增益性能。该天线系统在无线通信和雷达应用中表现优异。
                 </p>
 
                 <h2 class="section-title">技术规格</h2>
                 <ul class="specs-list">
                     <li>
                         <span class="spec-label">工作频率</span>
-                        <span class="spec-value">2.4-2.5 GHz</span>
+                        <span class="spec-value">5.9-7.2 GHz</span>
                     </li>
                     <li>
                         <span class="spec-label">增益</span>
-                        <span class="spec-value">12 dBi</span>
+                        <span class="spec-value">7 dBi</span>
                     </li>
                     <li>
                         <span class="spec-label">方向性</span>
                         <span class="spec-value">全向</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">阻抗</span>
-                        <span class="spec-value">50Ω</span>
                     </li>
                     <li>
                         <span class="spec-label">VSWR</span>
@@ -539,9 +535,7 @@
                 <h2 class="section-title">技术创新</h2>
                 <p class="description">
                     • 创新阵列排布设计<br>
-                    • 优化馈电网络结构<br>
-                    • 高效功率合成技术<br>
-                    • 宽带匹配网络<br>
+                    • 宽带工作频段<br>
                     • 紧凑型结构设计
                 </p>
             </div>
@@ -551,15 +545,13 @@
                 <h2 class="section-title">项目图片</h2>
                 <div class="image-title-display">
                     <span class="image-title">天线阵列</span>
-                    <span class="image-counter">1 / 6</span>
+                    <span class="image-counter">1 / 3</span>
                 </div>
                 <div class="gallery-container" onclick="openImageModal()">
-                    <img src="../myself.jpg" alt="天线阵列" class="gallery-image active">
-                    <img src="../myself.jpg" alt="辐射方向图" class="gallery-image">
-                    <img src="../myself.jpg" alt="馈电网络" class="gallery-image">
-                    <img src="../myself.jpg" alt="驻波比测试" class="gallery-image">
-                    <img src="../myself.jpg" alt="增益测量" class="gallery-image">
-                    <img src="../myself.jpg" alt="原型样机" class="gallery-image">
+                    <img src="files/antenna.webp" alt="天线阵列" class="gallery-image active">
+                    <img src="files/antenna4Pysical.webp" alt="产品实物图" class="gallery-image">
+                    <img src="files/antenna4Report.webp" alt="产品报告图" class="gallery-image">
+
                     
                     <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
                     <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
@@ -569,9 +561,7 @@
                     <span class="indicator active" onclick="currentImage(1)"></span>
                     <span class="indicator" onclick="currentImage(2)"></span>
                     <span class="indicator" onclick="currentImage(3)"></span>
-                    <span class="indicator" onclick="currentImage(4)"></span>
-                    <span class="indicator" onclick="currentImage(5)"></span>
-                    <span class="indicator" onclick="currentImage(6)"></span>
+
                 </div>
             </div>
         </div>
@@ -582,11 +572,11 @@
             <div class="achievement-grid">
                 <div class="achievement-item">
                     <h4>高增益</h4>
-                    <p>实现12dBi全向增益</p>
+                    <p>实现7dBi全向增益</p>
                 </div>
                 <div class="achievement-item">
                     <h4>宽带特性</h4>
-                    <p>100MHz工作带宽</p>
+                    <p>1.3GHz工作带宽</p>
                 </div>
                 <div class="achievement-item">
                     <h4>低驻波</h4>
@@ -612,7 +602,7 @@
                 <button class="zoom-btn" onclick="resetZoom()">重置</button>
                 <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
             </div>
-            <div class="image-info" id="imageInfo">1 / 6</div>
+            <div class="image-info" id="imageInfo">1 / 3</div>
         </div>
     </div>
 
@@ -630,21 +620,17 @@
 
         // 图片源数据
         const imageSources = [
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg',
-            '../myself.jpg'
+            'files/antenna.webp',
+            'files/antenna4Pysical.webp',
+            'files/antenna4Report.webp',
+
         ];
 
         const imageAlts = [
             '天线阵列',
-            '辐射方向图',
-            '馈电网络',
-            '驻波比测试',
-            '增益测量',
-            '原型样机'
+            '产品实物图',
+            '产品报告图',
+
         ];
 
         function showImage(index) {
