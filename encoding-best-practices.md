@@ -127,11 +127,44 @@ Get-ChildItem -Recurse -Filter "*.html" | ForEach-Object {
 ## 8. 当前项目状态
 
 ✅ 所有HTML文件已设置正确的charset meta标签
-✅ 所有HTML文件已设置正确的lang属性  
+✅ 所有HTML文件已设置正确的lang属性
 ✅ 所有HTML文件使用UTF-8无BOM编码
 ✅ 已创建标准HTML模板供未来使用
 
-**建议**: 
+### 8.1 自动化检查（推荐，替代手工逐项核对）
+
+一条命令跑完全部环节：`node tools/check-all.js`（加 `--fast` 只跑静态、秒级）。也可按需单跑下列脚本：
+
+```powershell
+node tools/check-site.js                       # 编码约定 / 死链 / 标签配对 / 语法 / 主题一致性
+node tools/verify-render.js                    # 真实启动 headless Chrome，断言 JS 执行后的 DOM
+node tools/verify-render.js --reduced           # 同上，但强制 prefers-reduced-motion 降级分支
+node tools/check-images.js                     # 图片存在性、非零字节、扩展名与实际格式是否一致
+node tools/check-template.js                   # 模板自身合法 + theme.js 依赖的 id/class 契约齐备
+node tools/check-facts-kept.js                 # 对比 git HEAD，旧版指标数字是否在改写中消失（advisory）
+node tools/check-periods.js                    # 简历 / 首页 / 子页 三处项目时段是否互相矛盾
+```
+
+`check-site.js` 会逐页输出 `ok` / `FAIL`，任一 FAIL 以非 0 退出码结束，可直接接进 CI 或 git pre-commit 钩子。
+
+### 8.2 共享设计系统（2026-08 起）
+
+全站样式与交互已收敛到两个文件，**页面不再各自内联一套 CSS**：
+
+| 文件 | 职责 |
+| --- | --- |
+| `assets/theme.css` | 设计令牌（`--ink-*` `--line-*` `--cu` `--sig` 等）与全部共享组件样式 |
+| `assets/theme.js` | 行为层：滚动进度、导航高亮、HUD、命令面板、滚动揭示、图档与灯箱 |
+| `html-template.html` | 新建内容页的骨架，`[契约]` 注释标出 theme.js 依赖的 id / class |
+
+由此新增两条编码约定：
+
+1. **不要在页面里重定义调色板。** 颜色、字体、间距一律引用 `:root` 令牌；页面专属样式只写覆写。
+2. **不要写内联事件处理器。** 图档切换、灯箱缩放等交互全部由 `theme.js` 按标记契约接线；页面只提供 `<div class="gal" data-gallery>` 这类结构。
+
+第 2 条的原因：内联 `onclick` 会让每页重复一份约 120 行的图片切换脚本，重构前 7 个子页共 117 处（25/17/16/13/13/13/20），改一处交互要动 7 个文件。
+
+**建议**:
 - 保持当前的编码设置不变
 - 新建文件时使用提供的模板
 - 定期运行编码检查脚本

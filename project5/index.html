@@ -3,812 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高增益全向阵列天线</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>高增益全向车载阵列天线 · 程锦阳</title>
+    <meta name="description" content="企业实习产出：设计 5.9–7.2 GHz 频段全向性高增益车载阵列天线，以交错阵列排布在维持水平面 360° 覆盖的同时把增益做到 7 dBi，带内 VSWR &lt; 1.5；完成性能测试与数据分析，协同结构团队解决集成问题，方案专利申请中。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            color: #e6edf3;
-            background: #0d1117;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        .header {
-            background: #151b24;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #5b9cf6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .back-btn:hover {
-            color: #e6edf3;
-        }
-
-        .project-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #e6edf3;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .project-info {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            background: rgba(52, 152, 219, 0.2);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #8b98a5;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .meta-item.time {
-            background: linear-gradient(45deg, #5b9cf6, #4f8cf5);
-            color: white;
-            border: none;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #e6edf3;
-            margin-bottom: 0.8rem;
-            border-left: 4px solid #5b9cf6;
-            padding-left: 0.8rem;
-        }
-
-        .description {
-            color: #8b98a5;
-            margin-bottom: 1.2rem;
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-
-        .specs-list {
-            list-style: none;
-            margin-bottom: 1.2rem;
-        }
-
-        .specs-list li {
-            padding: 0.4rem 0;
-            border-bottom: 1px solid rgba(189, 195, 199, 0.2);
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-        }
-
-        .specs-list li:last-child {
-            border-bottom: none;
-        }
-
-        .spec-label {
-            font-weight: 500;
-            color: #e6edf3;
-        }
-
-        .spec-value {
-            color: #5b9cf6;
-            font-weight: 500;
-        }
-
-        /* Image Gallery */
-        .image-gallery {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .gallery-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            overflow: hidden;
-            border-radius: 8px;
-            background: rgba(44, 62, 80, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-in;
-        }
-
-        .gallery-image {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            object-position: center;
-            display: none;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-image:hover {
-            transform: scale(1.02);
-        }
-
-        .gallery-image.active {
-            display: block;
-        }
-
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .gallery-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .gallery-nav.prev {
-            left: 15px;
-        }
-
-        .gallery-nav.next {
-            right: 15px;
-        }
-
-        .gallery-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(189, 195, 199, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-            background: #5b9cf6;
-            transform: scale(1.2);
-        }
-
-        .indicator:hover {
-            background: #5b9cf6;
-        }
-
-        /* Image Title Display */
-        .image-title-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            background: rgba(44, 62, 80, 0.6);
-            border-radius: 8px;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .image-title {
-            color: #e6edf3;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .image-counter {
-            color: #5b9cf6;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Achievements */
-        .achievements {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
-        }
-
-        .achievement-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-        }
-
-        .achievement-item {
-            background: rgba(52, 152, 219, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #5b9cf6;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .achievement-item:hover {
-            background: rgba(52, 152, 219, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .achievement-item h4 {
-            color: #e6edf3;
-            margin-bottom: 0.4rem;
-            font-size: 0.85rem;
-        }
-
-        .achievement-item p {
-            color: #8b98a5;
-            font-size: 0.75rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .project-info,
-            .image-gallery {
-                padding: 1.5rem;
-            }
-
-            .gallery-container {
-                height: 300px;
-            }
-
-            .achievement-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Image Modal Styles */
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            cursor: grab;
-            transition: transform 0.3s ease;
-        }
-
-        .modal-image:active {
-            cursor: grabbing;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1001;
-            transition: color 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: #5b9cf6;
-        }
-
-        .modal-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .modal-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .modal-nav.prev {
-            left: 30px;
-        }
-
-        .modal-nav.next {
-            right: 30px;
-        }
-
-        .zoom-controls {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 1001;
-        }
-
-        .zoom-btn {
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .zoom-btn:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: scale(1.1);
-        }
-
-        .image-info {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 16px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px 16px;
-            border-radius: 20px;
-            z-index: 1001;
-        }
-
-        @media (max-width: 768px) {
-            .modal-nav {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-
-            .modal-nav.prev {
-                left: 15px;
-            }
-
-            .modal-nav.next {
-                right: 15px;
-            }
-
-            .modal-close {
-                top: 15px;
-                right: 20px;
-                font-size: 30px;
-            }
-
-            .zoom-controls {
-                bottom: 60px;
-            }
-
-            .zoom-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
-            }
-        }
+        /* 本页专属：无（全部使用共享设计系统） */
     </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="container">
-            <div class="nav">
-                <a href="../index.html#research-ai" class="back-btn">
-                    ← 返回主页
+<body data-hud="P-05 · 阵列天线">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../" class="logo"><span>程锦阳</span><i>P-05</i></a>
+        <nav class="nav-links">
+            <a href="#overview" data-nav="overview"><sup>01</sup>概述</a>
+            <a href="#specs" data-nav="specs"><sup>02</sup>规格</a>
+            <a href="#innovation" data-nav="innovation"><sup>03</sup>创新</a>
+            <a href="#gallery" data-nav="gallery"><sup>04</sup>图档</a>
+            <a href="#outcomes" data-nav="outcomes"><sup>05</sup>成果</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="pg-head">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../">程锦阳</a><i>/</i><a href="../#projects">代表性项目</a><i>/</i><b>P-05</b>
+            </nav>
+            <h1>高增益全向车载阵列天线</h1>
+            <p class="pg-lede">
+                工作在 <b>5.9–7.2 GHz</b> 的车载阵列天线：在水平面维持 <b>360° 全向覆盖</b> 的前提下，
+                用<b>交错阵列排布</b>把增益换到 <b>7 dBi</b>，带内 VSWR 守在 1.5 以下。企业实习产出，方案<b>专利申请中</b>。
+            </p>
+            <div class="pg-meta">
+                <div><span class="k">Period</span><span class="v">2025.03 – 2025.09</span></div>
+                <div><span class="k">Role</span><span class="v">天线设计 · 测试与数据分析</span></div>
+                <div><span class="k">Domain</span><span class="v">车载天线 · 阵列</span></div>
+                <div><span class="k">Status</span><span class="v live">专利申请中</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 01 概述 -->
+    <section class="sec" id="overview">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">「全向」和「高增益」共用同一份能量预算，本页记录这笔交换怎么做。</p>
+            </div>
+            <div class="prose" style="max-width:74ch">
+                <p class="lead rv">
+                    设计并实现 <b>5.9–7.2 GHz 频段全向性高增益车载阵列天线</b>，采用<b>交错阵列排布</b>，
+                    在保持水平面全向辐射特性的同时把增益做到 <b>7 dBi</b>，带内 <b>VSWR &lt; 1.5</b>，
+                    用于车顶受限高度下的宽带无线链路。
+                </p>
+                <p class="rv rv-d1">
+                    难点不在「能不能变高增益」，而在<strong>增益从哪里来</strong>。车装天线要求任何行驶方向都不出盲区，
+                    水平面必须 360° 平坦；而增益的定义恰恰是把功率收进更小的立体角。全向条件下唯一可动的杠杆是
+                    <b>垂直面</b> —— 增益只能靠压窄垂直波束换取，两个面之间没有同时变好的余地。
+                </p>
+                <p class="rv rv-d2">
+                    第二重约束来自安装本身：车顶高度限制阵面可占的剖面，可用面积限制阵元可拉开的距离，
+                    而间距本身还要同时满足栅瓣与互耦两端的要求。阵列形式（交错排布）正是在这几个上限之间求得的折中 ——
+                    <strong>用排布方式换增益，而不是用尺寸换</strong>。
+                </p>
+                <p class="rv rv-d3">
+                    设计之外的工作同样由企业侧交付要求决定：完成<b>天线性能测试与数据分析</b>，
+                    协同<b>结构团队</b>解决工程集成问题，撰写<b>设计文档、测试报告及专利申请文件</b>。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02 技术规格 -->
+    <section class="sec" id="specs">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">技术规格<em>/ Specifications</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">按带内最差情况验收，不以中心频点单点定成败。</p>
+            </div>
+            <div class="spec-cols">
+                <dl class="spec-tbl rv">
+                    <div><dt>工作频段</dt><dd>5.9 – 7.2 GHz<u>绝对带宽 1.3 GHz</u></dd></div>
+                    <div><dt>增益</dt><dd>7 dBi<u>全向条件下</u></dd></div>
+                    <div><dt>方向性</dt><dd>全向<u>水平面 360° 覆盖</u></dd></div>
+                    <div><dt>驻波比</dt><dd>&lt; 1.5<u>带内</u></dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>阵面形式</dt><dd>阵列 · 交错排布</dd></div>
+                    <div><dt>结构形式</dt><dd>紧凑型<u>受车顶高度约束</u></dd></div>
+                    <div><dt>验证方式</dt><dd>性能测试 · 数据分析</dd></div>
+                    <div><dt>交付文档</dt><dd>设计 · 测试 · 专利</dd></div>
+                    <div><dt>知识产权</dt><dd>发明专利申请中</dd></div>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 技术方案 -->
+    <section class="sec" id="innovation">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">每条说的是为什么这么做，而不只是做了什么。</p>
+            </div>
+            <ul class="ink-list rv" style="max-width:74ch">
+                <li><b>增益只从垂直面换</b> —— 水平面越平，可支配的立体角越少，增益只能来自垂直波束收窄；先在指标里承认这条守恒关系，再谈设计，避免用「全向 + 高增益」两个词互相抵消。
+                </li>
+                <li><b>交错阵列排布</b> —— 车顶可布置面积有限，规则排布会让阵元在某些方位靠得过近，互耦随方位角起伏，全向圆随之变形；交错排布用同样的外接尺寸换取更均匀的等效间距，代价是馈电路径更长、布局更难对齐。
+                </li>
+                <li><b>间距按带宽两端定</b> —— 间距过密互耦强、过疏出现栅瓣；1.3 GHz 带宽意味着同一间距要在带高端避免栅瓣、在带低端避免耦合塌陷，因此间距取两端都能接受的区间，而不是按中心频点优化。
+                </li>
+                <li><b>匹配与馈电一致性同批收敛</b> —— VSWR &lt; 1.5 只在中心频点达标没有意义：带内任何残余失配都会以幅度滚降的形式破坏水平平坦度，所以匹配网络与阵元馈电一起按带内最差情况设计。
+                </li>
+                <li><b>安装面参与设计，与结构团队同步联调</b> —— 车顶金属面本身就是方向图的一部分，支架、开孔与邻接结构会改写实测结果；因此工程集成问题不等到装配阶段才处理，测试与结构方案并行推进。
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 04 图档 -->
+    <section class="sec" id="gallery">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">项目图档<em>/ Figures</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">点击放大，滚轮缩放、拖拽平移，方向键翻页。</p>
+            </div>
+            <div class="gal rv" data-gallery>
+                <div class="gal-stage">
+                    <div class="gal-hud">
+                        <span><b>FIG</b><span class="gal-name"></span></span>
+                        <span class="gal-count ct"></span>
+                    </div>
+                    <img src="files/antenna.webp" alt="天线阵列" data-cap="天线阵列">
+                    <img src="files/antenna4Pysical.webp" alt="产品实物图" data-cap="产品实物图">
+                    <img src="files/antenna4Report.webp" alt="产品报告图" data-cap="产品报告图">
+                    <button class="gal-nav p" type="button" aria-label="上一张">&#8249;</button>
+                    <button class="gal-nav n" type="button" aria-label="下一张">&#8250;</button>
+                </div>
+                <div class="gal-thumbs"></div>
+                <p class="gal-cap"><b>FIG 01</b><span></span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 05 成果 -->
+    <section class="sec" id="outcomes">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">05</span>
+                <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">指标之外，留下的是可交接的文档与专利申请文本。</p>
+            </div>
+            <div class="outs rv">
+                <div class="out">
+                    <div class="h">全向增益</div>
+                    <div class="v">7<small> dBi</small></div>
+                    <p>在水平面维持全向覆盖的前提下取得，增益由垂直波束收窄换得，非两个面同时提升。</p>
+                </div>
+                <div class="out">
+                    <div class="h">宽带特性</div>
+                    <div class="v">1.3<small> GHz</small></div>
+                    <p>覆盖 5.9 – 7.2 GHz，同一副阵面在带内两端都守住匹配与方向图。</p>
+                </div>
+                <div class="out">
+                    <div class="h">低驻波</div>
+                    <div class="v">&lt; 1.5<small> VSWR</small></div>
+                    <p>按带内最差情况控制失配，避免幅度滚降破坏水平面平坦度。</p>
+                </div>
+                <div class="out">
+                    <div class="h">工程交付</div>
+                    <div class="v">专利<small> 申请中</small></div>
+                    <p>技术方案已提交发明专利申请，并完成性能测试、数据分析与结构集成，交付设计文档与测试报告。</p>
+                </div>
+            </div>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:28px">
+                关联：<a href="../#research" style="color:var(--cu)">研究方向 01 · 天线设计</a> ·
+                <a href="../#experience" style="color:var(--cu)">工作经历 · 江苏骅盛车用电子</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- 上一页 / 下一页 -->
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="项目导航">
+            <a href="../project4/">
+                <span class="n">← Previous · P-04</span>
+                <span class="t">算法辅助全波电磁仿真优化</span>
+            </a>
+            <a href="../project6/" class="rt">
+                <span class="n">Next → · P-06</span>
+                <span class="t">GNSS 天线及有源射频模块</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>聊聊全向条件下的增益取舍。</h2>
+                <p>阵列排布与互耦、栅瓣与间距的边界、带内平坦度和方向图一起收敛的匹配策略，或者车载安装面的集成配合，都可以直接找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
                 </a>
-                <div class="project-title">高增益全向阵列天线</div>
             </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This project</h5>
+                    <ul>
+                        <li><a href="#overview">01 · 项目概述</a></li>
+                        <li><a href="#specs">02 · 技术规格</a></li>
+                        <li><a href="#innovation">03 · 技术方案</a></li>
+                        <li><a href="#gallery">04 · 项目图档</a></li>
+                        <li><a href="#outcomes">05 · 项目成果</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../">首页</a></li>
+                        <li><a href="../#projects">全部项目</a></li>
+                        <li><a href="../#publications">论文与专利</a></li>
+                        <li><a href="../#experience">工作经历</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>P-05 · 高增益全向车载阵列天线</span>
         </div>
     </div>
+</footer>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="main-content">
-            <!-- Project Info -->
-            <div class="project-info">
-                <div class="project-meta">
-                    <span class="meta-item time">2023.06 - 2024.01</span>
-                    <span class="meta-item">天线设计</span>
-                    <span class="meta-item">阵列技术</span>
-                </div>
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">P-05</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
 
-                <h2 class="section-title">项目概述</h2>
-                <p class="description">
-                    设计并实现了一款高增益全向阵列天线系统，采用创新的交错阵列排布，在保持全向辐射特性的同时实现了高增益性能。该天线系统在无线通信和雷达应用中表现优异。
-                </p>
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
 
-                <h2 class="section-title">技术规格</h2>
-                <ul class="specs-list">
-                    <li>
-                        <span class="spec-label">工作频率</span>
-                        <span class="spec-value">5.9-7.2 GHz</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">增益</span>
-                        <span class="spec-value">7 dBi</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">方向性</span>
-                        <span class="spec-value">全向</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">VSWR</span>
-                        <span class="spec-value">1.5</span>
-                    </li>
-                </ul>
-
-                <h2 class="section-title">技术创新</h2>
-                <p class="description">
-                    • 创新阵列排布设计<br>
-                    • 宽带工作频段<br>
-                    • 紧凑型结构设计
-                </p>
-            </div>
-
-            <!-- Image Gallery -->
-            <div class="image-gallery">
-                <h2 class="section-title">项目图片</h2>
-                <div class="image-title-display">
-                    <span class="image-title">天线阵列</span>
-                    <span class="image-counter">1 / 3</span>
-                </div>
-                <div class="gallery-container" onclick="openImageModal()">
-                    <img src="files/antenna.webp" alt="天线阵列" class="gallery-image active">
-                    <img src="files/antenna4Pysical.webp" alt="产品实物图" class="gallery-image">
-                    <img src="files/antenna4Report.webp" alt="产品报告图" class="gallery-image">
-
-                    
-                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
-                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
-                </div>
-                
-                <div class="gallery-indicators">
-                    <span class="indicator active" onclick="currentImage(1)"></span>
-                    <span class="indicator" onclick="currentImage(2)"></span>
-                    <span class="indicator" onclick="currentImage(3)"></span>
-
-                </div>
-            </div>
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
         </div>
-
-        <!-- Achievements -->
-        <div class="achievements">
-            <h2 class="section-title">项目成果</h2>
-            <div class="achievement-grid">
-                <div class="achievement-item">
-                    <h4>高增益</h4>
-                    <p>实现7dBi全向增益</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>宽带特性</h4>
-                    <p>1.3GHz工作带宽</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>低驻波</h4>
-                    <p>VSWR小于1.5</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>工程应用</h4>
-                    <p>成功产业化应用</p>
-                </div>
-            </div>
-        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
     </div>
+</div>
 
-    <!-- Image Modal -->
-    <div id="imageModal" class="image-modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeImageModal()">&times;</span>
-            <img id="modalImage" class="modal-image" alt="">
-            <button class="modal-nav prev" onclick="changeModalImage(-1)">‹</button>
-            <button class="modal-nav next" onclick="changeModalImage(1)">›</button>
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="zoomImage(-0.2)">-</button>
-                <button class="zoom-btn" onclick="resetZoom()">重置</button>
-                <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
-            </div>
-            <div class="image-info" id="imageInfo">1 / 3</div>
-        </div>
-    </div>
-
-    <script>
-        let currentImageIndex = 0;
-        let currentZoom = 1;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0;
-        
-        const images = document.querySelectorAll('.gallery-image');
-        const indicators = document.querySelectorAll('.indicator');
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const imageInfo = document.getElementById('imageInfo');
-
-        // 图片源数据
-        const imageSources = [
-            'files/antenna.webp',
-            'files/antenna4Pysical.webp',
-            'files/antenna4Report.webp',
-
-        ];
-
-        const imageAlts = [
-            '天线阵列',
-            '产品实物图',
-            '产品报告图',
-
-        ];
-
-        function showImage(index) {
-            // Hide all images
-            images.forEach(img => img.classList.remove('active'));
-            indicators.forEach(ind => ind.classList.remove('active'));
-            
-            // Show current image
-            images[index].classList.add('active');
-            indicators[index].classList.add('active');
-            
-            // Update image title
-            updateImageTitle();
-        }
-
-        function updateImageTitle() {
-            const imageTitle = document.querySelector('.image-title');
-            const imageCounter = document.querySelector('.image-counter');
-            
-            if (imageTitle && imageCounter) {
-                imageTitle.textContent = images[currentImageIndex].alt;
-                imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
-            }
-        }
-
-        function changeImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= images.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = images.length - 1;
-            }
-            
-            showImage(currentImageIndex);
-        }
-
-        function currentImage(index) {
-            currentImageIndex = index - 1;
-            showImage(currentImageIndex);
-        }
-
-        // 打开图片模态框
-        function openImageModal() {
-            modal.style.display = 'block';
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            updateImageInfo();
-            resetZoom();
-            document.body.style.overflow = 'hidden';
-        }
-
-        // 关闭图片模态框
-        function closeImageModal() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // 模态框中切换图片        
-        function changeModalImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= imageSources.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = imageSources.length - 1;
-            }
-            
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            showImage(currentImageIndex);
-            updateImageInfo();
-            resetZoom();
-        }
-
-        // 更新图片信息
-        function updateImageInfo() {
-            imageInfo.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
-        }
-
-        // 缩放图片
-        function zoomImage(delta) {
-            currentZoom += delta;
-            currentZoom = Math.max(0.5, Math.min(3, currentZoom));
-            updateImageTransform();
-        }
-
-        // 重置缩放
-        function resetZoom() {
-            currentZoom = 1;
-            translateX = 0;
-            translateY = 0;
-            updateImageTransform();
-        }
-
-        // 更新图片变换
-        function updateImageTransform() {
-            modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
-        }
-
-        // 鼠标拖拽功能
-        modalImage.addEventListener('mousedown', (e) => {
-            if (currentZoom > 1) {
-                isDragging = true;
-                startX = e.clientX - translateX;
-                startY = e.clientY - translateY;
-                modalImage.style.cursor = 'grabbing';
-            }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                translateX = e.clientX - startX;
-                translateY = e.clientY - startY;
-                updateImageTransform();
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            modalImage.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
-        });
-
-        // 鼠标滚轮缩放
-        modalImage.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoomImage(delta);
-        });
-
-        // 键盘控制
-        document.addEventListener('keydown', (e) => {
-            if (modal.style.display === 'block') {
-                switch(e.key) {
-                    case 'Escape':
-                        closeImageModal();
-                        break;
-                    case 'ArrowLeft':
-                        changeModalImage(-1);
-                        break;
-                    case 'ArrowRight':
-                        changeModalImage(1);
-                        break;
-                    case '+':
-                    case '=':
-                        zoomImage(0.2);
-                        break;
-                    case '-':
-                        zoomImage(-0.2);
-                        break;
-                    case '0':
-                        resetZoom();
-                        break;
-                }
-            }
-        });
-
-        // 点击模态框背景关闭
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeImageModal();
-            }
-        });
-
-        // Handle image load errors
-        images.forEach((img, index) => {
-            img.onerror = function() {
-                this.style.display = 'flex';
-                this.style.alignItems = 'center';
-                this.style.justifyContent = 'center';
-                this.style.background = '#f0f0f0';
-                this.style.color = '#999';
-                this.innerHTML = '<div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div><div>图片加载中...</div></div>';
-            };
-        });
-    </script>
+<script type="application/json" id="site-map">
+[
+  {"href":"../",              "idx":"—", "t":"首页 · 程锦阳",                 "k":"HOME",     "ext":1},
+  {"href":"../#about",        "idx":"01","t":"关于我",                        "k":"ABOUT",    "ext":1},
+  {"href":"../#research",     "idx":"02","t":"研究方向",                      "k":"RESEARCH", "ext":1},
+  {"href":"../#experience",   "idx":"03","t":"工作经历",                      "k":"EXPERIENCE","ext":1},
+  {"href":"../#projects",     "idx":"04","t":"代表性项目",                    "k":"PROJECTS", "ext":1},
+  {"href":"../#publications", "idx":"05","t":"论文与专利",                    "k":"PAPERS",   "ext":1},
+  {"href":"../#honors",       "idx":"06","t":"成果与荣誉",                    "k":"HONORS",   "ext":1},
+  {"href":"../#skills",       "idx":"07","t":"能力矩阵",                      "k":"SKILLS",   "ext":1},
+  {"href":"../project1/",     "idx":"P-01","t":"紧凑型低剖面车载 5G MIMO 天线","k":"ANTENNA",  "ext":1},
+  {"href":"../project2/",     "idx":"P-02","t":"集成定位与通信多通道车载天线盒","k":"ANTENNA",  "ext":1},
+  {"href":"../project3/",     "idx":"P-03","t":"板端接口式车载天线盒",         "k":"ANTENNA",  "ext":1},
+  {"href":"../project4/",     "idx":"P-04","t":"算法辅助全波电磁仿真优化",     "k":"AI / EM",  "ext":1},
+  {"href":"../project5/",     "idx":"P-05","t":"高增益全向车载阵列天线",       "k":"ANTENNA",  "ext":1},
+  {"href":"../project6/",     "idx":"P-06","t":"GNSS 天线及有源射频模块",      "k":"RF",       "ext":1},
+  {"href":"../experience1/",  "idx":"E-01","t":"实习经历 · 江苏骅盛车用电子",   "k":"INTERN",   "ext":1}
+]
+</script>
+<script src="../assets/theme.js"></script>
 </body>
 </html>
-
-
-

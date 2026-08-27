@@ -3,743 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>实习经历-江苏骅盛车用电子股份有限公司</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>射频工程师（实习）· 江苏骅盛车用电子 · 程锦阳</title>
+    <meta name="description" content="2025.03 – 2025.09 江苏骅盛车用电子股份有限公司射频工程师（实习）：设计板端接口款式的集成定位与通信多通道车载天线盒（发明专利申请 CN202511158479.6，关联 P-03），设计 5.9–7.2 GHz 频段全向性高增益车载阵列天线（关联 P-05），并完成天线性能测试与数据分析、协同结构团队解决工程集成问题、撰写设计文档与测试报告及专利申请文件。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0d1117;
-            color: #e6edf3;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header */
-        .header {
-            background: rgba(44, 62, 80, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            margin-bottom: 2rem;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-        }
-
-        .back-btn {
-            color: #5b9cf6;
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .back-btn:hover {
-            color: #5dade2;
-            transform: translateX(-5px);
-        }
-
-        .page-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #e6edf3;
-        }
-
-        /* Experience Item */
-        .experience-item {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            background: #151b24;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .experience-info {
-            padding-right: 1rem;
-        }
-
-        .experience-meta {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            background: rgba(52, 152, 219, 0.2);
-            color: #5dade2;
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .meta-item.time {
-            background: rgba(231, 76, 60, 0.2);
-            color: #ec7063;
-            border-color: rgba(231, 76, 60, 0.3);
-        }
-
-        .company-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #5b9cf6;
-            margin-bottom: 0.5rem;
-        }
-
-        .position-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #95a5a6;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #5dade2;
-            margin-bottom: 0.8rem;
-            margin-top: 1.5rem;
-        }
-
-        .section-title:first-of-type {
-            margin-top: 0;
-        }
-
-        .description {
-            font-size: 0.95rem;
-            line-height: 1.7;
-            color: #8b98a5;
-            margin-bottom: 1rem;
-        }
-
-        .achievements-list {
-            list-style: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .achievements-list li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.8rem;
-            font-size: 0.9rem;
-            color: #8b98a5;
-            line-height: 1.6;
-        }
-
-        .achievements-list li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: #5b9cf6;
-            font-weight: bold;
-        }
-
-        .skills-section {
-            margin-top: 1.5rem;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .skill-item {
-            background: rgba(52, 73, 94, 0.6);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .skill-item h4 {
-            font-size: 0.9rem;
-            color: #5b9cf6;
-            margin-bottom: 0.3rem;
-        }
-
-        .skill-item p {
-            font-size: 0.8rem;
-            color: #95a5a6;
-        }
-
-        /* Gallery */
-        .experience-gallery {
-            position: relative;
-        }
-
-        .gallery-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .gallery-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .gallery-image.active {
-            opacity: 1;
-        }
-
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .gallery-nav:hover {
-            background: rgba(0, 0, 0, 0.7);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .gallery-nav.prev {
-            left: 10px;
-        }
-
-        .gallery-nav.next {
-            right: 10px;
-        }
-
-        .gallery-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-            background: #5b9cf6;
-            transform: scale(1.2);
-        }
-
-        /* Image Modal Styles */
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            cursor: grab;
-            transition: transform 0.3s ease;
-            border-radius: 8px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-image:active {
-            cursor: grabbing;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1001;
-            transition: color 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: #5b9cf6;
-        }
-
-        .modal-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .modal-nav:hover {
-            background: rgba(52, 152, 219, 0.8);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .modal-nav.prev {
-            left: 30px;
-        }
-
-        .modal-nav.next {
-            right: 30px;
-        }
-
-        .zoom-controls {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 1001;
-        }
-
-        .zoom-btn {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .zoom-btn:hover {
-            background: rgba(52, 152, 219, 0.8);
-            transform: scale(1.1);
-        }
-
-        .image-info {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 16px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 16px;
-            border-radius: 20px;
-            z-index: 1001;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .experience-item {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                padding: 1.5rem;
-            }
-
-            .experience-info {
-                padding-right: 0;
-            }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .gallery-container {
-                height: 250px;
-            }
-
-            .page-title {
-                font-size: 1.4rem;
-            }
-
-            .company-title {
-                font-size: 1.3rem;
-            }
-        }
+        /* 本页专属，仅两处，原因：
+           1) theme.css 未导出 .fnote（首页以内联 style 变通），经历页需要脚注行说明图档与责任边界；
+           2) theme.css 里 a { color: inherit }，正文列表内的跳转链接无法辨识，而本页需要把招聘方
+              从经历导向项目页与专利清单，故只给列表/脚注内的链接一个可点提示。不重复任何共享令牌。 */
+        .fnote { font-family: var(--mono); font-size: .7rem; color: var(--dim); margin-top: 14px; line-height: 1.8; }
+        .ink-list a, .fnote a { color: var(--cu); border-bottom: 1px solid var(--cu-dim); transition: border-color .3s var(--ease); }
+        .ink-list a:hover, .fnote a:hover { border-bottom-color: var(--cu); }
     </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="container">
-            <div class="nav">
-                <a href="../index.html#experience" class="back-btn">
-                    ← 返回主页
-                </a>
-                <div class="page-title">工作经历</div>
+<body data-hud="E-01 · 骅盛实习">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../" class="logo"><span>程锦阳</span><i>E-01</i></a>
+        <nav class="nav-links">
+            <a href="#role" data-nav="role"><sup>01</sup>岗位职责</a>
+            <a href="#duties" data-nav="duties"><sup>02</sup>工作内容</a>
+            <a href="#deliverables" data-nav="deliverables"><sup>03</sup>交付产出</a>
+            <a href="#gallery" data-nav="gallery"><sup>04</sup>佐证图档</a>
+            <a href="#takeaway" data-nav="takeaway"><sup>05</sup>收获判断</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="pg-head">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../">程锦阳</a><i>/</i><a href="../#experience">工作经历</a><i>/</i><b>E-01</b>
+            </nav>
+            <h1>射频工程师（实习）</h1>
+            <p class="pg-lede">
+                <b>江苏骅盛车用电子股份有限公司</b> · 车载天线方向。两条设计主线：
+                <b>板端接口款式</b>的集成定位与通信多通道车载天线盒，以及
+                <b>5.9 – 7.2 GHz 全向性高增益车载阵列天线</b>；外加一条贯穿的实测与文档线。
+                其中板端接口方案已进入发明专利申请。
+            </p>
+            <div class="pg-meta">
+                <div><span class="k">Period</span><span class="v">2025.03 – 2025.09</span></div>
+                <div><span class="k">Role</span><span class="v">射频工程师（实习）</span></div>
+                <div><span class="k">Company</span><span class="v">江苏骅盛车用电子股份有限公司</span></div>
+                <div><span class="k">Status</span><span class="v">已结束 · 期内方案专利申请中</span></div>
             </div>
         </div>
     </div>
 
-    <!-- Experience Content -->
-    <div class="container">
-        <!-- 江苏骅盛公司经历 -->
-        <div class="experience-item">
-            <div class="experience-info">
-                <div class="experience-meta">
-                    <span class="meta-item time">2025.3 - 2025.9</span>
-                    <span class="meta-item">射频工程</span>
-                    <span class="meta-item">实习</span>
-                </div>
-
-                <h2 class="company-title">江苏骅盛车用电子股份有限公司</h2>
-                <h3 class="position-title">射频工程师（实习）</h3>
-
-                <h4 class="section-title">工作描述</h4>
-                <p class="description">
-                    在江苏骅盛车用电子股份有限公司担任射频工程师实习生，主要负责车载天线系统的设计与开发工作。参与多个横向课题项目，从天线设计、仿真优化到实际测试验证，全程参与产品开发流程。
+    <!-- 01 岗位职责 -->
+    <section class="sec" id="role">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">岗位职责<em>/ Role</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">四段职责 —— 设计、实测、结构协同、文档，每一段都在下面的项目页留有对应产出。</p>
+            </div>
+            <div class="prose" style="max-width:74ch">
+                <p class="lead rv">
+                    在江苏骅盛车用电子股份有限公司担任<b>射频工程师实习生</b>，负责<b>车载天线系统的设计与开发</b>：
+                    参与多个横向课题，从天线设计、仿真优化到实测验证，全程跟进产品开发流程。
                 </p>
+                <p class="rv rv-d1">
+                    这家企业的课题来源有两条并行的线：一条是<b>在校承接的横向课题</b>（2023.10 起），
+                    一条是<b>在岗实习</b>（2025.03 – 2025.09）。两者时间有重叠、对象是同一批车载天线产品，
+                    因此本页把实习期内的任务与前后承接的课题分开列，避免把不属于这段周期的产出记到实习头上。
+                </p>
+                <p class="rv rv-d2">
+                    实习期的职责不止于「把指标做出来」。<strong>天线性能测试与数据分析</strong>、
+                    <strong>协同结构团队解决工程集成问题</strong>、<strong>撰写设计文档、测试报告及专利申请文件</strong>
+                    是写进岗位任务里的三件事，也是这段经历对我改变最大的部分。
+                </p>
+            </div>
 
-                <h4 class="section-title">主要工作内容</h4>
-                <ul class="achievements-list">
-                    <li>完成天线性能测试与数据分析，协同结构团队解决工程集成问题</li>
-                    <li>撰写设计文档、测试报告及专利申请文件</li>
-                    <li>紧凑型低剖面车载5G MIMO天线设计（2023.10-2024.8）（成果已转化发明专利）</li>
-                    <li>集成定位与通信多通道的车载天线盒设计（2024.7-2025.4）（成果已转化发明专利）</li>
-                    <li>GNSS天线前端射频LNA链路设计调试工作（2025.3-2025.6）</li>
-                    <li>板端接口式定位与通信多通道的车载天线盒设计（2025.3-2025.6）（专利申请中）</li>
-                    <li>高增益全向阵列天线设计（2025.5-2025.9）（专利申请中）</li>
+            <div class="spec-cols rv" style="margin-top:40px">
+                <dl class="spec-tbl">
+                    <div><dt>任职单位</dt><dd>江苏骅盛车用电子股份有限公司<u>车载天线方向</u></dd></div>
+                    <div><dt>岗位</dt><dd>射频工程师（实习）</dd></div>
+                    <div><dt>在岗周期</dt><dd>2025.03 – 2025.09<u>约半年</u></dd></div>
+                    <div><dt>工作形式</dt><dd>企业实习<u>与在校横向课题同期</u></dd></div>
+                </dl>
+                <dl class="spec-tbl">
+                    <div><dt>任务类型</dt><dd>天线设计 · 仿真 · 实测<u>板端接口天线盒 / 阵列天线</u></dd></div>
+                    <div><dt>协同界面</dt><dd>结构团队<u>工程集成问题</u></dd></div>
+                    <div><dt>交付形态</dt><dd>样机 · 数据 · 文档 · 申请文件</dd></div>
+                    <div><dt>验证手段</dt><dd>微波暗室 · 矢量网络分析仪<u>噪声分析仪器</u></dd></div>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02 工作内容 -->
+    <section class="sec" id="duties">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">工作内容<em>/ Responsibilities</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">两条设计主线，一条贯穿的测试与文档线。</p>
+            </div>
+
+            <div class="prose rv" style="max-width:74ch">
+                <h3>实习期内 · 2025.03 – 2025.09</h3>
+                <ul class="ink-list">
+                    <li><b>主线 A · 板端接口款式的集成定位与通信多通道车载天线盒</b> —— 把安装接口从壳体侧移到板端，
+                        重排盒内通道布局，在提升集成度与装配便利性的同时维持多通道隔离；集成的定位与通信通道覆盖
+                        4G LTE / Wi-Fi 6E / BT / V2X / GNSS。技术方案以发明专利申请
+                        <em>CN202511158479.6</em>（「一种多通道车载天线盒」）提交。结构方案与通道布局见
+                        <a href="../project3/">P-03 · 板端接口式车载天线盒</a>。</li>
+                    <li><b>主线 B · 5.9 – 7.2 GHz 频段全向性高增益车载阵列天线</b> —— 在车顶受限的安装高度内用阵列
+                        换取增益，同时维持水平面全向覆盖；增益与方向图平坦度互为代价，是这段任务里最难的一处折中。
+                        阵列排布与实测指标见 <a href="../project5/">P-05 · 高增益全向车载阵列天线</a>（专利申请中）。</li>
+                    <li><b>贯穿线 · 测试、协同与文档</b> —— 完成天线性能测试与数据分析；协同结构团队解决工程集成问题；
+                        撰写设计文档、测试报告及专利申请文件。</li>
                 </ul>
+            </div>
 
-                <h4 class="section-title">主要成就</h4>
-                <ul class="achievements-list">
-                    <li>技术方案转化为发明专利"一种集成式低剖面车载5G MIMO天线"（专利号：CN202411549247.9）</li>
-                    <li>技术方案转化为发明专利"一种车载集成式天线盒"（专利号：CN202510483710.2）</li>
-                    <li>累计设计天线产品十余种，参与射频链路设计与调试工作</li>
-                    <li>熟练使用HFSS、CST、ADS等仿真软件，微波暗室、矢网测试、噪声分析仪等射频测试工具</li>
+            <div class="prose rv rv-d1" style="max-width:74ch">
+                <h3>同一家企业在实习前后承接的横向课题</h3>
+                <p>
+                    前两项完成于实习之前，第三项与实习期部分重叠。它们同在骅盛的车载天线方向上，
+                    构成实习期任务的技术起点 —— 板端接口款式是在整盒集成方案之后的一次接口形态改动。
+                </p>
+                <ul class="ink-list">
+                    <li><b>紧凑型低剖面车载 5G MIMO 天线</b>（2023.10 – 2024.08）—— 主天线、副天线与 2 支 MIMO 天线的
+                        低剖面低互耦方案；成果以第一作者发表于 IEEE AWPL，并转化为发明专利
+                        <em>CN202411549247.9</em>。详见 <a href="../project1/">P-01</a>。</li>
+                    <li><b>集成定位与通信多通道的车载天线盒</b>（2024.07 – 2025.04）—— 单盒集成 5G / Wi-Fi 6E / BT / V2X / GNSS
+                        多类型天线，完成设计、仿真、加工与实测闭环，转化为发明专利 <em>CN202510483710.2</em>。
+                        详见 <a href="../project2/">P-02</a>。</li>
+                    <li><b>GNSS 天线前端射频 LNA 链路设计与调试</b>（2025.03 – 2025.06）—— 「独立滤波 — 分级放大 — 合路再放大」
+                        架构下的噪声系数与增益分配调试。详见 <a href="../project6/">P-06</a>。</li>
                 </ul>
+            </div>
 
-                <div class="skills-section">
-                    <h4 class="section-title">核心技术</h4>
-                    <div class="skills-grid">
-                        <div class="skill-item">
-                            <h4>车载天线</h4>
-                            <p>5G、Wi-Fi 6E、BT、V2X、GNSS</p>
-                        </div>
-                        <div class="skill-item">
-                            <h4>射频电路</h4>
-                            <p>LNA射频链路设计调试</p>
-                        </div>
-                        <div class="skill-item">
-                            <h4>射频测试</h4>
-                            <p>矢网/暗室/噪声测试</p>
-                        </div>
-                        <div class="skill-item">
-                            <h4>专利申请</h4>
-                            <p>技术文档编写</p>
-                        </div>
+            <div class="prose rv rv-d2" style="max-width:74ch">
+                <h3>工具与测试手段</h3>
+                <div class="chips">
+                    <span class="chip">HFSS</span><span class="chip">CST</span><span class="chip">ADS</span>
+                    <span class="chip">矢量网络分析仪</span><span class="chip">微波暗室</span>
+                    <span class="chip">噪声分析仪器</span><span class="chip">Origin</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 交付产出 -->
+    <section class="sec" id="deliverables">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">交付产出<em>/ Deliverables</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">招聘方的三级下钻路径：经历（本页）→ 技术细节（项目页）→ 知识产权（专利清单）。</p>
+            </div>
+
+            <div class="outs rv">
+                <div class="out">
+                    <div class="h">设计主线</div>
+                    <div class="v">2<small> 条</small></div>
+                    <p>板端接口天线盒与 5.9 – 7.2 GHz 阵列天线，各完成设计、仿真与实测。</p>
+                </div>
+                <div class="out">
+                    <div class="h">期内专利</div>
+                    <div class="v">1<small> 项申请</small></div>
+                    <p>CN202511158479.6「一种多通道车载天线盒」，板端接口款式，申请中。</p>
+                </div>
+                <div class="out">
+                    <div class="h">阵列频段</div>
+                    <div class="v">5.9–7.2<small> GHz</small></div>
+                    <p>全向性高增益车载阵列天线；方向图与增益指标在 P-05 逐项给出。</p>
+                </div>
+                <div class="out">
+                    <div class="h">累计型谱</div>
+                    <div class="v">10<small> + 型</small></div>
+                    <p>在同一家企业累计设计天线产品十余种，并参与射频链路设计与调试工作。</p>
+                </div>
+            </div>
+
+            <ul class="ink-list rv" style="max-width:74ch;margin-top:40px">
+                <li><b>天线样机与结构配合方案</b> —— 板端接口款式的多通道车载天线盒、5.9 – 7.2 GHz 全向阵列天线。</li>
+                <li><b>性能实测数据与分析</b> —— 微波暗室与矢量网络分析仪测试，仿真值收敛为可交付的实测结论。</li>
+                <li><b>设计文档与测试报告</b> —— 面向结构团队与后继接手人的可复现记录。</li>
+                <li><b>专利申请文件</b> —— 期内 1 项；连同实习前两项课题，共 3 项发明专利在公司名下推进。</li>
+            </ul>
+
+            <div class="hon rv" style="margin-top:38px">
+                <a class="hon-row" href="../project3/">
+                    <span class="y">P-03</span>
+                    <span class="t"><b>板端接口式车载天线盒</b> <span>接口位置改动的结构代价与通道布局、多通道隔离方案</span></span>
+                    <span class="lv">技术细节 →</span>
+                </a>
+                <a class="hon-row" href="../project5/">
+                    <span class="y">P-05</span>
+                    <span class="t"><b>高增益全向车载阵列天线</b> <span>5.9 – 7.2 GHz 阵列排布、全向与增益的取舍及实测指标</span></span>
+                    <span class="lv">技术细节 →</span>
+                </a>
+                <a class="hon-row" href="../#publications">
+                    <span class="y">IP</span>
+                    <span class="t"><b>论文与专利清单</b> <span>CN202411549247.9 · CN202510483710.2 · CN202511158479.6 及申请中项</span></span>
+                    <span class="lv">首页 05 →</span>
+                </a>
+            </div>
+            <p class="fnote">
+                另有 <a href="../project1/">P-01</a>（IEEE AWPL 第一作者 + 发明专利）与
+                <a href="../project2/">P-02</a>（发明专利）完成于同一家企业的在校横向课题期，不计入本段实习产出。
+            </p>
+        </div>
+    </section>
+
+    <!-- 04 佐证图档 -->
+    <section class="sec" id="gallery">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">佐证图档<em>/ Evidence</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">在职与实习凭证各 1 份，天线样机与报告截图各 4 组；点击放大，滚轮缩放、拖拽平移，方向键翻页。</p>
+            </div>
+            <div class="gal rv" data-gallery>
+                <div class="gal-stage">
+                    <div class="gal-hud">
+                        <span><b>FIG</b><span class="gal-name"></span></span>
+                        <span class="gal-count ct"></span>
                     </div>
+                    <img src="files/workID.webp" alt="江苏骅盛工作ID" data-cap="在职凭证">
+                    <img src="files/internshipProof.webp" alt="江苏骅盛实习证明" data-cap="实习证明文件">
+                    <img src="files/antenna1Pysical.webp" alt="天线1物理结构" data-cap="天线 1 · 实物">
+                    <img src="files/antenna1Report.webp" alt="天线1设计报告" data-cap="天线 1 · 设计报告">
+                    <img src="files/antenna2Pysical.webp" alt="天线2物理结构" data-cap="天线 2 · 实物">
+                    <img src="files/antenna2Report.webp" alt="天线2设计报告" data-cap="天线 2 · 设计报告">
+                    <img src="files/antenna3Pysical.webp" alt="天线3物理结构" data-cap="天线 3 · 实物">
+                    <img src="files/antenna3Report.webp" alt="天线3设计报告" data-cap="天线 3 · 设计报告">
+                    <img src="files/antenna4Pysical.webp" alt="天线4物理结构" data-cap="天线 4 · 实物">
+                    <img src="files/antenna4Report.webp" alt="天线4设计报告" data-cap="天线 4 · 设计报告">
+                    <button class="gal-nav p" type="button" aria-label="上一张">&#8249;</button>
+                    <button class="gal-nav n" type="button" aria-label="下一张">&#8250;</button>
                 </div>
+                <div class="gal-thumbs"></div>
+                <p class="gal-cap"><b>FIG 01</b><span></span></p>
             </div>
+            <p class="fnote">
+                凭证类图档只做存在性佐证，其上的编号、姓名与二维码等字段不在页面文字中复述；
+                四组天线图档为样机实物与报告页面截图，与具体课题的对应关系在各项目页说明。
+            </p>
+        </div>
+    </section>
 
-            <div class="experience-gallery">
-                <div class="gallery-container" onclick="openImageModal(0)">
-                    <img src="files/workID.webp" alt="江苏骅盛工作ID" class="gallery-image active">
-                    <img src="files/internshipProof.webp" alt="江苏骅盛实习证明" class="gallery-image">
-                    <img src="files/antenna1Pysical.webp" alt="天线1物理结构" class="gallery-image">
-                    <img src="files/antenna1Report.webp" alt="天线1设计报告" class="gallery-image">
-                    <img src="files/antenna2Pysical.webp" alt="天线2物理结构" class="gallery-image">
-                    <img src="files/antenna2Report.webp" alt="天线2设计报告" class="gallery-image">
-                    <img src="files/antenna3Pysical.webp" alt="天线3物理结构" class="gallery-image">
-                    <img src="files/antenna3Report.webp" alt="天线3设计报告" class="gallery-image">
-                    <img src="files/antenna4Pysical.webp" alt="天线4物理结构" class="gallery-image">
-                    <img src="files/antenna4Report.webp" alt="天线4设计报告" class="gallery-image">
-                    
-                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(0, -1)">‹</button>
-                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(0, 1)">›</button>
+    <!-- 05 收获与判断 -->
+    <section class="sec" id="takeaway">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">05</span>
+                <h2 class="sec-t">收获与判断<em>/ Takeaways</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">这半年改变的是验收标准，不是软件熟练度。</p>
+            </div>
+            <div class="prose" style="max-width:74ch">
+                <p class="lead rv">
+                    最大的变化是把评价天线的那把尺子换掉了：从<b>「做出满足指标的天线」</b>，
+                    变成<b>「交付能被产线装配、能被结构团队接住的产品」</b>。
+                </p>
+            </div>
+            <ul class="ink-list rv rv-d1" style="max-width:74ch;margin-top:26px">
+                <li><b>指标是必要条件，不是交付物</b> —— 板端接口这个决定对增益本身没有收益，
+                    它买回来的是整车装配工序与整机布局的余量。天线的价值要按系统收益评估，而不按单端口曲线评估。</li>
+                <li><b>全向与增益是一对此消彼长的约束</b> —— 安装高度锁死口径之后，阵列换来的是峰值增益，
+                    付出的是水平方向的起伏。盯住最差的覆盖角比盯住最好的点更有用。</li>
+                <li><b>实测负责把乐观值收敛成能签字的数</b> —— 仿真里的材料、公差与装配间隙不会自动出现，
+                    暗室与矢网的数据才是能被别人引用的那一份。数据处理属于设计闭环，不属于附录。</li>
+                <li><b>文档是接口，不是收尾</b> —— 设计文档、测试报告、专利申请文件写清楚，结构团队与后继接手的人
+                    就不需要来问我。写权利要求的过程反过来暴露了方案真正的创新点在哪。</li>
+                <li><b>责任边界要讲明白</b> —— 有文档可查的责任止于样机指标、实测数据与三份文件；
+                    再往后的工序我不替它记功。知道自己交付到哪里为止，比多写几条职责更有信息量。</li>
+            </ul>
+            <div class="prose" style="max-width:74ch">
+                <p class="rv rv-d2" style="margin-top:26px">
+                    这段经历之后，我进入卫星整星与单机 <b>EMC、磁、力学、真空热试验</b>体系（2025.11 至今），
+                    负责的对象从「一副天线的指标」变成「一台整机的兼容性证据」。
+                    在骅盛养成的习惯 —— 以实测数据与可复现文档作为交付终点 —— 是这两段工作之间唯一连贯的部分。
+                </p>
+            </div>
+            <p class="fnote">
+                关联：<a href="../#experience">工作经历总览</a> ·
+                <a href="../#projects">代表性项目</a> ·
+                <a href="../#publications">论文与专利</a> ·
+                <a href="mailto:aeayang@163.com">aeayang@163.com</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- 上一页 / 下一页 -->
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="经历导航">
+            <a href="../#experience">
+                <span class="n">← 工作经历总览</span>
+                <span class="t">首页 · 03 Experience</span>
+            </a>
+            <a href="../project1/" class="rt">
+                <span class="n">Next → · P-01</span>
+                <span class="t">紧凑型低剖面车载 5G MIMO 天线</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>聊聊车载天线与暗室实测。</h2>
+                <p>板端接口的装配取舍、5.9 – 7.2 GHz 全向与增益的折中、多通道隔离，或者从天线到专利文件的写法，都可以直接找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
+            </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This page</h5>
+                    <ul>
+                        <li><a href="#role">01 · 岗位职责</a></li>
+                        <li><a href="#duties">02 · 工作内容</a></li>
+                        <li><a href="#deliverables">03 · 交付产出</a></li>
+                        <li><a href="#gallery">04 · 佐证图档</a></li>
+                        <li><a href="#takeaway">05 · 收获与判断</a></li>
+                    </ul>
                 </div>
-                
-                <div class="gallery-indicators">
-                    <span class="indicator active" onclick="currentImage(0, 1)"></span>
-                    <span class="indicator" onclick="currentImage(0, 2)"></span>
-                    <span class="indicator" onclick="currentImage(0, 3)"></span>
-                    <span class="indicator" onclick="currentImage(0, 4)"></span>
-                    <span class="indicator" onclick="currentImage(0, 5)"></span>
-                    <span class="indicator" onclick="currentImage(0, 6)"></span>
-                    <span class="indicator" onclick="currentImage(0, 7)"></span>
-                    <span class="indicator" onclick="currentImage(0, 8)"></span>
-                    <span class="indicator" onclick="currentImage(0, 9)"></span>
-                    <span class="indicator" onclick="currentImage(0, 10)"></span>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../">首页</a></li>
+                        <li><a href="../#experience">工作经历</a></li>
+                        <li><a href="../#projects">代表性项目</a></li>
+                        <li><a href="../#publications">论文与专利</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Image Modal -->
-    <div id="imageModal" class="image-modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeImageModal()">&times;</span>
-            <img id="modalImage" class="modal-image" alt="">
-            <button class="modal-nav prev" onclick="changeModalImage(-1)">‹</button>
-            <button class="modal-nav next" onclick="changeModalImage(1)">›</button>
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="zoomImage(-0.2)">-</button>
-                <button class="zoom-btn" onclick="resetZoom()">重置</button>
-                <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
-            </div>
-            <div class="image-info" id="imageInfo">1 / 10</div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>E-01 · 射频工程师（实习）· 江苏骅盛车用电子</span>
         </div>
     </div>
+</footer>
 
-    <script>
-        let currentImageIndex = 0;
-        let currentZoom = 1;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0;
-        
-        const images = document.querySelectorAll('.gallery-image');
-        const indicators = document.querySelectorAll('.indicator');
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const imageInfo = document.getElementById('imageInfo');
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">E-01</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
 
-        // 图片源数据
-        const imageSources = [
-            'files/workID.webp',
-            'files/internshipProof.webp',
-            'files/antenna1Pysical.webp',
-            'files/antenna1Report.webp',
-            'files/antenna2Pysical.webp',
-            'files/antenna2Report.webp',
-            'files/antenna3Pysical.webp',
-            'files/antenna3Report.webp',
-            'files/antenna4Pysical.webp',
-            'files/antenna4Report.webp',
-        ];
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
 
-        const imageAlts = [
-            '江苏骅盛工作ID',
-            '江苏骅盛实习证明',
-            '天线1物理结构',
-            '天线1设计报告',
-            '天线2物理结构',
-            '天线2设计报告',
-            '天线3物理结构',
-            '天线3设计报告',
-            '天线4物理结构',
-            '天线4设计报告',
-        ];
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
+    </div>
+</div>
 
-        function changeImage(galleryIndex, direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= images.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = images.length - 1;
-            }
-            
-            showImage(currentImageIndex);
-        }
-
-        function currentImage(galleryIndex, imageIndex) {
-            currentImageIndex = imageIndex - 1;
-            showImage(currentImageIndex);
-        }
-
-        function showImage(index) {
-            // Hide all images
-            images.forEach(img => img.classList.remove('active'));
-            indicators.forEach(ind => ind.classList.remove('active'));
-            
-            // Show current image
-            images[index].classList.add('active');
-            indicators[index].classList.add('active');
-        }
-
-        // 打开图片模态框
-        function openImageModal(galleryIndex) {
-            modal.style.display = 'block';
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            updateImageInfo();
-            resetZoom();
-            document.body.style.overflow = 'hidden';
-        }
-
-        // 关闭图片模态框
-        function closeImageModal() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // 模态框中切换图片
-        function changeModalImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= imageSources.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = imageSources.length - 1;
-            }
-            
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            showImage(currentImageIndex);
-            updateImageInfo();
-            resetZoom();
-        }
-
-        // 更新图片信息
-        function updateImageInfo() {
-            imageInfo.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
-        }
-
-        // 缩放图片
-        function zoomImage(delta) {
-            currentZoom += delta;
-            currentZoom = Math.max(0.5, Math.min(3, currentZoom));
-            updateImageTransform();
-        }
-
-        // 重置缩放
-        function resetZoom() {
-            currentZoom = 1;
-            translateX = 0;
-            translateY = 0;
-            updateImageTransform();
-        }
-
-        // 更新图片变换
-        function updateImageTransform() {
-            modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
-        }
-
-        // 鼠标拖拽功能
-        modalImage.addEventListener('mousedown', (e) => {
-            if (currentZoom > 1) {
-                isDragging = true;
-                startX = e.clientX - translateX;
-                startY = e.clientY - translateY;
-                modalImage.style.cursor = 'grabbing';
-            }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                translateX = e.clientX - startX;
-                translateY = e.clientY - startY;
-                updateImageTransform();
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            modalImage.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
-        });
-
-        // 鼠标滚轮缩放
-        modalImage.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoomImage(delta);
-        });
-
-        // 键盘控制
-        document.addEventListener('keydown', (e) => {
-            if (modal.style.display === 'block') {
-                switch(e.key) {
-                    case 'Escape':
-                        closeImageModal();
-                        break;
-                    case 'ArrowLeft':
-                        changeModalImage(-1);
-                        break;
-                    case 'ArrowRight':
-                        changeModalImage(1);
-                        break;
-                    case '+':
-                    case '=':
-                        zoomImage(0.2);
-                        break;
-                    case '-':
-                        zoomImage(-0.2);
-                        break;
-                    case '0':
-                        resetZoom();
-                        break;
-                }
-            }
-        });
-
-        // 点击模态框背景关闭
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeImageModal();
-            }
-        });
-
-        // Handle image loading errors
-        images.forEach((img, index) => {
-            img.onerror = function() {
-                this.style.display = 'flex';
-                this.style.alignItems = 'center';
-                this.style.justifyContent = 'center';
-                this.style.background = '#f0f0f0';
-                this.style.color = '#999';
-                this.innerHTML = '<div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div><div>图片加载中...</div></div>';
-            };
-        });
-    </script>
+<script type="application/json" id="site-map">
+[
+  {"href":"../",              "idx":"—", "t":"首页 · 程锦阳",                 "k":"HOME",     "ext":1},
+  {"href":"../#about",        "idx":"01","t":"关于我",                        "k":"ABOUT",    "ext":1},
+  {"href":"../#research",     "idx":"02","t":"研究方向",                      "k":"RESEARCH", "ext":1},
+  {"href":"../#experience",   "idx":"03","t":"工作经历",                      "k":"EXPERIENCE","ext":1},
+  {"href":"../#projects",     "idx":"04","t":"代表性项目",                    "k":"PROJECTS", "ext":1},
+  {"href":"../#publications", "idx":"05","t":"论文与专利",                    "k":"PAPERS",   "ext":1},
+  {"href":"../#honors",       "idx":"06","t":"成果与荣誉",                    "k":"HONORS",   "ext":1},
+  {"href":"../#skills",       "idx":"07","t":"能力矩阵",                      "k":"SKILLS",   "ext":1},
+  {"href":"../project1/",     "idx":"P-01","t":"紧凑型低剖面车载 5G MIMO 天线","k":"ANTENNA",  "ext":1},
+  {"href":"../project2/",     "idx":"P-02","t":"集成定位与通信多通道车载天线盒","k":"ANTENNA",  "ext":1},
+  {"href":"../project3/",     "idx":"P-03","t":"板端接口式车载天线盒",         "k":"ANTENNA",  "ext":1},
+  {"href":"../project4/",     "idx":"P-04","t":"算法辅助全波电磁仿真优化",     "k":"AI / EM",  "ext":1},
+  {"href":"../project5/",     "idx":"P-05","t":"高增益全向车载阵列天线",       "k":"ANTENNA",  "ext":1},
+  {"href":"../project6/",     "idx":"P-06","t":"GNSS 天线及有源射频模块",      "k":"RF",       "ext":1},
+  {"href":"../experience1/",  "idx":"E-01","t":"实习经历 · 江苏骅盛车用电子",   "k":"INTERN",   "ext":1}
+]
+</script>
+<script src="../assets/theme.js"></script>
 </body>
 </html>

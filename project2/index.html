@@ -3,831 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>集成多位置通信多通道车载天线盒</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>集成定位与通信多通道车载天线盒 · 程锦阳</title>
+    <meta name="description" content="单盒集成 5G、Wi-Fi 6E、BT、V2X 与 GNSS 多类型天线的车载天线盒：以宽带多频段、圆极化与高隔离技术取得天线间 &gt; 20 dB 隔离、增益 2 – 8 dBi，方案转化为发明专利 CN202510483710.2。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            color: #e6edf3;
-            background: #0d1117;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        .header {
-            background: #151b24;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #5b9cf6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .back-btn:hover {
-            color: #e6edf3;
-        }
-
-        .project-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #e6edf3;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .project-info {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            background: rgba(52, 152, 219, 0.2);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #8b98a5;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .meta-item.time {
-            background: linear-gradient(45deg, #5b9cf6, #4f8cf5);
-            color: white;
-            border: none;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #e6edf3;
-            margin-bottom: 0.8rem;
-            border-left: 4px solid #5b9cf6;
-            padding-left: 0.8rem;
-        }
-
-        .description {
-            color: #8b98a5;
-            margin-bottom: 1.2rem;
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-
-        .specs-list {
-            list-style: none;
-            margin-bottom: 1.2rem;
-        }
-
-        .specs-list li {
-            padding: 0.4rem 0;
-            border-bottom: 1px solid rgba(189, 195, 199, 0.2);
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-        }
-
-        .specs-list li:last-child {
-            border-bottom: none;
-        }
-
-        .spec-label {
-            font-weight: 500;
-            color: #e6edf3;
-        }
-
-        .spec-value {
-            color: #5b9cf6;
-            font-weight: 500;
-        }
-
-        /* Image Gallery */
-        .image-gallery {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .gallery-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            overflow: hidden;
-            border-radius: 8px;
-            background: rgba(44, 62, 80, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-in;
-        }
-
-        .gallery-image {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            object-position: center;
-            display: none;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-image:hover {
-            transform: scale(1.02);
-        }
-
-        .gallery-image.active {
-            display: block;
-        }
-
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .gallery-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .gallery-nav.prev {
-            left: 15px;
-        }
-
-        .gallery-nav.next {
-            right: 15px;
-        }
-
-        .gallery-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(189, 195, 199, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-            background: #5b9cf6;
-            transform: scale(1.2);
-        }
-
-        .indicator:hover {
-            background: #5b9cf6;
-        }
-
-        /* Image Title Display */
-        .image-title-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            background: rgba(44, 62, 80, 0.6);
-            border-radius: 8px;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .image-title {
-            color: #e6edf3;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .image-counter {
-            color: #5b9cf6;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Achievements */
-        .achievements {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
-        }
-
-        .achievement-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-        }
-
-        .achievement-item {
-            background: rgba(52, 152, 219, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #5b9cf6;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .achievement-item:hover {
-            background: rgba(52, 152, 219, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .achievement-item h4 {
-            color: #e6edf3;
-            margin-bottom: 0.4rem;
-            font-size: 0.85rem;
-        }
-
-        .achievement-item p {
-            color: #8b98a5;
-            font-size: 0.75rem;
-        }
-
-        /* Image Modal */
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-        }
-
-        .modal-content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            cursor: grab;
-            transition: transform 0.3s ease;
-        }
-
-        .modal-image:active {
-            cursor: grabbing;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1001;
-            transition: color 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: #5b9cf6;
-        }
-
-        .modal-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .modal-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .modal-nav.prev {
-            left: 30px;
-        }
-
-        .modal-nav.next {
-            right: 30px;
-        }
-
-        .zoom-controls {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 1001;
-        }
-
-        .zoom-btn {
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .zoom-btn:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: scale(1.1);
-        }
-
-        .image-info {
-            position: absolute;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 16px;
-            z-index: 1001;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .project-info,
-            .image-gallery {
-                padding: 1.5rem;
-            }
-
-            .gallery-container {
-                height: 300px;
-            }
-
-            .achievement-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-close {
-                top: 10px;
-                right: 15px;
-                font-size: 30px;
-            }
-
-            .modal-nav {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-
-            .modal-nav.prev {
-                left: 15px;
-            }
-
-            .modal-nav.next {
-                right: 15px;
-            }
-
-            .zoom-controls {
-                bottom: 20px;
-            }
-
-            .zoom-btn {
-                padding: 8px 12px;
-                font-size: 14px;
-            }
-        }
+        /* 本页专属：无（全部使用共享设计系统） */
     </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="container">
-            <div class="nav">
-                <a href="../index.html#research-antenna" class="back-btn">
-                    ← 返回主页
+<body data-hud="P-02 · 天线盒">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../" class="logo"><span>程锦阳</span><i>P-02</i></a>
+        <nav class="nav-links">
+            <a href="#overview" data-nav="overview"><sup>01</sup>概述</a>
+            <a href="#specs" data-nav="specs"><sup>02</sup>规格</a>
+            <a href="#innovation" data-nav="innovation"><sup>03</sup>创新</a>
+            <a href="#gallery" data-nav="gallery"><sup>04</sup>图档</a>
+            <a href="#outcomes" data-nav="outcomes"><sup>05</sup>成果</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="pg-head">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../">程锦阳</a><i>/</i><a href="../#projects">代表性项目</a><i>/</i><b>P-02</b>
+            </nav>
+            <h1>集成定位与通信多通道车载天线盒</h1>
+            <p class="pg-lede">
+                把 <b>5G / Wi-Fi 6E / BT / V2X / GNSS</b> 五类天线收进一个
+                <b>120 × 80 × 25 mm</b> 的盒体，在 <b>700 MHz – 6 GHz</b> 内以宽带多频段、圆极化与高隔离
+                三条技术线同时守住 <b>2 – 8 dBi</b> 增益与天线间 <b>&gt; 20 dB</b> 隔离。
+            </p>
+            <div class="pg-meta">
+                <div><span class="k">Period</span><span class="v">2024.07 – 2025.04</span></div>
+                <div><span class="k">Role</span><span class="v">天线设计 · 集成方案</span></div>
+                <div><span class="k">Domain</span><span class="v">车载天线 · 多通道集成</span></div>
+                <div><span class="k">Status</span><span class="v live">设计—实测闭环</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 01 概述 -->
+    <section class="sec" id="overview">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">集成度的代价从来不是尺寸，是互耦。</p>
+            </div>
+            <div class="prose" style="max-width:74ch">
+                <p class="lead rv">
+                    企业横向课题。设计并交付<b>集成定位与通信功能的多通道车载天线盒</b>，单盒集成
+                    <b>5G、Wi-Fi 6E、BT、V2X、GNSS</b> 多类型天线，提出宽带 5G 车载天线与高增益 V2X
+                    天线方案，融合圆极化、宽带多频段、高隔离等技术，完成设计、仿真、加工与实测全流程。
+                </p>
+                <p class="rv rv-d1">
+                    需求侧的驱动力很直白：整车不愿为每类业务各留一副车顶天线，<b>一盒取代多副</b>
+                    既压装配复杂度，也保住车顶型面与后装可行性。定位与通信通道因此必须共口径。
+                </p>
+                <p class="rv rv-d2">
+                    代价随之而来。五类系统、六项功能（蜂窝含 4G 与 5G）挤在 <b>120 × 80 mm</b> 的口径里，
+                    <strong>每加一副天线，都是把它的一部分能量塞进旁边天线的近场</strong>：
+                    低频段拉不开距离，高端的 Wi-Fi 6E 与 V2X 又在频域上紧邻。
+                    指标不能再按单副天线逐个定，只能按「盒」整体定 —— 本页所有数字都是盒级口径。
+                </p>
+                <p class="rv rv-d3">
+                    方案因此走两条主线：把蜂窝通道合并为<b>宽带</b>结构以省出辐射体数量，
+                    把增益最敏感的 V2X <b>单独拆出</b>做高增益；其余隔离额度由极化与布局组合补齐。
+                </p>
+                <div class="chips rv rv-d3">
+                    <span class="chip">宽带 5G 车载天线</span>
+                    <span class="chip">高增益 V2X 天线</span>
+                    <span class="chip">圆极化</span>
+                    <span class="chip">宽带多频段</span>
+                    <span class="chip">高隔离去耦合</span>
+                    <span class="chip">紧凑封装</span>
+                    <span class="chip">车规环境适应性</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02 技术规格 -->
+    <section class="sec" id="specs">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">技术规格<em>/ Specifications</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">左列是盒级电气口径，右列是集成与工程约束。</p>
+            </div>
+            <div class="spec-cols">
+                <dl class="spec-tbl rv">
+                    <div><dt>集成通道</dt><dd>GNSS / 4G / 5G / Wi-Fi 6E / BT / V2X<u>五类系统六项功能</u></dd></div>
+                    <div><dt>工作频段</dt><dd>700 MHz – 6 GHz<u>定位与通信合并口径</u></dd></div>
+                    <div><dt>天线增益</dt><dd>2 – 8 dBi</dd></div>
+                    <div><dt>天线间隔离</dt><dd>&gt; 20 dB</dd></div>
+                    <div><dt>辐射效率</dt><dd>&gt; 40%<u>各通道</u></dd></div>
+                    <div><dt>极化方式</dt><dd>RHCP + 线极化</dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>外形尺寸</dt><dd>120 × 80 × 25 mm</dd></div>
+                    <div><dt>关键技术</dt><dd>宽带多频段 · 高隔离 · 圆极化</dd></div>
+                    <div><dt>研制范围</dt><dd>设计 · 仿真 · 加工 · 实测</dd></div>
+                    <div><dt>合作形式</dt><dd>企业横向课题</dd></div>
+                    <div><dt>成果转化</dt><dd>CN202510483710.2<u>发明专利</u></dd></div>
+                    <div><dt>下游迭代</dt><dd>P-03 板端接口款式</dd></div>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 技术方案 -->
+    <section class="sec" id="innovation">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">每一条都要回答：为什么不是更简单的做法。</p>
+            </div>
+            <ul class="ink-list rv" style="max-width:74ch">
+                <li>
+                    <b>蜂窝通道合并成一副宽带辐射体，而不是按频段分副</b> ——
+                    盒内要为 Wi-Fi、BT、V2X、GNSS 各留出位置，口径不可能按频段逐个开振子。
+                    把蜂窝低频段一路拉到 6 GHz 收进同一宽带结构、阻抗匹配按宽带做，
+                    本质是用<em>最少的辐射体数量</em>换<em>最大的剩余间距</em>，省下的空间全部让给隔离。
+                </li>
+                <li>
+                    <b>V2X 从合并方案里拆出来，单独做高增益</b> ——
+                    V2X 是车对车、车对路侧的直达链路，功率与时延余量最紧，偏偏又与 Wi-Fi 6E
+                    在频域上紧邻，是盒内最容易互相污染的一对。共用宽带体保不住它的增益，
+                    所以宁可多占一块口径，也要给出独立的高增益 V2X 方案。
+                </li>
+                <li>
+                    <b>圆极化只用在定位通道</b> ——
+                    GNSS 来向不定，信号经车身与地面反射后极化状态劣化，线极化会直接吃掉链路余量，
+                    因此定位通道取圆极化（RHCP）。附带的好处是不花钱的那一路：它与周围线极化的
+                    通信振子在极化上近乎正交，天然分掉一部分互耦。
+                </li>
+                <li>
+                    <b>隔离度不指望「拉开距离」</b> ——
+                    700 MHz 端自由空间半波长接近 210 mm，已超过盒体最长边，最低频段根本没有
+                    空间隔离可用。天线间 <em>&gt; 20 dB</em> 只能由频段划分、极化正交、方向图错开
+                    与辐射体位置<em>组合</em>出来 —— 这才是「高隔离度去耦合」在本项目里的实际含义。
+                </li>
+                <li>
+                    <b>紧凑封装必须与结构件共存</b> ——
+                    辐射体压在盒内、贴近壳体与支架，介质与金属件的加载会把仿真谐振点拉偏，
+                    匹配只能在装配状态下迭代，不能在自由空间里定稿。车规侧的环境适应性优化
+                    处理的正是这一点：温湿、振动与洗车工况之后指标不回退。
+                </li>
+                <li>
+                    <b>设计 — 仿真 — 加工 — 实测由同一人闭环</b> ——
+                    实物在微波暗室以矢量网络分析仪回测端口 S 参数、通道间隔离与方向图增益，
+                    偏差直接回到模型上改。「满足项目指标」这句话之所以可追溯，
+                    是因为四个环节没有交接缝。
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 04 图档 -->
+    <section class="sec" id="gallery">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">项目图档<em>/ Figures</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">七张图按子系统分开出图，互耦要在图上找到位置才有实感；点击放大，方向键翻页。</p>
+            </div>
+            <div class="gal rv" data-gallery>
+                <div class="gal-stage">
+                    <div class="gal-hud">
+                        <span><b>FIG</b><span class="gal-name"></span></span>
+                        <span class="gal-count ct"></span>
+                    </div>
+                    <img src="files/productPysical.webp" alt="车载天线盒产品实物图" data-cap="产品实物图">
+                    <img src="files/productReport.webp" alt="产品报告图" data-cap="产品报告图">
+                    <img src="files/5gAntenna.webp" alt="宽带 5G 车载天线" data-cap="5G 宽带天线">
+                    <img src="files/mimoAntenna.webp" alt="车载 MIMO 天线单元" data-cap="MIMO 天线单元">
+                    <img src="files/wifiAntenna.webp" alt="Wi-Fi 6E 天线" data-cap="Wi-Fi 6E 天线">
+                    <img src="files/btAntenna.webp" alt="蓝牙 BT 天线" data-cap="蓝牙 (BT) 天线">
+                    <img src="files/v2xAntenna.webp" alt="高增益 V2X 天线" data-cap="V2X 高增益天线">
+                    <button class="gal-nav p" type="button" aria-label="上一张">&#8249;</button>
+                    <button class="gal-nav n" type="button" aria-label="下一张">&#8250;</button>
+                </div>
+                <div class="gal-thumbs"></div>
+                <p class="gal-cap"><b>FIG 01</b><span></span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 05 成果 -->
+    <section class="sec" id="outcomes">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">05</span>
+                <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">多通道指标要同时成立，验收难度是乘性的。</p>
+            </div>
+            <div class="outs rv">
+                <div class="out">
+                    <div class="h">共盒功能</div>
+                    <div class="v">6<small> 项</small></div>
+                    <p>GNSS / 4G / 5G / Wi-Fi 6E / BT / V2X 集成于一盒，取代多副独立天线。</p>
+                </div>
+                <div class="out">
+                    <div class="h">天线间隔离</div>
+                    <div class="v">&gt; 20<small> dB</small></div>
+                    <p>在低频段无空间隔离可用的口径内，由极化与布局组合取得。</p>
+                </div>
+                <div class="out">
+                    <div class="h">辐射效率</div>
+                    <div class="v">&gt; 40<small> %</small></div>
+                    <p>各通道优于 40%，增益覆盖 2 – 8 dBi，频率跨度 700 MHz – 6 GHz。</p>
+                </div>
+                <div class="out">
+                    <div class="h">研制闭环</div>
+                    <div class="v">4<small> 个环节</small></div>
+                    <p>设计、仿真、加工、实测全流程自持，指标偏差可回溯到模型。</p>
+                </div>
+                <div class="out">
+                    <div class="h">成果转化</div>
+                    <div class="v">1<small> 件发明专利</small></div>
+                    <p>「一种车载集成式天线盒」CN202510483710.2。</p>
+                </div>
+            </div>
+
+            <div class="prose" style="max-width:74ch;margin-top:36px">
+                <p class="rv">
+                    交付形态不只是一张指标表：盒级指标一次成立，方案随即进入企业产品路径并应用于车载系统；
+                    其集成结构以发明专利「一种车载集成式天线盒」（CN202510483710.2）固化。
+                    同一产品线的工程问题（安装接口与内部通道布局）继续在
+                    <a href="../project3/" style="color:var(--cu)">P-03 板端接口式车载天线盒</a> 上推进。
+                </p>
+            </div>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:28px">
+                关联：<a href="../#research" style="color:var(--cu)">研究方向 D-01 · 天线设计</a> ·
+                <a href="../#publications" style="color:var(--cu)">论文与专利</a> ·
+                <a href="../#experience" style="color:var(--cu)">工作经历</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- 上一页 / 下一页 -->
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="项目导航">
+            <a href="../project1/">
+                <span class="n">← Previous · P-01</span>
+                <span class="t">紧凑型低剖面车载 5G MIMO 天线</span>
+            </a>
+            <a href="../project3/" class="rt">
+                <span class="n">Next · P-03 →</span>
+                <span class="t">板端接口式车载天线盒</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>聊聊多通道共口径集成。</h2>
+                <p>宽带蜂窝辐射体与高增益 V2X 怎么分口径、隔离度从哪里凑、装配状态下的匹配怎么收敛，或者车载天线的车规验证边界，都可以直接找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
                 </a>
-                <div class="project-title">集成多位置通信多通道车载天线盒</div>
             </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This project</h5>
+                    <ul>
+                        <li><a href="#overview">01 · 项目概述</a></li>
+                        <li><a href="#specs">02 · 技术规格</a></li>
+                        <li><a href="#innovation">03 · 技术方案</a></li>
+                        <li><a href="#gallery">04 · 项目图档</a></li>
+                        <li><a href="#outcomes">05 · 项目成果</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../">首页</a></li>
+                        <li><a href="../#projects">全部项目</a></li>
+                        <li><a href="../#publications">论文与专利</a></li>
+                        <li><a href="../#experience">工作经历</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>P-02 · 集成定位与通信多通道车载天线盒</span>
         </div>
     </div>
+</footer>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="main-content">
-            <!-- Project Info -->
-            <div class="project-info">
-                <div class="project-meta">
-                    <span class="meta-item time">2023.06 - 2024.01</span>
-                    <span class="meta-item">5G MIMO</span>
-                    <span class="meta-item">Wi-Fi 6E</span>
-                    <span class="meta-item">BT</span>
-                    <span class="meta-item">V2X</span>
-                    <span class="meta-item">GNSS</span>
-                    <span class="meta-item">车载天线集成</span>
-                </div>
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">P-02</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
 
-                <h2 class="section-title">项目概述</h2>
-                <p class="description">
-                    设计了一款集成多位置通信功能的多通道车载天线盒，集成了GNSS定位、4G/5G通信、WiFi、BT、V2X等多种无线通信功能。该解决方案设计，实现了高集成度和优异的多频性能。
-                </p>
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
 
-                <h2 class="section-title">技术规格</h2>
-                <ul class="specs-list">
-                    <li>
-                        <span class="spec-label">集成功能</span>
-                        <span class="spec-value">GNSS/4G/5G/WiFi/BT</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">工作频段</span>
-                        <span class="spec-value">700MHz-6GHz</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">天线增益</span>
-                        <span class="spec-value">2-8dBi</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">隔离度</span>
-                        <span class="spec-value">>20dB</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">尺寸</span>
-                        <span class="spec-value">120×80×25mm</span>
-                    </li>
-                </ul>
-
-                <h2 class="section-title">技术创新</h2>
-                <p class="description">
-                    • 多频段天线集成技术<br>
-                    • 高隔离度去耦合技术<br>
-                    • 紧凑型封装结构<br>
-                    • 宽带阻抗匹配<br>
-                    • 车规级环境适应性优化
-                </p>
-            </div>
-
-            <!-- Image Gallery -->
-            <div class="image-gallery">
-                <h2 class="section-title">项目图片</h2>
-                <div class="image-title-display">
-                    <span class="image-title">产品实物图</span>
-                    <span class="image-counter">1 / 7</span>
-                </div>
-                <div class="gallery-container" onclick="openImageModal()">    
-                    <img src="files/productPysical.webp" alt="产品实物图" class="gallery-image active">
-                    <img src="files/productReport.webp" alt="产品报告图" class="gallery-image">
-                    <img src="files/5gAntenna.webp" alt="5G天线" class="gallery-image">
-                    <img src="files/mimoAntenna.webp" alt="MIMO天线" class="gallery-image">
-                    <img src="files/wifiAntenna.webp" alt="WiFi天线" class="gallery-image">
-                    <img src="files/btAntenna.webp" alt="蓝牙天线" class="gallery-image">
-                    <img src="files/v2xAntenna.webp" alt="V2X天线" class="gallery-image">
-
-                    
-                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
-                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
-                </div>
-                
-                <div class="gallery-indicators">
-                    <span class="indicator active" onclick="currentImage(1)"></span>
-                    <span class="indicator" onclick="currentImage(2)"></span>
-                    <span class="indicator" onclick="currentImage(3)"></span>
-                    <span class="indicator" onclick="currentImage(4)"></span>
-                    <span class="indicator" onclick="currentImage(5)"></span>
-                    <span class="indicator" onclick="currentImage(6)"></span>
-                    <span class="indicator" onclick="currentImage(7)"></span>
-                </div>
-            </div>
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
         </div>
-
-        <!-- Achievements -->
-        <div class="achievements">
-            <h2 class="section-title">项目成果</h2>
-            <div class="achievement-grid">
-                <div class="achievement-item">
-                    <h4>多功能集成</h4>
-                    <p>集成6种无线通信功能</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>高隔离度</h4>
-                    <p>天线间隔离>20dB</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>高效率</h4>
-                    <p>效率均>40%</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>产业应用</h4>
-                    <p>成功应用于车载系统</p>
-                </div>
-            </div>
-        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
     </div>
+</div>
 
-    <!-- Image Modal -->
-    <div id="imageModal" class="image-modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeImageModal()">&times;</span>
-            <img id="modalImage" class="modal-image" alt="">
-            <button class="modal-nav prev" onclick="changeModalImage(-1)">‹</button>
-            <button class="modal-nav next" onclick="changeModalImage(1)">›</button>
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="zoomImage(-0.2)">-</button>
-                <button class="zoom-btn" onclick="resetZoom()">重置</button>
-                <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
-            </div>
-            <div class="image-info" id="imageInfo">1 / 4</div>
-        </div>
-    </div>
-    
-    <script>
-        let currentImageIndex = 0;
-        let currentZoom = 1;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0;
-        
-        const images = document.querySelectorAll('.gallery-image');
-        const indicators = document.querySelectorAll('.indicator');
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const imageInfo = document.getElementById('imageInfo');
-
-        // 图片源数据
-        const imageSources = [
-            'files/productPysical.webp',
-            'files/productReport.webp',
-            'files/5gAntenna.webp',
-            'files/mimoAntenna.webp',
-            'files/wifiAntenna.webp',
-            'files/btAntenna.webp',
-            'files/v2xAntenna.webp',
-
-        ];
-
-        const imageAlts = [
-            '产品实物图',
-            '产品报告图',
-            '5G天线',
-            'MIMO天线',
-            'Wi-Fi 6E天线',
-            '蓝牙天线',
-            'V2X天线',
-
-        ];
-
-        function showImage(index) {
-            // Hide all images
-            images.forEach(img => img.classList.remove('active'));
-            indicators.forEach(ind => ind.classList.remove('active'));
-            
-            // Show current image
-            images[index].classList.add('active');
-            indicators[index].classList.add('active');
-            
-            // Update image title and counter
-            updateImageTitle(index);
-        }
-
-        function updateImageTitle(index) {
-            const titleElement = document.querySelector('.image-title');
-            const counterElement = document.querySelector('.image-counter');
-            
-            if (titleElement && counterElement) {
-                titleElement.textContent = imageAlts[index];
-                counterElement.textContent = `${index + 1} / ${images.length}`;
-            }
-        }
-
-        function changeImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= images.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = images.length - 1;
-            }
-            
-            showImage(currentImageIndex);
-        }
-
-        function currentImage(index) {
-            currentImageIndex = index - 1;
-            showImage(currentImageIndex);
-        }
-
-        // 打开图片模态框
-        function openImageModal() {
-            modal.style.display = 'block';
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            updateImageInfo();
-            resetZoom();
-            document.body.style.overflow = 'hidden';
-        }
-
-        // 关闭图片模态框
-        function closeImageModal() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // 模态框中切换图片
-        function changeModalImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= imageSources.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = imageSources.length - 1;
-            }
-            
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            showImage(currentImageIndex);
-            updateImageInfo();
-            resetZoom();
-        }
-
-        // 更新图片信息
-        function updateImageInfo() {
-            imageInfo.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
-        }
-
-        // 缩放图片
-        function zoomImage(delta) {
-            currentZoom += delta;
-            currentZoom = Math.max(0.5, Math.min(3, currentZoom));
-            updateImageTransform();
-        }
-
-        // 重置缩放
-        function resetZoom() {
-            currentZoom = 1;
-            translateX = 0;
-            translateY = 0;
-            updateImageTransform();
-        }
-
-        // 更新图片变换
-        function updateImageTransform() {
-            modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
-        }
-
-        // 鼠标拖拽功能
-        modalImage.addEventListener('mousedown', (e) => {
-            if (currentZoom > 1) {
-                isDragging = true;
-                startX = e.clientX - translateX;
-                startY = e.clientY - translateY;
-                modalImage.style.cursor = 'grabbing';
-            }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                translateX = e.clientX - startX;
-                translateY = e.clientY - startY;
-                updateImageTransform();
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            modalImage.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
-        });
-
-        // 鼠标滚轮缩放
-        modalImage.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoomImage(delta);
-        });
-
-        // 键盘控制
-        document.addEventListener('keydown', (e) => {
-            if (modal.style.display === 'block') {
-                switch(e.key) {
-                    case 'Escape':
-                        closeImageModal();
-                        break;
-                    case 'ArrowLeft':
-                        changeModalImage(-1);
-                        break;
-                    case 'ArrowRight':
-                        changeModalImage(1);
-                        break;
-                    case '+':
-                    case '=':
-                        zoomImage(0.2);
-                        break;
-                    case '-':
-                        zoomImage(-0.2);
-                        break;
-                    case '0':
-                        resetZoom();
-                        break;
-                }
-            }
-        });
-
-        // 点击模态框背景关闭
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeImageModal();
-            }
-        });
-
-        // Handle image load errors
-        images.forEach((img, index) => {
-            img.onerror = function() {
-                this.style.display = 'flex';
-                this.style.alignItems = 'center';
-                this.style.justifyContent = 'center';
-                this.style.background = '#f0f0f0';
-                this.style.color = '#999';
-                this.innerHTML = '<div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div><div>图片加载中...</div></div>';
-            };
-        });
-    </script>
+<script type="application/json" id="site-map">
+[
+  {"href":"../",              "idx":"—", "t":"首页 · 程锦阳",                 "k":"HOME",     "ext":1},
+  {"href":"../#about",        "idx":"01","t":"关于我",                        "k":"ABOUT",    "ext":1},
+  {"href":"../#research",     "idx":"02","t":"研究方向",                      "k":"RESEARCH", "ext":1},
+  {"href":"../#experience",   "idx":"03","t":"工作经历",                      "k":"EXPERIENCE","ext":1},
+  {"href":"../#projects",     "idx":"04","t":"代表性项目",                    "k":"PROJECTS", "ext":1},
+  {"href":"../#publications", "idx":"05","t":"论文与专利",                    "k":"PAPERS",   "ext":1},
+  {"href":"../#honors",       "idx":"06","t":"成果与荣誉",                    "k":"HONORS",   "ext":1},
+  {"href":"../#skills",       "idx":"07","t":"能力矩阵",                      "k":"SKILLS",   "ext":1},
+  {"href":"../project1/",     "idx":"P-01","t":"紧凑型低剖面车载 5G MIMO 天线","k":"ANTENNA",  "ext":1},
+  {"href":"../project2/",     "idx":"P-02","t":"集成定位与通信多通道车载天线盒","k":"ANTENNA",  "ext":1},
+  {"href":"../project3/",     "idx":"P-03","t":"板端接口式车载天线盒",         "k":"ANTENNA",  "ext":1},
+  {"href":"../project4/",     "idx":"P-04","t":"算法辅助全波电磁仿真优化",     "k":"AI / EM",  "ext":1},
+  {"href":"../project5/",     "idx":"P-05","t":"高增益全向车载阵列天线",       "k":"ANTENNA",  "ext":1},
+  {"href":"../project6/",     "idx":"P-06","t":"GNSS 天线及有源射频模块",      "k":"RF",       "ext":1},
+  {"href":"../experience1/",  "idx":"E-01","t":"实习经历 · 江苏骅盛车用电子",   "k":"INTERN",   "ext":1}
+]
+</script>
+<script src="../assets/theme.js"></script>
 </body>
 </html>
-
-
-

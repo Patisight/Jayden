@@ -3,1058 +3,424 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>紧凑型车载5G MIMO天线</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>紧凑型低剖面车载 5G MIMO 天线 · 程锦阳</title>
+    <meta name="description" content="车载 5G 2×2 MIMO 天线系统：主 / 副 / 2 支 MIMO 四端口，以「单极子枝节 + 类缝隙结构地板」在不同频段制造极化方向差异，尺寸 74×74×11 mm，VSWR &lt; 3，效率 &gt; 40%，端口隔离 &gt; 10 dB。第一作者论文发表于 IEEE AWPL。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            color: #e6edf3;
-            background: #0d1117;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        .header {
-            background: #151b24;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #5b9cf6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .back-btn:hover {
-            color: #e6edf3;
-        }
-
-        .project-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #e6edf3;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .project-info {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            background: rgba(52, 152, 219, 0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: #8b98a5;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .meta-item.time {
-            background: linear-gradient(45deg, #5b9cf6, #4f8cf5);
-            color: white;
-            border: none;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #e6edf3;
-            margin-bottom: 1rem;
-            border-left: 4px solid #5b9cf6;
-            padding-left: 1rem;
-        }
-
-        .description {
-            color: #8b98a5;
-            margin-bottom: 1.5rem;
-            line-height: 1.7;
-        }
-
-        .specs-list {
-            list-style: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .specs-list li {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(189, 195, 199, 0.2);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .specs-list li:last-child {
-            border-bottom: none;
-        }
-
-        .spec-label {
-            font-weight: 500;
-            color: #e6edf3;
-        }
-
-        .spec-value {
-            color: #5b9cf6;
-            font-weight: 500;
-        }
-
-        /* Image Gallery */
-        .image-gallery {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .gallery-container {
-            position: relative;
-            width: 100%;
-            height: 450px;
-            overflow: hidden;
-            border-radius: 8px;
-            background: rgba(44, 62, 80, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-in;
-        }
-
-        .gallery-image {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            object-position: center;
-            display: none;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-image:hover {
-            transform: scale(1.02);
-        }
-
-        .gallery-image.active {
-            display: block;
-        }
-
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .gallery-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .gallery-nav.prev {
-            left: 15px;
-        }
-
-        .gallery-nav.next {
-            right: 15px;
-        }
-
-        .gallery-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator:hover {
-            background: rgba(52, 152, 219, 0.7);
-            transform: scale(1.2);
-        }
-
-        .indicator.active {
-            background: #5b9cf6;
-            transform: scale(1.3);
-        }
-
-        /* Image Details Section */
-        .image-details {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background: rgba(44, 62, 80, 0.3);
-            border-radius: 8px;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-        }
-
-        .details-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #5b9cf6;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .details-title::before {
-            content: "📋";
-            font-size: 1rem;
-        }
-
-        .image-description {
-            margin-bottom: 1rem;
-        }
-
-        .image-description p {
-            color: #8b98a5;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .image-specs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .spec-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem;
-            background: rgba(52, 152, 219, 0.1);
-            border-radius: 6px;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-        }
-
-        .spec-item .spec-label {
-            font-weight: 500;
-            color: #e6edf3;
-            font-size: 0.9rem;
-        }
-
-        .spec-item .spec-value {
-            color: #5b9cf6;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        /* Reference Section */
-        .reference-section {
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .reference-section .main-content {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .reference-section .section-title {
-            color: #e6edf3;
-            margin-bottom: 1rem;
-        }
-
-        .reference-section .description {
-            color: #8b98a5;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
-        .reference-section .description a {
-            color: #5b9cf6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .reference-section .description a:hover {
-            color: #e6edf3;
-            text-decoration: underline;
-        }
-        
-        /* Image Title Display */
-        .image-title-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            background: rgba(44, 62, 80, 0.6);
-            border-radius: 8px;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .image-title {
-            color: #e6edf3;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .image-counter {
-            color: #5b9cf6;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Achievements */
-        .achievements {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
-        }
-
-        .achievement-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .achievement-item {
-            background: rgba(52, 152, 219, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #5b9cf6;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .achievement-item:hover {
-            background: rgba(52, 152, 219, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .achievement-item h4 {
-            color: #e6edf3;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .achievement-item p {
-            color: #8b98a5;
-            font-size: 0.8rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .project-info,
-            .image-gallery {
-                padding: 1.5rem;
-            }
-
-            .gallery-container {
-                height: 250px;
-            }
-
-            .achievement-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Image Modal Styles */
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
-            cursor: grab;
-            transition: transform 0.3s ease;
-        }
-
-        .modal-image:active {
-            cursor: grabbing;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: #e6edf3;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1001;
-            transition: color 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: #5b9cf6;
-        }
-
-        .modal-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            font-size: 24px;
-            padding: 15px 20px;
-            cursor: pointer;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .modal-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .modal-nav.prev {
-            left: 30px;
-        }
-
-        .modal-nav.next {
-            right: 30px;
-        }
-
-        .zoom-controls {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 1001;
-        }
-
-        .zoom-btn {
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .zoom-btn:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: scale(1.1);
-        }
-
-        .image-info {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(44, 62, 80, 0.9);
-            color: #e6edf3;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            z-index: 1001;
-        }
+        /* 本页专属：无（全部使用共享设计系统） */
     </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="container">
-            <div class="nav">
-                <a href="../index.html#research-antenna" class="back-btn">
-                    ← 返回主页
-                </a>
-                <div class="project-title">紧凑型车载5G MIMO天线</div>
+<body data-hud="P-01 · MIMO 天线">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../" class="logo"><span>程锦阳</span><i>P-01</i></a>
+        <nav class="nav-links">
+            <a href="#overview" data-nav="overview"><sup>01</sup>概述</a>
+            <a href="#specs" data-nav="specs"><sup>02</sup>规格</a>
+            <a href="#innovation" data-nav="innovation"><sup>03</sup>方案</a>
+            <a href="#gallery" data-nav="gallery"><sup>04</sup>图档</a>
+            <a href="#outcomes" data-nav="outcomes"><sup>05</sup>成果</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="pg-head">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../">程锦阳</a><i>/</i><a href="../#projects">代表性项目</a><i>/</i><b>P-01</b>
+            </nav>
+            <h1>紧凑型低剖面车载 5G MIMO 天线</h1>
+            <p class="pg-lede">
+                四端口（<b>主天线 · 副天线 · 2 支 MIMO 分集</b>）压进 <b>74 × 74 × 11 mm</b> 的印制结构：
+                以<b>「单极子枝节 + 类缝隙结构地板」</b>在不同频段制造极化方向差异，用极化失配换隔离度，
+                全频段端口隔离优于 10 dB。
+            </p>
+            <div class="pg-meta">
+                <div><span class="k">Period</span><span class="v">2023.10 – 2024.08</span></div>
+                <div><span class="k">Role</span><span class="v">天线设计 · 仿真 · 实测</span></div>
+                <div><span class="k">Domain</span><span class="v">车载 5G MIMO · 射频</span></div>
+                <div><span class="k">Type</span><span class="v">校企横向课题</span></div>
+                <div><span class="k">Status</span><span class="v live">已实测交付</span></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="main-content">
-            <!-- Project Info -->
-            <div class="project-info">
-                <div class="project-meta">
-                    <span class="meta-item time">2023.10 - 2024.8</span>
-                    <span class="meta-item">天线设计</span>
-                    <span class="meta-item">5G MIMO</span>
-                    <span class="meta-item">紧凑型小型化</span>
-                    <span class="meta-item">极化解耦高隔离</span>
-                </div>
-
-                <h2 class="section-title">项目概述</h2>
-                <p class="description">
-                    提出并实现了一款紧凑低剖面的车载5G 2×2 MIMO天线系统，由两副主天线与两副分集天线组成。主天线覆盖700–960 MHz与1710–6000 MHz，分集天线覆盖1710–6000 MHz；通过在不同频段呈现差异化的极化方向并使相邻天线极化互相正交，实现低互耦合与图形/极化双重分集。整体尺寸仅为74 × 74 × 11 mm，端口间隔离均超过10 dB，满足车载5G/LTE工程应用需求。
+    <!-- 01 概述 -->
+    <section class="sec" id="overview">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">车载 MIMO 的难点从来不是把天线做小，而是在 74 mm 口径里让四端口彼此不相关。</p>
+            </div>
+            <div class="prose" style="max-width:74ch">
+                <p class="lead rv">
+                    提出并实现一款<b>紧凑低剖面的车载 5G 2×2 MIMO 天线系统</b>，满足 VSWR &lt; 3、
+                    各端口效率 &gt; 40%、端口间隔离 &gt; 10 dB，整体尺寸仅 74 mm × 74 mm × 11 mm。
                 </p>
+                <p class="rv rv-d1">
+                    系统由<b>主天线、副天线与两支 MIMO 分集天线</b>共四个端口组成：主天线覆盖
+                    <b>700–960 MHz 与 1710–6000 MHz</b>，分集天线覆盖 <b>1710–6000 MHz</b>。
+                    同一块板子上既要有蜂窝低频、又要有 5G FR1 中高频，是尺寸与隔离度冲突最直接的场景。
+                </p>
+                <p class="rv rv-d2">
+                    约束首先来自物理：<strong>700 MHz 的半波长接近 210 mm</strong>，远大于 74 mm 的安装口径 ——
+                    靠拉开端口间距解耦在低频段根本做不到。方案的落点因此从空间域移到<strong>极化域</strong>：
+                    用「单极子枝节 + 类缝隙结构地板」让同一套金属在不同频段呈现<strong>差异化的极化方向</strong>，
+                    使相邻端口在任一工作频段内近似极化正交，以极化失配压低互耦合，
+                    同时形成<strong>图形分集与极化分集</strong>，改善链路的分集增益与 MIMO 信道稳定性。
+                </p>
+                <p class="rv rv-d3">
+                    项目为企业横向课题，走完<strong>需求 — 仿真 — 加工 — 实测</strong>全流程，仿真与实测趋势一致；
+                    结果以第一作者发表于 IEEE AWPL，技术方案转化为发明专利。
+                </p>
+                <div class="chips rv rv-d3">
+                    <span class="chip">天线设计</span>
+                    <span class="chip">5G MIMO</span>
+                    <span class="chip">紧凑型小型化</span>
+                    <span class="chip">极化解耦高隔离</span>
+                    <span class="chip">FR4 印制</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <h2 class="section-title">技术规格</h2>
-                <ul class="specs-list">
+    <!-- 02 技术规格 -->
+    <section class="sec" id="specs">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">技术规格<em>/ Specifications</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">低频段看匹配与效率，中高频段看隔离与相关性 —— 两组指标的难点不在同一处。</p>
+            </div>
+            <div class="spec-cols">
+                <dl class="spec-tbl rv">
+                    <div><dt>系统构成</dt><dd>4 端口<u>主 · 副 · 2×MIMO</u></dd></div>
+                    <div><dt>低频段</dt><dd>700 – 960 MHz<u>主天线</u></dd></div>
+                    <div><dt>中高频段</dt><dd>1710 – 6000 MHz<u>主 · 副 · MIMO 全覆盖</u></dd></div>
+                    <div><dt>外形尺寸</dt><dd>74 × 74 × 11 mm<u>低剖面</u></dd></div>
+                    <div><dt>实现方式</dt><dd>FR4 印制<u>单结构集成四端口</u></dd></div>
+                    <div><dt>应用对象</dt><dd>车载 5G / LTE</dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>VSWR</dt><dd>&lt; 3</dd></div>
+                    <div><dt>端口隔离</dt><dd>&gt; 10 dB<u>高频段 &gt; 15 dB</u></dd></div>
+                    <div><dt>辐射效率</dt><dd>&gt; 40%<u>各端口</u></dd></div>
+                    <div><dt>平均效率</dt><dd>64.8% 仿真<u>53.1% 实测</u></dd></div>
+                    <div><dt>ECC</dt><dd>&lt; 0.5<u>包络相关系数</u></dd></div>
+                    <div><dt>仿真 / 实测</dt><dd>趋势一致</dd></div>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 技术方案 -->
+    <section class="sec" id="innovation">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">一句话：间距做不到的解耦，用极化去换。六条逐个可复述。</p>
+            </div>
+            <ul class="ink-list rv" style="max-width:74ch">
+                <li><b>低频段交给单极子枝节</b> —— 枝节的垂直电流分量相对车体金属面呈近全向，在 11 mm 剖面内就能拿到 <em>700–960 MHz</em> 的匹配；若改用贴片，低频需要的大口径会直接顶破尺寸预算。</li>
+                <li><b>中高频由地板上的类缝隙结构承担</b> —— 在同一地板上开窄槽与宽槽，使低 / 中 / 高频段分别以<em>金属枝、窄槽、宽槽</em>三种机理辐射，一套金属覆盖 <em>1710–6000 MHz</em>，避免为每个频段另起一副天线互相干扰。</li>
+                <li><b>频段相关的极化方向做解耦</b> —— 让相邻端口在同一频段内极化近似正交，用极化失配换取隔离度。这是唯一可行的路：700 MHz 的 <em>λ/2 ≈ 210 mm</em>，在 74 mm 口径里靠间距解耦无从谈起。</li>
+                <li><b>图形分集 + 极化分集双通道</b> —— 低频段靠方向图差异、中高频段靠极化正交，把包络相关系数压到 <em>ECC &lt; 0.5</em>。车载信道是强多径环境，相关系数降不下来，四端口只是四路相同的信号。</li>
+                <li><b>FR4 印制而非特种工艺</b> —— 选 FR4 是量产成本与加工一致性的取舍；代价是板材与铜损吃掉部分效率，这也是效率下限按<em>实测 &gt; 40%</em>给出、而把仿真的 <em>64.8%</em> 单列为参考值的原因。</li>
+                <li><b>隔离度按频段分档验收</b> —— 全频段 <em>&gt; 10 dB</em>、高频段 <em>&gt; 15 dB</em>，而不是取一个平均值：频段越高越容易解耦，把难易两档合并成一条指标会掩盖真实的工程难度。</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 04 图档 -->
+    <section class="sec" id="gallery">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">项目图档<em>/ Figures</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">15 帧：实物与报告 2 · 结构 2 · 演进 1 · 实测 4 · 电流仿真 3 · 极化分析 3。点击放大，滚轮缩放、拖拽平移，方向键翻页。</p>
+            </div>
+            <div class="gal rv" data-gallery>
+                <div class="gal-stage">
+                    <div class="gal-hud">
+                        <span><b>FIG</b><span class="gal-name"></span></span>
+                        <span class="gal-count ct"></span>
+                    </div>
+                    <img src="files/productPhysical.webp" alt="车载 5G MIMO 天线模组实物照片" data-cap="产品实物 · 74 × 74 × 11 mm">
+                    <img src="files/productReport.webp" alt="产品性能测试报告" data-cap="产品测试报告">
+                    <img src="files/structure1.webp" alt="天线三维结构视图一：单极子枝节与地板开槽" data-cap="天线结构 · 视图一">
+                    <img src="files/strucutre2.webp" alt="天线三维结构视图二：端口布局与组件空间关系" data-cap="天线结构 · 视图二">
+                    <img src="files/structureEvolution.webp" alt="结构演进：由初始构型到最终优化方案" data-cap="结构演进">
+                    <img src="files/returnLoss.webp" alt="回波损耗与端口匹配实测曲线" data-cap="回波损耗">
+                    <img src="files/isolation.webp" alt="端口间隔离度实测曲线" data-cap="端口隔离">
+                    <img src="files/antennaEfficiency1.webp" alt="主天线与副天线辐射效率曲线" data-cap="辐射效率 · 主 / 副">
+                    <img src="files/antennaEfficiency2.webp" alt="MIMO 天线辐射效率曲线，仿真与实测平均效率对比" data-cap="辐射效率 · MIMO">
+                    <img src="files/currentDistribution1.webp" alt="低频段表面电流分布仿真" data-cap="电流分布 · 低频段">
+                    <img src="files/currentDistribution2.webp" alt="中频段表面电流分布仿真" data-cap="电流分布 · 中频段">
+                    <img src="files/currentDistribution3.webp" alt="高频段表面电流分布仿真" data-cap="电流分布 · 高频段">
+                    <img src="files/polarizationDirection1.webp" alt="低频段极化方向与辐射方向图" data-cap="极化方向 · 低频段">
+                    <img src="files/polarizationDirection2.webp" alt="中频段极化方向与辐射方向图" data-cap="极化方向 · 中频段">
+                    <img src="files/polarizationDirection3.webp" alt="高频段极化方向与相邻端口极化正交验证" data-cap="极化方向 · 高频段">
+                    <button class="gal-nav p" type="button" aria-label="上一张">&#8249;</button>
+                    <button class="gal-nav n" type="button" aria-label="下一张">&#8250;</button>
+                </div>
+                <div class="gal-thumbs"></div>
+                <p class="gal-cap"><b>FIG 01</b><span></span></p>
+            </div>
+
+            <div class="prose rv" style="margin-top:34px">
+                <h3>图号索引 · Figure Index</h3>
+            </div>
+            <div class="hon rv">
+                <div class="hon-row">
+                    <span class="y">FIG 01</span>
+                    <span class="t"><b>产品实物</b> <span>· 整机实物照片，74 × 74 × 11 mm 的紧凑外形与装配工艺</span></span>
+                    <span class="lv">实物</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 02</span>
+                    <span class="t"><b>产品报告</b> <span>· 完整性能参数、测试结果与技术规格记录</span></span>
+                    <span class="lv">报告</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 03</span>
+                    <span class="t"><b>天线结构 · 视图一</b> <span>· 单极子枝节与地板开槽的组合构型</span></span>
+                    <span class="lv">结构</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 04</span>
+                    <span class="t"><b>天线结构 · 视图二</b> <span>· 另一视角，四端口组件的空间布局与连接关系</span></span>
+                    <span class="lv">结构</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 05</span>
+                    <span class="t"><b>结构演进</b> <span>· 由初始构型到最终优化方案的迭代过程</span></span>
+                    <span class="lv">演进</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 06</span>
+                    <span class="t"><b>回波损耗</b> <span>· 700–960 MHz 与 1710–6000 MHz 端口匹配，VSWR &lt; 3</span></span>
+                    <span class="lv top">实测</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 07</span>
+                    <span class="t"><b>端口隔离</b> <span>· 全频段 &gt; 10 dB，高频段 &gt; 15 dB</span></span>
+                    <span class="lv top">实测</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 08</span>
+                    <span class="t"><b>辐射效率 · 主 / 副</b> <span>· 主天线与副天线效率均 &gt; 40%</span></span>
+                    <span class="lv top">实测</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 09</span>
+                    <span class="t"><b>辐射效率 · MIMO</b> <span>· 两支 MIMO 天线效率；平均效率仿真 ≈ 64.8% / 实测 ≈ 53.1%</span></span>
+                    <span class="lv top">实测</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 10</span>
+                    <span class="t"><b>电流分布 · 低频段</b> <span>· 金属枝辐射机理的电流路径</span></span>
+                    <span class="lv">仿真</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 11</span>
+                    <span class="t"><b>电流分布 · 中频段</b> <span>· 窄槽辐射机理的电流分布</span></span>
+                    <span class="lv">仿真</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 12</span>
+                    <span class="t"><b>电流分布 · 高频段</b> <span>· 宽槽辐射机理的电流分布</span></span>
+                    <span class="lv">仿真</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 13</span>
+                    <span class="t"><b>极化方向 · 低频段</b> <span>· 该频段的极化特性与辐射方向性</span></span>
+                    <span class="lv">分析</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 14</span>
+                    <span class="t"><b>极化方向 · 中频段</b> <span>· 与低频段相比极化方向发生偏移</span></span>
+                    <span class="lv">分析</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">FIG 15</span>
+                    <span class="t"><b>极化方向 · 高频段</b> <span>· 相邻端口极化互为正交，解耦前提成立</span></span>
+                    <span class="lv">分析</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 05 成果 -->
+    <section class="sec" id="outcomes">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">05</span>
+                <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">论文与专利同源：同一套结构，一次发表、一次权利化。</p>
+            </div>
+            <div class="outs rv">
+                <div class="out">
+                    <div class="h">学术产出</div>
+                    <div class="v">1<small> 篇 AWPL</small></div>
+                    <p>以第一作者发表于 IEEE Antennas and Wireless Propagation Letters（SCI / EI Q2）。</p>
+                </div>
+                <div class="out">
+                    <div class="h">知识产权</div>
+                    <div class="v">1<small> 项发明专利</small></div>
+                    <p>技术方案转化为发明专利「一种集成式低剖面5G天线」CN202411549247.9。</p>
+                </div>
+                <div class="out">
+                    <div class="h">解耦水平</div>
+                    <div class="v">&gt; 10<small> dB</small></div>
+                    <p>四端口隔离全频段优于 10 dB、高频段优于 15 dB，ECC &lt; 0.5。</p>
+                </div>
+                <div class="out">
+                    <div class="h">小型化</div>
+                    <div class="v">11<small> mm 剖面</small></div>
+                    <p>74 × 74 mm 口径内集成四端口，覆盖 700–960 与 1710–6000 MHz。</p>
+                </div>
+            </div>
+
+            <div class="prose rv" style="margin-top:44px">
+                <h3>发表与专利</h3>
+                <ul class="ink-list">
                     <li>
-                        <span class="spec-label">工作频段</span>
-                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                            <span class="spec-value">主天线：700–960 MHz & 1710–6000 MHz</span>
-                            <span class="spec-value">分集天线：1710–6000 MHz</span>
-                        </div>
+                        <span class="tag cu">article</span>
+                        <b>J. Cheng</b>* et al., <i>A Compact Low-Profile Vehicular 5G MIMO Antenna System</i>,
+                        IEEE Antennas and Wireless Propagation Letters, vol. 24, no. 8, pp. 2422–2426, Aug. 2025.
+                        <a href="https://ieeexplore.ieee.org/document/10979809" target="_blank" rel="noopener" style="color:var(--cu)">IEEE Xplore</a>
                     </li>
                     <li>
-                        <span class="spec-label">天线尺寸</span>
-                        <span class="spec-value">74 mm × 74 mm × 11 mm</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">隔离度</span>
-                        <span class="spec-value">>10 dB（高频段 >15 dB）</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">效率</span>
-                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                            <span class="spec-value">各天线>40%</span>
-                            <span class="spec-value">仿真平均效率≈64.8%</span>
-                            <span class="spec-value">实测平均效率≈53.1%</span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="spec-label">VSWR</span>
-                        <span class="spec-value"><3</span>
+                        <span class="tag cu">patent</span>
+                        <b>一种集成式低剖面5G天线</b>，发明专利，申请号 CN202411549247.9，公布号 CN119297580A。
+                        <a href="https://pss-system.cponline.cnipa.gov.cn/documents/detail?prevPageTit=changgui" target="_blank" rel="noopener" style="color:var(--cu)">国家知识产权局</a>
                     </li>
                 </ul>
-
-                <h2 class="section-title">技术创新</h2>
-                <p class="description">
-                    • 新型多频段主天线结构：金属枝与地板开槽组合，分别在低/中/高频段形成不同的辐射机理（金属枝、窄槽、宽槽）<br>
-                    • 频段相关的极化方向：主天线在不同频段呈现差异化极化，使相邻天线极化互为正交，显著降低耦合<br>
-                    • 图形与极化双分集：四天线在低频与中高频实现全向覆盖与分集，提高链路稳定性<br>
-                    • 紧凑低剖面与工程可实现性：整体仅74 mm × 74 mm × 11 mm，端口隔离10–15 dB，满足车载5G/LTE应用<br>
-                    • FR4印制实现与一致性验证：仿真与实测结果一致，ECC<0.5，效率>40%
-                </p>
-
             </div>
 
-            <!-- Image Gallery -->
-            <div class="image-gallery">
-                <h2 class="section-title">项目图片</h2>
-                <!-- Image Title Display -->
-                <div class="image-title-display">
-                    <span class="image-title">产品实物图</span>
-                    <span class="image-counter">1 / 15</span>
-                </div>
-                <div class="gallery-container" onclick="openImageModal()">
-                    <img src="files/productPhysical.webp" alt="产品实物图" class="gallery-image active">
-                    <img src="files/productReport.webp" alt="产品报告图" class="gallery-image">
-                    <img src="files/structure1.webp" alt="天线结构图1" class="gallery-image">
-                    <img src="files/strucutre2.webp" alt="天线结构图2" class="gallery-image">
-                    <img src="files/structureEvolution.webp" alt="结构演进图" class="gallery-image">
-                    <img src="files/returnLoss.webp" alt="回波损耗图" class="gallery-image">
-                    <img src="files/isolation.webp" alt="隔离度图" class="gallery-image">
-                    <img src="files/antennaEfficiency1.webp" alt="天线效率图1" class="gallery-image">
-                    <img src="files/antennaEfficiency2.webp" alt="天线效率图2" class="gallery-image">
-                    <img src="files/currentDistribution1.webp" alt="电流分布图1" class="gallery-image">
-                    <img src="files/currentDistribution2.webp" alt="电流分布图2" class="gallery-image">
-                    <img src="files/currentDistribution3.webp" alt="电流分布图3" class="gallery-image">
-                    <img src="files/polarizationDirection1.webp" alt="极化方向图1" class="gallery-image">
-                    <img src="files/polarizationDirection2.webp" alt="极化方向图2" class="gallery-image">
-                    <img src="files/polarizationDirection3.webp" alt="极化方向图3" class="gallery-image">
-                            
-                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
-                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
-                </div>
-                
-                <div class="gallery-indicators">
-                    <span class="indicator active" onclick="currentImage(1)"></span>
-                    <span class="indicator" onclick="currentImage(2)"></span>
-                    <span class="indicator" onclick="currentImage(3)"></span>
-                    <span class="indicator" onclick="currentImage(4)"></span>
-                    <span class="indicator" onclick="currentImage(5)"></span>
-                    <span class="indicator" onclick="currentImage(6)"></span>
-                    <span class="indicator" onclick="currentImage(7)"></span>
-                    <span class="indicator" onclick="currentImage(8)"></span>
-                    <span class="indicator" onclick="currentImage(9)"></span>
-                    <span class="indicator" onclick="currentImage(10)"></span>
-                    <span class="indicator" onclick="currentImage(11)"></span>
-                    <span class="indicator" onclick="currentImage(12)"></span>
-                    <span class="indicator" onclick="currentImage(13)"></span>
-                    <span class="indicator" onclick="currentImage(14)"></span>
-                    <span class="indicator" onclick="currentImage(15)"></span>
-                </div>
-
-                <!-- Image Details Section -->
-                <div class="image-details">
-                    <h3 class="details-title">图片说明</h3>
-                    <div class="image-description">
-                        <p id="current-image-description">展示了紧凑型车载5G MIMO天线的实物产品，体现了74×74×11 mm的紧凑设计和精密的工程制造工艺。</p>
-                    </div>
-                    <div class="image-specs">
-                        <div class="spec-item">
-                            <span class="spec-label">图片类型</span>
-                            <span class="spec-value" id="current-image-type">产品实物</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">相关技术</span>
-                            <span class="spec-value" id="current-image-tech">MIMO天线设计</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Achievements -->
-        <div class="achievements">
-            <h2 class="section-title">项目成果</h2>
-            <div class="achievement-grid">
-                <div class="achievement-item">
-                    <h4>学术发表</h4>
-                    <p>以第一作者发表IEEE AWPL期刊论文</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>性能指标</h4>
-                    <p>端口隔离>10 dB（高频段>15 dB），ECC<0.5，效率>40%</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>工程应用</h4>
-                    <p>设计方案具备实际工程应用价值</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>技术创新</h4>
-                    <p>在紧凑型MIMO天线设计方面有所突破</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Image Modal -->
-    <div id="imageModal" class="image-modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeImageModal()">&times;</span>
-            <img id="modalImage" class="modal-image" alt="">
-            <button class="modal-nav prev" onclick="changeModalImage(-1)">‹</button>
-            <button class="modal-nav next" onclick="changeModalImage(1)">›</button>
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="zoomImage(-0.2)">-</button>
-                <button class="zoom-btn" onclick="resetZoom()">重置</button>
-                <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
-            </div>
-            <div class="image-info" id="imageInfo">1 / 4</div>
-        </div>
-    </div>
-
-    <script>
-        let currentImageIndex = 0;
-        let currentZoom = 1;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0;
-        
-        const images = document.querySelectorAll('.gallery-image');
-        const indicators = document.querySelectorAll('.indicator');
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const imageInfo = document.getElementById('imageInfo');
-
-        // 图片源数据
-        const imageSources = [
-            'files/productPhysical.webp',
-            'files/productReport.webp',
-            'files/structure1.webp',
-            'files/strucutre2.webp',
-            'files/structureEvolution.webp',
-            'files/returnLoss.webp',
-            'files/isolation.webp',
-            'files/antennaEfficiency1.webp',
-            'files/antennaEfficiency2.webp',
-            'files/currentDistribution1.webp',
-            'files/currentDistribution2.webp',
-            'files/currentDistribution3.webp',
-            'files/polarizationDirection1.webp',
-            'files/polarizationDirection2.webp',
-            'files/polarizationDirection3.webp'
-        ];
-
-        const imageAlts = [
-            '产品实物图',
-            '产品报告图',
-            '天线结构图1',
-            '天线结构图2',
-            '结构演进图',
-            '回波损耗图',
-            '隔离度图',
-            '天线效率图-主/副',
-            '天线效率图-MIMO',
-            '电流分布图-低频段',
-            '电流分布图-中频段',
-            '电流分布图-高频段',
-            '极化方向图-低频段',
-            '极化方向图-中频段',
-            '极化方向图-高频段'
-        ];
-
-        // 图片详情数据
-        const imageDetails = [
-            {
-                description: '展示了紧凑型车载5G MIMO天线的实物产品，体现了74×74×11 mm的紧凑设计和精密的工程制造工艺。',
-                type: '产品实物',
-                tech: 'MIMO天线设计'
-            },
-            {
-                description: '详细的产品技术报告，包含完整的性能参数、测试结果和技术规格说明。',
-                type: '技术报告',
-                tech: '性能测试'
-            },
-            {
-                description: '天线的三维结构设计图，展示了金属枝与地板开槽的创新组合结构。',
-                type: '结构设计',
-                tech: '结构创新'
-            },
-            {
-                description: '天线结构的另一视角，清晰展示了各个组件的空间布局和连接方式。',
-                type: '结构设计',
-                tech: '空间布局'
-            },
-            {
-                description: '天线结构的演进过程，从初始设计到最终优化的完整发展历程。',
-                type: '设计演进',
-                tech: '优化过程'
-            },
-            {
-                description: '回波损耗测试结果，验证了天线在700-960MHz和1710-6000MHz频段的优异性能。',
-                type: '性能测试',
-                tech: '回波损耗'
-            },
-            {
-                description: '端口隔离度测试数据，显示全频段>10dB，高频段>15dB的优秀隔离性能。',
-                type: '性能测试',
-                tech: '端口隔离'
-            },
-            {
-                description: '天线效率测试结果第一部分，展示各天线效率均>40%的优异表现。',
-                type: '效率测试',
-                tech: '辐射效率'
-            },
-            {
-                description: '天线效率测试结果第二部分，仿真平均效率≈64.8%，实测平均效率≈53.1%。',
-                type: '效率测试',
-                tech: '效率对比'
-            },
-            {
-                description: '低频段电流分布仿真结果，展示了金属枝辐射机理的工作原理。',
-                type: '仿真分析',
-                tech: '电流分布'
-            },
-            {
-                description: '中频段电流分布仿真结果，显示了窄槽辐射机理的特性。',
-                type: '仿真分析',
-                tech: '电流分布'
-            },
-            {
-                description: '高频段电流分布仿真结果，体现了宽槽辐射机理的工作模式。',
-                type: '仿真分析',
-                tech: '电流分布'
-            },
-            {
-                description: '低频段极化方向图，展示了天线在该频段的极化特性和辐射方向性。',
-                type: '极化分析',
-                tech: '极化方向'
-            },
-            {
-                description: '中频段极化方向图，显示了不同频段间极化的差异化特性。',
-                type: '极化分析',
-                tech: '极化方向'
-            },
-            {
-                description: '高频段极化方向图，验证了相邻天线极化互为正交的设计目标。',
-                type: '极化分析',
-                tech: '极化方向'
-            }
-        ];
-
-        function showImage(index) {
-            // Hide all images
-            images.forEach(img => img.classList.remove('active'));
-            indicators.forEach(ind => ind.classList.remove('active'));
-            
-            // Show current image
-            images[index].classList.add('active');
-            indicators[index].classList.add('active');
-            
-            // Update image title and counter
-            updateImageTitle(index);
-            
-            // Update image details
-            updateImageDetails(index);
-        }
-
-        function updateImageTitle(index) {
-            const titleElement = document.querySelector('.image-title');
-            const counterElement = document.querySelector('.image-counter');
-            
-            if (titleElement && counterElement) {
-                titleElement.textContent = imageAlts[index];
-                counterElement.textContent = `${index + 1} / ${images.length}`;
-            }
-        }
-
-        function updateImageDetails(index) {
-            const descriptionElement = document.getElementById('current-image-description');
-            const typeElement = document.getElementById('current-image-type');
-            const techElement = document.getElementById('current-image-tech');
-            
-            if (descriptionElement && typeElement && techElement && imageDetails[index]) {
-                descriptionElement.textContent = imageDetails[index].description;
-                typeElement.textContent = imageDetails[index].type;
-                techElement.textContent = imageDetails[index].tech;
-            }
-        }
-
-        function changeImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= images.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = images.length - 1;
-            }
-            
-            showImage(currentImageIndex);
-        }
-
-        function currentImage(index) {
-            currentImageIndex = index - 1;
-            showImage(currentImageIndex);
-        }
-
-        // 打开图片模态框
-        function openImageModal() {
-            modal.style.display = 'block';
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            updateImageInfo();
-            resetZoom();
-            document.body.style.overflow = 'hidden';
-        }
-
-        // 关闭图片模态框
-        function closeImageModal() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // 模态框中切换图片
-        function changeModalImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= imageSources.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = imageSources.length - 1;
-            }
-            
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            showImage(currentImageIndex);
-            updateImageInfo();
-            resetZoom();
-        }
-
-        // 更新图片信息
-        function updateImageInfo() {
-            imageInfo.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
-        }
-
-        // 缩放图片
-        function zoomImage(delta) {
-            currentZoom += delta;
-            currentZoom = Math.max(0.5, Math.min(3, currentZoom));
-            updateImageTransform();
-        }
-
-        // 重置缩放
-        function resetZoom() {
-            currentZoom = 1;
-            translateX = 0;
-            translateY = 0;
-            updateImageTransform();
-        }
-
-        // 更新图片变换
-        function updateImageTransform() {
-            modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
-        }
-
-        // 鼠标拖拽功能
-        modalImage.addEventListener('mousedown', (e) => {
-            if (currentZoom > 1) {
-                isDragging = true;
-                startX = e.clientX - translateX;
-                startY = e.clientY - translateY;
-                modalImage.style.cursor = 'grabbing';
-            }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                translateX = e.clientX - startX;
-                translateY = e.clientY - startY;
-                updateImageTransform();
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            modalImage.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
-        });
-
-        // 鼠标滚轮缩放
-        modalImage.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoomImage(delta);
-        });
-
-        // 键盘控制
-        document.addEventListener('keydown', (e) => {
-            if (modal.style.display === 'block') {
-                switch(e.key) {
-                    case 'Escape':
-                        closeImageModal();
-                        break;
-                    case 'ArrowLeft':
-                        changeModalImage(-1);
-                        break;
-                    case 'ArrowRight':
-                        changeModalImage(1);
-                        break;
-                    case '+':
-                    case '=':
-                        zoomImage(0.2);
-                        break;
-                    case '-':
-                        zoomImage(-0.2);
-                        break;
-                    case '0':
-                        resetZoom();
-                        break;
-                }
-            }
-        });
-
-        // 点击模态框背景关闭
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeImageModal();
-            }
-        });
-
-        // Handle image load errors
-        images.forEach((img, index) => {
-            img.onerror = function() {
-                this.style.display = 'flex';
-                this.style.alignItems = 'center';
-                this.style.justifyContent = 'center';
-                this.style.background = '#f0f0f0';
-                this.style.color = '#999';
-                this.innerHTML = '<div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div><div>图片加载�?..</div></div>';
-            };
-        });
-    </script>
-</body>
-
-<div class="container reference-section">
-    <div class="main-content">
-        <h2 class="section-title">引用</h2>
-        <div class="description" style="margin-left: -6rem; margin-right: 1.5rem; text-align: justify;">
-            <p>
-                [article] <strong>J. Cheng</strong>* et al., "A Compact Low-Profile Vehicular 5G MIMO Antenna System," in IEEE Antennas and Wireless Propagation Letters, vol. 24, no. 8, pp. 2422-2426, Aug. 2025.   论文链接：
-                <a href="https://ieeexplore.ieee.org/document/10979809" target="_blank" rel="noopener">IEEE Xplore</a>
-            </p>
-            <p>
-                [patent] <strong>"一种集成式低剖面5G天线"</strong> CN119297580A. 专利链接：
-                <a href="https://pss-system.cponline.cnipa.gov.cn/documents/detail?prevPageTit=changgui" target="_blank" rel="noopener">发明专利</a>
+            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:28px">
+                关联：<a href="../#publications" style="color:var(--cu)">论文与专利</a> ·
+                <a href="../#research" style="color:var(--cu)">研究方向 D-01 · 天线设计</a> ·
+                <a href="../#projects" style="color:var(--cu)">全部代表性项目</a>
             </p>
         </div>
+    </section>
+
+    <!-- 上一页 / 下一页 -->
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="项目导航">
+            <a href="../">
+                <span class="n">← Back · Projects</span>
+                <span class="t">返回全部项目</span>
+            </a>
+            <a href="../project2/" class="rt">
+                <span class="n">Next · P-02 →</span>
+                <span class="t">集成定位与通信多通道车载天线盒</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>聊聊车载 MIMO 天线。</h2>
+                <p>极化解耦、端口隔离与 ECC 的取舍、低剖面下的多频段覆盖，或者从仿真到实测的偏差怎么解释，都可以直接找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
+            </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This project</h5>
+                    <ul>
+                        <li><a href="#overview">01 · 项目概述</a></li>
+                        <li><a href="#specs">02 · 技术规格</a></li>
+                        <li><a href="#innovation">03 · 技术方案</a></li>
+                        <li><a href="#gallery">04 · 项目图档</a></li>
+                        <li><a href="#outcomes">05 · 项目成果</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../">首页</a></li>
+                        <li><a href="../#projects">全部项目</a></li>
+                        <li><a href="../#publications">论文与专利</a></li>
+                        <li><a href="../#experience">工作经历</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>P-01 · 紧凑型低剖面车载 5G MIMO 天线</span>
+        </div>
+    </div>
+</footer>
+
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">P-01</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
+
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
     </div>
 </div>
+
+<script type="application/json" id="site-map">
+[
+  {"href":"../",              "idx":"—", "t":"首页 · 程锦阳",                 "k":"HOME",     "ext":1},
+  {"href":"../#about",        "idx":"01","t":"关于我",                        "k":"ABOUT",    "ext":1},
+  {"href":"../#research",     "idx":"02","t":"研究方向",                      "k":"RESEARCH", "ext":1},
+  {"href":"../#experience",   "idx":"03","t":"工作经历",                      "k":"EXPERIENCE","ext":1},
+  {"href":"../#projects",     "idx":"04","t":"代表性项目",                    "k":"PROJECTS", "ext":1},
+  {"href":"../#publications", "idx":"05","t":"论文与专利",                    "k":"PAPERS",   "ext":1},
+  {"href":"../#honors",       "idx":"06","t":"成果与荣誉",                    "k":"HONORS",   "ext":1},
+  {"href":"../#skills",       "idx":"07","t":"能力矩阵",                      "k":"SKILLS",   "ext":1},
+  {"href":"../project1/",     "idx":"P-01","t":"紧凑型低剖面车载 5G MIMO 天线","k":"ANTENNA",  "ext":1},
+  {"href":"../project2/",     "idx":"P-02","t":"集成定位与通信多通道车载天线盒","k":"ANTENNA",  "ext":1},
+  {"href":"../project3/",     "idx":"P-03","t":"板端接口式车载天线盒",         "k":"ANTENNA",  "ext":1},
+  {"href":"../project4/",     "idx":"P-04","t":"算法辅助全波电磁仿真优化",     "k":"AI / EM",  "ext":1},
+  {"href":"../project5/",     "idx":"P-05","t":"高增益全向车载阵列天线",       "k":"ANTENNA",  "ext":1},
+  {"href":"../project6/",     "idx":"P-06","t":"GNSS 天线及有源射频模块",      "k":"RF",       "ext":1},
+  {"href":"../experience1/",  "idx":"E-01","t":"实习经历 · 江苏骅盛车用电子",   "k":"INTERN",   "ext":1}
+]
+</script>
+<script src="../assets/theme.js"></script>
+</body>
 </html>

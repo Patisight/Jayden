@@ -3,792 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>板端接口式定位与通信多通道的车载天线盒</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>板端接口式多通道车载天线盒 · 程锦阳</title>
+    <meta name="description" content="集成定位与通信的多通道车载天线盒之板端接口款式：射频接口从壳体侧迁移到 PCB 板端，五路馈电在单板上重排，通道间隔离 ≥14 dB，外形 200 × 100 × 25 mm，技术方案形成发明专利申请 CN202511158479.6。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            color: #e6edf3;
-            background: #0d1117;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        .header {
-            background: #151b24;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #5b9cf6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .back-btn:hover {
-            color: #e6edf3;
-        }
-
-        .project-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #e6edf3;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .project-info {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            background: rgba(52, 152, 219, 0.2);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #8b98a5;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .meta-item.time {
-            background: linear-gradient(45deg, #5b9cf6, #4f8cf5);
-            color: white;
-            border: none;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #e6edf3;
-            margin-bottom: 0.8rem;
-            border-left: 4px solid #5b9cf6;
-            padding-left: 0.8rem;
-        }
-
-        .description {
-            color: #8b98a5;
-            margin-bottom: 1.2rem;
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-
-        .specs-list {
-            list-style: none;
-            margin-bottom: 1.2rem;
-        }
-
-        .specs-list li {
-            padding: 0.4rem 0;
-            border-bottom: 1px solid rgba(189, 195, 199, 0.2);
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-        }
-
-        .specs-list li:last-child {
-            border-bottom: none;
-        }
-
-        .spec-label {
-            font-weight: 500;
-            color: #e6edf3;
-        }
-
-        .spec-value {
-            color: #5b9cf6;
-            font-weight: 500;
-        }
-
-        /* Image Gallery */
-        .image-gallery {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .gallery-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            overflow: hidden;
-            border-radius: 8px;
-            background: rgba(44, 62, 80, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-in;
-        }
-
-        .gallery-image {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            object-position: center;
-            display: none;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-image:hover {
-            transform: scale(1.02);
-        }
-
-        .gallery-image.active {
-            display: block;
-        }
-
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .gallery-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .gallery-nav.prev {
-            left: 15px;
-        }
-
-        .gallery-nav.next {
-            right: 15px;
-        }
-
-        .gallery-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(189, 195, 199, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-            background: #5b9cf6;
-            transform: scale(1.2);
-        }
-
-        .indicator:hover {
-            background: #5b9cf6;
-        }
-
-        /* Image Title Display */
-        .image-title-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            background: rgba(44, 62, 80, 0.6);
-            border-radius: 8px;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .image-title {
-            color: #e6edf3;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .image-counter {
-            color: #5b9cf6;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Achievements */
-        .achievements {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
-        }
-
-    .achievement-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-    }
-
-    .achievement-item {
-        background: rgba(52, 152, 219, 0.1);
-        padding: 1rem;
-        border-radius: 8px;
-        text-align: center;
-        border-left: 4px solid #5b9cf6;
-        border: 1px solid rgba(52, 152, 219, 0.2);
-        transition: all 0.3s ease;
-    }
-
-    .achievement-item:hover {
-        background: rgba(52, 152, 219, 0.2);
-        transform: translateY(-2px);
-    }
-
-    .achievement-item h4 {
-        color: #e6edf3;
-        margin-bottom: 0.4rem;
-        font-size: 0.85rem;
-    }
-
-    .achievement-item p {
-        color: #8b98a5;
-        font-size: 0.75rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .main-content {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .project-info,
-        .image-gallery {
-            padding: 1.5rem;
-        }
-
-        .gallery-container {
-            height: 300px;
-        }
-
-        .achievement-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    /* Image Modal Styles */
-    .image-modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.9);
-        backdrop-filter: blur(5px);
-    }
-
-    .modal-content {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-image {
-        max-width: 90%;
-        max-height: 90%;
-        object-fit: contain;
-        border-radius: 8px;
-        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
-        cursor: grab;
-        transition: transform 0.3s ease;
-    }
-
-    .modal-image:active {
-        cursor: grabbing;
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 20px;
-        right: 30px;
-        color: #e6edf3;
-        font-size: 40px;
-        font-weight: bold;
-        cursor: pointer;
-        z-index: 1001;
-        transition: color 0.3s ease;
-    }
-
-    .modal-close:hover {
-        color: #5b9cf6;
-    }
-
-    .modal-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(52, 152, 219, 0.8);
-        color: white;
-        border: none;
-        font-size: 24px;
-        padding: 15px 20px;
-        cursor: pointer;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-        z-index: 1001;
-    }
-
-    .modal-nav:hover {
-        background: rgba(52, 152, 219, 1);
-        transform: translateY(-50%) scale(1.1);
-    }
-
-    .modal-nav.prev {
-        left: 30px;
-    }
-
-    .modal-nav.next {
-        right: 30px;
-    }
-
-    .zoom-controls {
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 10px;
-        z-index: 1001;
-    }
-
-    .zoom-btn {
-        background: rgba(52, 152, 219, 0.8);
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 25px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: all 0.3s ease;
-    }
-
-    .zoom-btn:hover {
-        background: rgba(52, 152, 219, 1);
-        transform: scale(1.1);
-    }
-
-    .image-info {
-        position: absolute;
-        bottom: 30px;
-        right: 30px;
-        background: rgba(44, 62, 80, 0.9);
-        color: #e6edf3;
-        padding: 10px 15px;
-        border-radius: 20px;
-        font-size: 14px;
-        z-index: 1001;
-    }
-</style>
+        /* 本页专属：无（全部使用共享设计系统） */
+    </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="container">
-            <div class="nav">
-                <a href="../index.html#research-antenna" class="back-btn">
-                    ← 返回主页
-                </a>
-                <div class="project-title">板端接口式定位与通信多通道的车载天线盒</div>
+<body data-hud="P-03 · 板端接口">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../" class="logo"><span>程锦阳</span><i>P-03</i></a>
+        <nav class="nav-links">
+            <a href="#overview" data-nav="overview"><sup>01</sup>概述</a>
+            <a href="#specs" data-nav="specs"><sup>02</sup>规格</a>
+            <a href="#innovation" data-nav="innovation"><sup>03</sup>方案</a>
+            <a href="#gallery" data-nav="gallery"><sup>04</sup>图档</a>
+            <a href="#outcomes" data-nav="outcomes"><sup>05</sup>成果</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="pg-head">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../">程锦阳</a><i>/</i><a href="../#projects">代表性项目</a><i>/</i><b>P-03</b>
+            </nav>
+            <h1>板端接口式集成定位与通信多通道车载天线盒</h1>
+            <p class="pg-lede">
+                与 P-02 同一功能集的第二种工程形态：把射频接口从<b>壳体侧壁</b>迁到 <b>PCB 板端</b>，
+                五路馈电在同一块板上重排，用<b>全印刷工艺取代盒内同轴尾线</b>，换来整车装配上的一次对位固定。
+            </p>
+            <div class="pg-meta">
+                <div><span class="k">Period</span><span class="v">2025.03 – 2025.09</span></div>
+                <div><span class="k">Role</span><span class="v">板端款设计 · 性能测试 · 结构协同</span></div>
+                <div><span class="k">Domain</span><span class="v">车载天线盒 · 多通道集成</span></div>
+                <div><span class="k">Status</span><span class="v live">实习产出 · 专利申请中</span></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="main-content">
-            <!-- Project Info -->
-            <div class="project-info">
-                <div class="project-meta">
-                    <span class="meta-item time">2024.01 - 2024.06</span>
-                    <span class="meta-item">板端接口</span>
-                    <span class="meta-item">定位通信</span>
-                    <span class="meta-item">多通道</span>
-                    <span class="meta-item">车载天线</span>
-                    <span class="meta-item">集成设计</span>
-                    <span class="meta-item">高隔离度</span>
-                    <span class="meta-item">宽频带</span>
-                </div>
-
-                <h2 class="section-title">项目概述</h2>
-                <p class="description">
-                    设计了一款板端接口式定位与通信多通道的车载天线盒，其中集成了4G LTE、Wi-Fi 6E、BT、V2X、GNSS等多种通信功能。该天线盒结构紧凑，占用空间小，同时提供了高隔离度的多通道通信。
+    <!-- 01 概述 -->
+    <section class="sec" id="overview">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">接口位置一挪，天线盒就从「带尾线的盒子」变成「板上的部件」，收益与代价都落在内部布局里。</p>
+            </div>
+            <div class="prose" style="max-width:74ch">
+                <p class="lead rv">
+                    为车载天线盒产品设计的<b>板端接口款式</b>，功能集与 P-02 一致 —— 定位与通信多通道合于一盒；
+                    差别只在射频输出端口与安装基准的位置。该方案是同一横向课题方向上的第二次工程化，
+                    也是 2025.03 – 2025.09 在江苏骅盛车用电子担任射频工程师实习期间的产出，
+                    技术方案形成发明专利申请<b>「一种多通道车载天线盒」</b>（申请号 CN202511158479.6）。
                 </p>
-
-                <h2 class="section-title">技术规格</h2>
-                <ul class="specs-list">
-                    <li>
-                        <span class="spec-label">工作频率</span>
-                        <span class="spec-value">4G, Wi-Fi 6E, BT, V2X, GNSS</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">天线盒尺寸</span>
-                        <span class="spec-value">200mm×100mm×25mm</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">天线效率</span>
-                        <span class="spec-value">>50%</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">VSWR</span>
-                        <span class="spec-value">2</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">隔离度</span>
-                        <span class="spec-value">14dB</span>
-                    </li>
+                <p class="rv rv-d1">
+                    壳体侧接口靠盒外线束对接，整箱作为一个独立部件装车；板端接口让天线盒直接落到板端的射频口上 ——
+                    省掉盒外同轴尾线、壳体开孔与密封件，产线上的装配动作从<b>逐个插拔连接器</b>变成
+                    <b>一次对位固定</b>。这正是整车厂在意的便利性，也是本项目立项的目的。
+                </p>
+                <p class="rv rv-d2">
+                    收益不是白拿的。端口集中到板端一条边之后，五路馈电路径不再能从壳壁向盒内辐射展开，
+                    只能在同一块 PCB 上重新排布；连接器的接地参考也从壳壁转移到板的接地层，
+                    回流路径变短但必须用地孔阵列重新接续。<strong>通道间隔离因此不能只靠拉开辐射单元间距，
+                    而主要由布线顺序与接地结构决定</strong> —— 本页给出的 ≥ 14 dB 是这一版形态下的通道隔离值。
+                </p>
+                <h3 class="rv rv-d2">与 P-02 的分工</h3>
+                <ul class="ink-list rv rv-d3">
+                    <li><b>P-02 · 壳体侧接口</b> —— 端口出壳壁，馈电路径短、连接器反力由壳体承担，整箱作为部件装车。</li>
+                    <li><b>P-03 · 板端接口（本页）</b> —— 端口与安装基准合并到 PCB 一侧，免尾线与开孔密封，代价是通道重排与板端补强。</li>
                 </ul>
-
-                <h2 class="section-title">技术创新</h2>
-                <p class="description">
-                    • 多频段共口径紧凑布局：4G/Wi-Fi/BT/V2X/GNSS五合一<br>
-                    • 高隔离度布线与接地：通道间隔离≥14 dB<br>
-                    • 板端一体化便于产品安装使用<br>
-                    • 全印刷PCB工艺，成本低，方便量产
+                <p class="rv rv-d3" style="margin-top:22px">
+                    除方案本身，实习期内完成了多通道天线性能测试与数据分析，协同结构团队处理装配与工程集成问题，
+                    并撰写设计文档、测试报告及专利申请文件。本页「验证状态」一栏对应的就是这条工作链；
+                    原始资料未给出的测试条件与分项数据，不在本页补。
                 </p>
             </div>
+        </div>
+    </section>
 
-            <!-- Image Gallery -->
-            <div class="image-gallery">
-                <h2 class="section-title">项目图片</h2>
-                <div class="image-title-display">
-                    <span class="image-title">产品实物图</span>
-                    <span class="image-counter">1 / 6</span>
+    <!-- 02 技术规格 -->
+    <section class="sec" id="specs">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">技术规格<em>/ Specifications</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">四项数值为原始交付口径，其余按定性条目列出 —— 未取得的数字不在本页编造。</p>
+            </div>
+            <div class="spec-cols">
+                <dl class="spec-tbl rv">
+                    <div><dt>接口形式</dt><dd>板端接口<u>射频端口出自 PCB 一侧</u></dd></div>
+                    <div><dt>通道构成</dt><dd>4G LTE · Wi-Fi 6E · BT · V2X · GNSS<u>五类系统合一盒</u></dd></div>
+                    <div><dt>辐射与馈电工艺</dt><dd>全印刷 PCB<u>盒内无同轴飞线</u></dd></div>
+                    <div><dt>装配方式</dt><dd>盒体与板端一次对位固定<u>免逐端口插拔</u></dd></div>
+                    <div><dt>外形尺寸</dt><dd>200 × 100 × 25 mm</dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>通道间隔离</dt><dd>&ge; 14 dB<u>同盒多通道</u></dd></div>
+                    <div><dt>天线效率</dt><dd>&gt; 50%<u>整盒口径，未分频段拆分</u></dd></div>
+                    <div><dt>VSWR</dt><dd>&lt; 2<u>整盒口径，未分端口拆分</u></dd></div>
+                    <div><dt>极化</dt><dd>GNSS 圆极化 · 通信线极化<u>沿承 P-02 方案</u></dd></div>
+                    <div><dt>验证状态</dt><dd>S 参数与暗室测试<u>产出设计文档与测试报告</u></dd></div>
+                </dl>
+            </div>
+            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:26px;max-width:74ch">
+                口径说明：原始资料只给了尺寸、隔离度、效率、驻波四项数值，此处原样保留，未改写也未追加。
+                逐通道增益与带宽、端口隔离矩阵、各系统频段边界、工作温度与车规环境试验数据原始资料未提供，故不列。
+            </p>
+        </div>
+    </section>
+
+    <!-- 03 技术方案 -->
+    <section class="sec" id="innovation">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">每条都写清为什么这么做，以及代价落在哪里。</p>
+            </div>
+            <ul class="ink-list rv" style="max-width:74ch">
+                <li><b>接口从壳壁搬到板端</b> —— 为的是产线装配：整箱对位一次固定即可，省掉盒外尾线、壳体开孔与密封件；代价是连接器反力落到 PCB，接口区需要补强与定位基准，这部分与结构团队共同确定。</li>
+                <li><b>五路馈电在单板上重排</b> —— 端口成排后，长波长的 4G LTE 通路与约 5.9 GHz 的 V2X、6 GHz 的 Wi-Fi 6E 通路无法各自径向展开；按单元占位与馈电长度重新分配位置，并优先给 GNSS 接收通路让开发射通路的净距。</li>
+                <li><b>隔离靠接地与布线顺序，而非拉开间距</b> —— 盒体尺寸固定、端口同边布置，间距收益有限；以分层接地、地孔围挡与馈线净距压制互耦，本形态下通道隔离做到 <em>≥ 14 dB</em>。</li>
+                <li><b>全印刷 PCB，取消盒内同轴飞线</b> —— 让一致性来自板厂工艺而不是手工焊接：无尾线即无焊点离散度与节拍波动，成本随批量下降；物理代价是 6 GHz 附近走线损耗高于同轴，需要在通路长度与线宽上收敛。</li>
+                <li><b>接地参考随接口一起迁移</b> —— 板端接口的回流参考是板的接地层而非壳壁，用密集过孔把连接器地、PCB 地层与盒体金属件接续起来，保持回流路径最短；这一步不做实，上面三条隔离结论都不成立。</li>
+                <li><b>验证按判据倒排</b> —— 回损与通道隔离用矢量网络分析仪逐端口扫测，方向图与效率进微波暗室，数据统一整理为测试报告；效率与驻波按整盒口径判定，不逐通道另立标准。</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 04 图档 -->
+    <section class="sec" id="gallery">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">项目图档<em>/ Figures</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">点击放大，滚轮缩放、拖拽平移，方向键翻页。</p>
+            </div>
+            <div class="gal rv" data-gallery>
+                <div class="gal-stage">
+                    <div class="gal-hud">
+                        <span><b>FIG</b><span class="gal-name"></span></span>
+                        <span class="gal-count ct"></span>
+                    </div>
+                    <img src="files/productPysical.webp" alt="产品实物图" data-cap="产品实物图">
+                    <img src="files/productReport.webp" alt="产品报告图" data-cap="产品报告图">
+                    <img src="files/4GndWiFi.webp" alt="4G和WiFi天线正面图" data-cap="4G / Wi-Fi 天线 · 正面">
+                    <img src="files/4GndWiFi2.webp" alt="4G和WiFi天线背面图" data-cap="4G / Wi-Fi 天线 · 背面">
+                    <img src="files/btAntenna.webp" alt="蓝牙天线" data-cap="蓝牙（BT）天线">
+                    <img src="files/v2xAntenna.webp" alt="V2X天线" data-cap="V2X 天线">
+                    <button class="gal-nav p" type="button" aria-label="上一张">&#8249;</button>
+                    <button class="gal-nav n" type="button" aria-label="下一张">&#8250;</button>
                 </div>
-                <div class="gallery-container" onclick="openImageModal()">
-                    <img src="files/productPysical.webp" alt="产品实物图" class="gallery-image active">
-                    <img src="files/productReport.webp" alt="产品报告图" class="gallery-image">
-                    <img src="files/4GndWiFi.webp" alt="4G和WiFi天线正面图" class="gallery-image">
-                    <img src="files/4GndWiFi2.webp" alt="4G和WiFi天线背面图" class="gallery-image">
-                    <img src="files/btAntenna.webp" alt="蓝牙天线" class="gallery-image">
-                    <img src="files/v2xAntenna.webp" alt="V2X天线" class="gallery-image">
-                    
-                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
-                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
+                <div class="gal-thumbs"></div>
+                <p class="gal-cap"><b>FIG 01</b><span></span></p>
+            </div>
+            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:22px">
+                GNSS 通道与整盒接地结构未随原始资料提供图片，故图档只有以上 6 张。
+            </p>
+        </div>
+    </section>
+
+    <!-- 05 成果 -->
+    <section class="sec" id="outcomes">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">05</span>
+                <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">改版是否值得，看的是便利性与射频指标是否同时守住。</p>
+            </div>
+            <div class="outs rv">
+                <div class="out">
+                    <div class="h">多系统合一</div>
+                    <div class="v">5<small> 通道</small></div>
+                    <p>4G LTE / Wi-Fi 6E / BT / V2X / GNSS 共口径紧凑布局，占用空间小。</p>
                 </div>
-                
-                <div class="gallery-indicators">
-                    <span class="indicator active" onclick="currentImage(1)"></span>
-                    <span class="indicator" onclick="currentImage(2)"></span>
-                    <span class="indicator" onclick="currentImage(3)"></span>
-                    <span class="indicator" onclick="currentImage(4)"></span>
-                    <span class="indicator" onclick="currentImage(5)"></span>
-                    <span class="indicator" onclick="currentImage(6)"></span>
+                <div class="out">
+                    <div class="h">通道隔离</div>
+                    <div class="v">&ge; 14<small> dB</small></div>
+                    <p>端口同边布置下由布线与接地达成，通道互扰控制在全盒可用范围。</p>
+                </div>
+                <div class="out">
+                    <div class="h">装配便利性</div>
+                    <div class="v">板端<small> 一次对位</small></div>
+                    <p>免盒外尾线与逐端口插拔，直接装车，安装稳定性提升。</p>
+                </div>
+                <div class="out">
+                    <div class="h">工艺与量产</div>
+                    <div class="v">全印刷<small> PCB</small></div>
+                    <p>无同轴飞线，成本与一致性来自板厂工艺，量产一致性好。</p>
+                </div>
+            </div>
+
+            <h3 class="rv" style="font-size:1.02rem;font-weight:500;margin:44px 0 16px;letter-spacing:-.015em">交付与知识产权</h3>
+            <div class="hon rv rv-d1">
+                <div class="hon-row">
+                    <span class="y">2025</span>
+                    <span class="t"><b>发明专利申请 · 一种多通道车载天线盒</b> <span>· 申请号 CN202511158479.6，本项目的板端接口方案</span></span>
+                    <span class="lv">申请中</span>
+                </div>
+                <div class="hon-row">
+                    <span class="y">2025</span>
+                    <span class="t"><b>设计文档与测试报告</b> <span>· 性能测试、数据分析与工程集成问题闭环记录</span></span>
+                    <span class="lv">实习产出</span>
+                </div>
+            </div>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:28px">
+                关联：<a href="../project2/" style="color:var(--cu)">P-02 · 壳体侧接口款（同功能集）</a> ·
+                <a href="../#experience" style="color:var(--cu)">工作经历 · 江苏骅盛</a> ·
+                <a href="../#publications" style="color:var(--cu)">论文与专利</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- 上一页 / 下一页 -->
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="项目导航">
+            <a href="../project2/">
+                <span class="n">← Previous · P-02</span>
+                <span class="t">集成定位与通信多通道车载天线盒</span>
+            </a>
+            <a href="../project4/" class="rt">
+                <span class="n">Next → · P-04</span>
+                <span class="t">算法辅助全波电磁仿真优化</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>聊聊板端接口的取舍。</h2>
+                <p>多通道同盒隔离、接地参考随接口迁移、用全印刷 PCB 取代同轴尾线的成本账，或者整车厂的装配便利性要求，都可以直接找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
+            </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This project</h5>
+                    <ul>
+                        <li><a href="#overview">01 · 项目概述</a></li>
+                        <li><a href="#specs">02 · 技术规格</a></li>
+                        <li><a href="#innovation">03 · 技术方案</a></li>
+                        <li><a href="#gallery">04 · 项目图档</a></li>
+                        <li><a href="#outcomes">05 · 项目成果</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../">首页</a></li>
+                        <li><a href="../#projects">全部项目</a></li>
+                        <li><a href="../#publications">论文与专利</a></li>
+                        <li><a href="../#experience">工作经历</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
-
-        <!-- Achievements -->
-        <div class="achievements">
-            <h2 class="section-title">项目成果</h2>
-            <div class="achievement-grid">
-                <div class="achievement-item">
-                    <h4>多天线高度集成</h4>
-                    <p>4G/Wi-Fi/BT/V2X/GNSS全频段覆盖</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>高隔离度</h4>
-                    <p>通道间隔离≥14 dB，互扰极低</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>天线盒板端一体化</h4>
-                    <p>直接装车安装，稳定性大幅提升</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>全印刷PCB工艺</h4>
-                    <p>无同轴线，成本大幅降低，量产一致性优</p>
-                </div>
-            </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>P-03 · 板端接口式集成定位与通信多通道车载天线盒</span>
         </div>
     </div>
+</footer>
 
-    <!-- Image Modal -->
-    <div id="imageModal" class="image-modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeImageModal()">&times;</span>
-            <img id="modalImage" class="modal-image" alt="">
-            <button class="modal-nav prev" onclick="changeModalImage(-1)">‹</button>
-            <button class="modal-nav next" onclick="changeModalImage(1)">›</button>
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="zoomImage(-0.2)">-</button>
-                <button class="zoom-btn" onclick="resetZoom()">重置</button>
-                <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
-            </div>
-            <div class="image-info" id="imageInfo">1 / 6</div>
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">P-03</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
+
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
         </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
     </div>
+</div>
 
-    <script>
-        let currentImageIndex = 0;
-        let currentZoom = 1;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0;
-        
-        const images = document.querySelectorAll('.gallery-image');
-        const indicators = document.querySelectorAll('.indicator');
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const imageInfo = document.getElementById('imageInfo');
-
-        // 图片源数据
-        const imageSources = [
-            'files/productPysical.webp',
-            'files/productReport.webp',
-            'files/4GndWiFi.webp',
-            'files/4GndWiFi2.webp',
-            'files/btAntenna.webp',
-            'files/v2xAntenna.webp'
-        ];
-
-        const imageAlts = [
-            '产品实物图',
-            '产品报告',
-            '4G和WiFi天线',
-            '4G和WiFi天线2',
-            '蓝牙天线',
-            'V2X天线'
-        ];
-
-        function showImage(index) {
-            // Hide all images
-            images.forEach(img => img.classList.remove('active'));
-            indicators.forEach(ind => ind.classList.remove('active'));
-            
-            // Show current image
-            images[index].classList.add('active');
-            indicators[index].classList.add('active');
-            
-            // Update image title and counter
-            updateImageTitle(index);
-        }
-
-        function updateImageTitle(index) {
-            const titleElement = document.querySelector('.image-title');
-            const counterElement = document.querySelector('.image-counter');
-            
-            if (titleElement && counterElement) {
-                titleElement.textContent = imageAlts[index];
-                counterElement.textContent = `${index + 1} / ${images.length}`;
-            }
-        }
-        function changeImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= images.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = images.length - 1;
-            }
-            
-            showImage(currentImageIndex);
-        }
-
-        function currentImage(index) {
-            currentImageIndex = index - 1;
-            showImage(currentImageIndex);
-        }
-
-        // 打开图片模态框
-        function openImageModal() {
-            modal.style.display = 'block';
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            updateImageInfo();
-            resetZoom();
-            document.body.style.overflow = 'hidden';
-        }
-
-        // 关闭图片模态框
-        function closeImageModal() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // 模态框中切换图片
-        function changeModalImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= imageSources.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = imageSources.length - 1;
-            }
-            
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            showImage(currentImageIndex);
-            updateImageInfo();
-            resetZoom();
-        }
-
-        // 更新图片信息
-        function updateImageInfo() {
-            imageInfo.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
-        }
-
-        // 缩放图片
-        function zoomImage(delta) {
-            currentZoom += delta;
-            currentZoom = Math.max(0.5, Math.min(3, currentZoom));
-            updateImageTransform();
-        }
-
-        // 重置缩放
-        function resetZoom() {
-            currentZoom = 1;
-            translateX = 0;
-            translateY = 0;
-            updateImageTransform();
-        }
-
-        // 更新图片变换
-        function updateImageTransform() {
-            modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
-        }
-
-        // 鼠标拖拽功能
-        modalImage.addEventListener('mousedown', (e) => {
-            if (currentZoom > 1) {
-                isDragging = true;
-                startX = e.clientX - translateX;
-                startY = e.clientY - translateY;
-                modalImage.style.cursor = 'grabbing';
-            }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                translateX = e.clientX - startX;
-                translateY = e.clientY - startY;
-                updateImageTransform();
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            modalImage.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
-        });
-
-        // 鼠标滚轮缩放
-        modalImage.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoomImage(delta);
-        });
-
-        // 键盘控制
-        document.addEventListener('keydown', (e) => {
-            if (modal.style.display === 'block') {
-                switch(e.key) {
-                    case 'Escape':
-                        closeImageModal();
-                        break;
-                    case 'ArrowLeft':
-                        changeModalImage(-1);
-                        break;
-                    case 'ArrowRight':
-                        changeModalImage(1);
-                        break;
-                    case '+':
-                    case '=':
-                        zoomImage(0.2);
-                        break;
-                    case '-':
-                        zoomImage(-0.2);
-                        break;
-                    case '0':
-                        resetZoom();
-                        break;
-                }
-            }
-        });
-
-        // 点击模态框背景关闭
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeImageModal();
-            }
-        });
-
-        // Handle image load errors
-        images.forEach((img, index) => {
-            img.onerror = function() {
-                this.style.display = 'flex';
-                this.style.alignItems = 'center';
-                this.style.justifyContent = 'center';
-                this.style.background = '#f0f0f0';
-                this.style.color = '#999';
-                this.innerHTML = '<div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div><div>图片加载中...</div></div>';
-            };
-        });
-    </script>
+<script type="application/json" id="site-map">
+[
+  {"href":"../",              "idx":"—", "t":"首页 · 程锦阳",                 "k":"HOME",     "ext":1},
+  {"href":"../#about",        "idx":"01","t":"关于我",                        "k":"ABOUT",    "ext":1},
+  {"href":"../#research",     "idx":"02","t":"研究方向",                      "k":"RESEARCH", "ext":1},
+  {"href":"../#experience",   "idx":"03","t":"工作经历",                      "k":"EXPERIENCE","ext":1},
+  {"href":"../#projects",     "idx":"04","t":"代表性项目",                    "k":"PROJECTS", "ext":1},
+  {"href":"../#publications", "idx":"05","t":"论文与专利",                    "k":"PAPERS",   "ext":1},
+  {"href":"../#honors",       "idx":"06","t":"成果与荣誉",                    "k":"HONORS",   "ext":1},
+  {"href":"../#skills",       "idx":"07","t":"能力矩阵",                      "k":"SKILLS",   "ext":1},
+  {"href":"../project1/",     "idx":"P-01","t":"紧凑型低剖面车载 5G MIMO 天线","k":"ANTENNA",  "ext":1},
+  {"href":"../project2/",     "idx":"P-02","t":"集成定位与通信多通道车载天线盒","k":"ANTENNA",  "ext":1},
+  {"href":"../project3/",     "idx":"P-03","t":"板端接口式车载天线盒",         "k":"ANTENNA",  "ext":1},
+  {"href":"../project4/",     "idx":"P-04","t":"算法辅助全波电磁仿真优化",     "k":"AI / EM",  "ext":1},
+  {"href":"../project5/",     "idx":"P-05","t":"高增益全向车载阵列天线",       "k":"ANTENNA",  "ext":1},
+  {"href":"../project6/",     "idx":"P-06","t":"GNSS 天线及有源射频模块",      "k":"RF",       "ext":1},
+  {"href":"../experience1/",  "idx":"E-01","t":"实习经历 · 江苏骅盛车用电子",   "k":"INTERN",   "ext":1}
+]
+</script>
+<script src="../assets/theme.js"></script>
 </body>
 </html>
-
-
-

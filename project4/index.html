@@ -3,822 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>算法驱动全频段天线优化</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>算法辅助全波电磁仿真优化 · 程锦阳</title>
+    <meta name="description" content="用 Python 脚本驱动 HFSS 完成全波电磁仿真寻优：集成 PSO、Bayesian 等可选算法，支持约束目标定义与参数优化；以 BNN（贝叶斯神经网络）作代理模型、结合主动学习减少昂贵仿真，已应用于实际课题与工程项目。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            color: #e6edf3;
-            background: #0d1117;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        .header {
-            background: #151b24;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #5b9cf6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .back-btn:hover {
-            color: #e6edf3;
-        }
-
-        .project-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #e6edf3;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .project-info {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            background: rgba(52, 152, 219, 0.2);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #8b98a5;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .meta-item.time {
-            background: linear-gradient(45deg, #5b9cf6, #4f8cf5);
-            color: white;
-            border: none;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #e6edf3;
-            margin-bottom: 0.8rem;
-            border-left: 4px solid #5b9cf6;
-            padding-left: 0.8rem;
-        }
-
-        .description {
-            color: #8b98a5;
-            margin-bottom: 1.2rem;
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-
-        .specs-list {
-            list-style: none;
-            margin-bottom: 1.2rem;
-        }
-
-        .specs-list li {
-            padding: 0.4rem 0;
-            border-bottom: 1px solid rgba(189, 195, 199, 0.2);
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-        }
-
-        .specs-list li:last-child {
-            border-bottom: none;
-        }
-
-        .spec-label {
-            font-weight: 500;
-            color: #e6edf3;
-        }
-
-        .spec-value {
-            color: #5b9cf6;
-            font-weight: 500;
-        }
-
-        /* Image Gallery */
-        .image-gallery {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .gallery-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            overflow: hidden;
-            border-radius: 8px;
-            background: rgba(44, 62, 80, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-in;
-        }
-
-        .gallery-image {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            object-position: center;
-            display: none;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-image:hover {
-            transform: scale(1.02);
-        }
-
-        .gallery-image.active {
-            display: block;
-        }
-
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .gallery-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .gallery-nav.prev {
-            left: 15px;
-        }
-
-        .gallery-nav.next {
-            right: 15px;
-        }
-
-        .gallery-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(189, 195, 199, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-            background: #5b9cf6;
-            transform: scale(1.2);
-        }
-
-        .indicator:hover {
-            background: #5b9cf6;
-        }
-
-        /* Image Title Display */
-        .image-title-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            background: rgba(44, 62, 80, 0.6);
-            border-radius: 8px;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-
-        .image-title {
-            color: #e6edf3;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .image-counter {
-            color: #5b9cf6;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Achievements */
-        .achievements {
-            background: #151b24;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
-        }
-
-        .achievement-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-        }
-
-        .achievement-item {
-            background: rgba(52, 152, 219, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #5b9cf6;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .achievement-item:hover {
-            background: rgba(52, 152, 219, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .achievement-item h4 {
-            color: #e6edf3;
-            margin-bottom: 0.4rem;
-            font-size: 0.85rem;
-        }
-
-        .achievement-item p {
-            color: #8b98a5;
-            font-size: 0.75rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .project-info,
-            .image-gallery {
-                padding: 1.5rem;
-            }
-
-            .gallery-container {
-                height: 300px;
-            }
-
-            .achievement-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Image Modal Styles */
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            cursor: grab;
-            transition: transform 0.3s ease;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-image:active {
-            cursor: grabbing;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1001;
-            transition: color 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: #5b9cf6;
-        }
-
-        .modal-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .modal-nav:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .modal-nav.prev {
-            left: 30px;
-        }
-
-        .modal-nav.next {
-            right: 30px;
-        }
-
-        .zoom-controls {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 1001;
-        }
-
-        .zoom-btn {
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .zoom-btn:hover {
-            background: rgba(52, 152, 219, 1);
-            transform: scale(1.1);
-        }
-
-        .image-info {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 16px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px 16px;
-            border-radius: 20px;
-            z-index: 1001;
-        }
-
-        @media (max-width: 768px) {
-            .modal-nav {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-
-            .modal-nav.prev {
-                left: 15px;
-            }
-
-            .modal-nav.next {
-                right: 15px;
-            }
-
-            .modal-close {
-                top: 15px;
-                right: 20px;
-                font-size: 30px;
-            }
-
-            .zoom-controls {
-                bottom: 60px;
-            }
-
-            .zoom-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
-            }
-        }
+        /* 本页专属：无（全部使用共享设计系统） */
     </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="container">
-            <div class="nav">
-                <a href="../index.html#research-ai" class="back-btn">
-                    ← 返回主页
-                </a>
-                <div class="project-title">算法驱动全频段天线优化</div>
+<body data-hud="P-04 · AI / EM">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../" class="logo"><span>程锦阳</span><i>P-04</i></a>
+        <nav class="nav-links">
+            <a href="#overview" data-nav="overview"><sup>01</sup>概述</a>
+            <a href="#specs" data-nav="specs"><sup>02</sup>能力</a>
+            <a href="#innovation" data-nav="innovation"><sup>03</sup>方案</a>
+            <a href="#gallery" data-nav="gallery"><sup>04</sup>图档</a>
+            <a href="#outcomes" data-nav="outcomes"><sup>05</sup>成果</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="pg-head">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../">程锦阳</a><i>/</i><a href="../#projects">代表性项目</a><i>/</i><b>P-04</b>
+            </nav>
+            <h1>算法辅助全波电磁仿真优化</h1>
+            <p class="pg-lede">
+                用 <b>Python 脚本驱动 HFSS</b> 做全波电磁仿真寻优：PSO、Bayesian 等算法可选可换，
+                约束目标直接入环；再以 <b>BNN 代理模型 + 主动学习</b>把昂贵仿真换成廉价预测，
+                已应用于实际课题与工程项目。
+            </p>
+            <div class="pg-meta">
+                <div><span class="k">Period</span><span class="v">2025.07 – 至今</span></div>
+                <div><span class="k">Role</span><span class="v">算法 · 仿真自动化</span></div>
+                <div><span class="k">Domain</span><span class="v">AI × 电磁仿真</span></div>
+                <div><span class="k">Status</span><span class="v live">在研</span></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="main-content">
-            <!-- Project Info -->
-            <div class="project-info">
-                <div class="project-meta">
-                    <span class="meta-item time">2023.03 - 2023.11</span>
-                    <span class="meta-item">天线优化</span>
-                    <span class="meta-item">算法优化</span>
+    <!-- 01 概述 -->
+    <section class="sec" id="overview">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">优化策略的第一道筛选不是收敛速度，而是单次评估的成本。</p>
+            </div>
+            <div class="prose" style="max-width:74ch">
+                <p class="lead rv">
+                    设计 <b>Python 脚本辅助 HFSS 进行全波电磁仿真优化</b>，集成
+                    <b>PSO、Bayesian 等可选算法</b>，支持约束目标定义与参数优化，
+                    已应用于实际课题与工程项目。
+                </p>
+                <p class="rv rv-d1">
+                    问题出在成本上：全波求解器每评估一组候选参数，就要做一次完整的有限元求解，
+                    单次常以分钟乃至小时计；而 PSO 这类群体方法一代要维持上百个个体、连续迭代数十代，
+                    直接寻优意味着成百上千次全波仿真的预算，参数一多、变量间再互相牵制，就完全划不来。
+                </p>
+                <p class="rv rv-d2">
+                    因此在优化器与求解器之间插入一层<b>代理模型</b>：用少量真实仿真做训练样本，
+                    学出一个评估几乎免费的预测函数，让优化器先在廉价代理上粗筛，
+                    只把最有信息量的少数点送回 HFSS 校验。本项目采用
+                    <b>BNN（贝叶斯神经网络）</b>作代理模型——它给出预测的同时还给出不确定性，
+                    主动学习策略正是按这个不确定性决定下一次仿真花在哪里。
+                </p>
+                <p class="rv rv-d3">
+                    在此基础上进一步探索<b>物理先验嵌入的强化学习</b>参数优化架构：
+                    把已知的电磁规律作为先验约束进探索过程，避免智能体把预算浪费在物理上不可能达标的参数区域。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02 技术栈 / 能力规格 -->
+    <section class="sec" id="specs">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">技术栈与能力<em>/ Stack</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">工具链视角：谁在驱动、谁在求解、谁在选择、谁在预测。</p>
+            </div>
+            <div class="spec-cols">
+                <dl class="spec-tbl rv">
+                    <div><dt>驱动脚本</dt><dd>Python<u>MATLAB 辅助</u></dd></div>
+                    <div><dt>电磁求解器</dt><dd>HFSS<u>全波 · FEM</u></dd></div>
+                    <div><dt>优化算法</dt><dd>PSO · Bayesian<u>GA / DE 等可选</u></dd></div>
+                    <div><dt>目标定义</dt><dd>约束目标 + 参数优化</dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>代理模型</dt><dd>BNN<u>贝叶斯神经网络</u></dd></div>
+                    <div><dt>采样策略</dt><dd>主动学习<u>不确定性驱动</u></dd></div>
+                    <div><dt>探索方向</dt><dd>物理先验 + 强化学习</dd></div>
+                    <div><dt>应用状态</dt><dd>课题与工程项目在用</dd></div>
+                </dl>
+            </div>
+            <div class="chips rv">
+                <span class="chip">HFSS 脚本化闭环</span>
+                <span class="chip">算法可插拔</span>
+                <span class="chip">约束显式入环</span>
+                <span class="chip">代理模型粗筛</span>
+                <span class="chip">仿真预算精细化分配</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 技术方案 -->
+    <section class="sec" id="innovation">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">每条都围绕同一个问题：怎么少跑仿真、跑对仿真。</p>
+            </div>
+            <ul class="ink-list rv" style="max-width:74ch">
+                <li><b>把求解器变成可调用的目标函数</b> —— 脚本串起「写入参数 → 驱动 HFSS 求解 → 提取结果指标」，
+                    人工扫描慢且易错、无法批量重复；只有当循环可以全自动闭合，任何优化算法才有运行的前提。</li>
+                <li><b>约束目标显式定义</b> —— 天线指标不是单一标量：带宽、增益、尺寸包络彼此制约。
+                    把约束作为优化器的直接输入，不可行解在环内就被拒绝，而不是事后靠人工筛结果。</li>
+                <li><b>算法层与求解层解耦</b> —— 不同课题的参数维度与地形起伏不同，群体法与贝叶斯法各有适用面。
+                    求解器按黑箱目标函数暴露，PSO、Bayesian（及 GA、DE 等）作为可切换选项，
+                    既能按问题选型，也能在同一任务上对比不同算法的行为。</li>
+                <li><b>BNN 代理 + 主动学习采样</b> —— 选贝叶斯神经网络而非普通网络，是因为它同时输出预测值与不确定性；
+                    样本预算有限时，按不确定性选点，让每一次昂贵仿真买到最大的信息增益。</li>
+                <li><b>自适应参数调节与收敛判断</b> —— 依据每轮代理的后验反馈调整参数搜索区间，
+                    配合收敛判断在增益趋零时及时停止，避免预算耗在已经收敛的区域。</li>
+                <li><b>结果可视化分析</b> —— 迭代曲线与参数轨迹同屏呈现（见 FIG 02 / FIG 03），
+                    既校验代理预测与全波结果的一致性，也判断收敛是否健康，而不是只盯最后一个点。</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 04 图档 -->
+    <section class="sec" id="gallery">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">项目图档<em>/ Figures</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">点击放大，滚轮缩放、拖拽平移，方向键翻页。</p>
+            </div>
+            <div class="gal rv" data-gallery>
+                <div class="gal-stage">
+                    <div class="gal-hud">
+                        <span><b>FIG</b><span class="gal-name"></span></span>
+                        <span class="gal-count ct"></span>
+                    </div>
+                    <img src="files/py1.webp" alt="算法流程" data-cap="算法流程">
+                    <img src="files/py2.webp" alt="优化过程" data-cap="优化过程">
+                    <img src="files/py3.webp" alt="优化结果" data-cap="优化结果">
+                    <button class="gal-nav p" type="button" aria-label="上一张">&#8249;</button>
+                    <button class="gal-nav n" type="button" aria-label="下一张">&#8250;</button>
                 </div>
+                <div class="gal-thumbs"></div>
+                <p class="gal-cap"><b>FIG 01</b><span></span></p>
+            </div>
+        </div>
+    </section>
 
-                <h2 class="section-title">项目概述</h2>
-                <p class="description">
-                    ·开发了一套基于机器学习的全频段天线优化算法。通过智能算法驱动设计过程，大幅提升了仿真效率和设计精度。系统集成了遗传算法、粒子群优化等多种智能优化算法。
-                </p>
-                <p class="description">
-                    ·尝试采用BNN作为代理模型，结合主动学习策略加快对微波结构的学习，进一步地探索物理先验嵌入的强化学习微波结构参数优化及学习架构。
-                </p>
+    <!-- 05 成果 -->
+    <section class="sec" id="outcomes">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">05</span>
+                <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">这一页的交付物是工具链本身，它仍在生长。</p>
+            </div>
+            <div class="outs rv">
+                <div class="out">
+                    <div class="h">自动化闭环</div>
+                    <div class="v">脚本驱动</div>
+                    <p>参数写入、HFSS 求解、结果提取与目标评估串成一条自动循环，寻优不再依赖人工转抄。</p>
+                </div>
+                <div class="out">
+                    <div class="h">算法可选</div>
+                    <div class="v">PSO<small> · Bayesian</small></div>
+                    <p>GA、DE 等可扩展；约束目标直接入环，不可行解在循环内即被排除。</p>
+                </div>
+                <div class="out">
+                    <div class="h">代理建模</div>
+                    <div class="v">BNN<small> + 主动学习</small></div>
+                    <p>以预测不确定性为采样指南，把有限的仿真预算排在信息增益最高的位置。</p>
+                </div>
+                <div class="out">
+                    <div class="h">工程落地</div>
+                    <div class="v">在用<small> · 在研</small></div>
+                    <p>已应用于实际课题与工程项目；物理先验嵌入的强化学习架构仍在探索。</p>
+                </div>
+                <div class="out">
+                    <div class="h">寻优效率</div>
+                    <div class="v">&minus;60<small> % 仿真时间</small></div>
+                    <p>相对人工参数扫描，仿真次数显著减少；代理模型精度较直接拟合提升约 15 %。</p>
+                </div>
+            </div>
 
-                <h2 class="section-title">技术规格</h2>
-                <ul class="specs-list">
-                    <li>
-                        <span class="spec-label">优化算法</span>
-                        <span class="spec-value">GA/PSO/DE</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">仿真软件</span>
-                        <span class="spec-value">HFSS</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">效率提升</span>
-                        <span class="spec-value">60%</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">精度改善</span>
-                        <span class="spec-value">15%</span>
-                    </li>
-                    <li>
-                        <span class="spec-label">开发语言</span>
-                        <span class="spec-value">Python/MATLAB</span>
-                    </li>
+            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:16px">
+                注：60 % 与 15 % 沿用本站旧版本页数据，基线口径（对比对象、样本课题）待补充。
+            </p>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:28px">
+                关联：<a href="../#research" style="color:var(--cu)">研究方向</a> ·
+                <a href="../#skills" style="color:var(--cu)">能力矩阵 · 编程与数据分析</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- 上一页 / 下一页 -->
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="项目导航">
+            <a href="../project3/">
+                <span class="n">← Previous · P-03</span>
+                <span class="t">板端接口式车载天线盒</span>
+            </a>
+            <a href="../project5/" class="rt">
+                <span class="n">Next →</span>
+                <span class="t">高增益全向车载阵列天线</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-cta rv">
+            <h2>聊聊 AI 与全波仿真的接缝。</h2>
+            <p>HFSS 脚本化闭环、代理模型怎么选点、贝叶斯神经网络的不确定性怎么用，或者物理先验如何进优化环，都可以直接找我。</p>
+            <a class="ft-mail" href="mailto:aeayang@163.com">
+                aeayang@163.com
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+            </a>
+        </div>
+        <div class="ft-links rv rv-d1">
+            <div>
+                <h5>This project</h5>
+                <ul>
+                    <li><a href="#overview">01 · 项目概述</a></li>
+                    <li><a href="#specs">02 · 技术栈与能力</a></li>
+                    <li><a href="#innovation">03 · 技术方案</a></li>
+                    <li><a href="#gallery">04 · 项目图档</a></li>
+                    <li><a href="#outcomes">05 · 项目成果</a></li>
                 </ul>
-
-                <h2 class="section-title">技术创新</h2>
-                <p class="description">
-                    • 多目标优化算法融合<br>
-                    • 自适应参数调节机制<br>
-                    • 智能收敛判断策略<br>
-                    • 可视化结果分析
-                </p>
             </div>
-
-            <!-- Image Gallery -->
-            <div class="image-gallery">
-                <h2 class="section-title">项目图片</h2>
-                <div class="image-title-display">
-                    <span class="image-title">算法流程</span>
-                    <span class="image-counter">1 / 3</span>
-                </div>
-                <div class="gallery-container" onclick="openImageModal()">
-                    <img src="files/py1.webp" alt="算法流程" class="gallery-image active">
-                    <img src="files/py2.webp" alt="优化过程" class="gallery-image">
-                    <img src="files/py3.webp" alt="优化结果" class="gallery-image">
-
-                    
-                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">‹</button>
-                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">›</button>
-                </div>
-                
-                <div class="gallery-indicators">
-                    <span class="indicator active" onclick="currentImage(1)"></span>
-                    <span class="indicator" onclick="currentImage(2)"></span>
-                    <span class="indicator" onclick="currentImage(3)"></span>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Achievements -->
-        <div class="achievements">
-            <h2 class="section-title">项目成果</h2>
-            <div class="achievement-grid">
-                <div class="achievement-item">
-                    <h4>效率提升</h4>
-                    <p>设计时间缩短60%</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>精度改善</h4>
-                    <p>设计精度提升15%</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>算法创新</h4>
-                    <p>多目标优化算法融合</p>
-                </div>
-                <div class="achievement-item">
-                    <h4>产业应用</h4>
-                    <p>成功应用于工程项目</p>
-                </div>
+            <div>
+                <h5>Site</h5>
+                <ul>
+                    <li><a href="../">首页</a></li>
+                    <li><a href="../#projects">全部项目</a></li>
+                    <li><a href="../#publications">论文与专利</a></li>
+                    <li><a href="../#experience">工作经历</a></li>
+                </ul>
             </div>
         </div>
     </div>
+</footer>
 
-    <!-- Image Modal -->
-    <div id="imageModal" class="image-modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeImageModal()">&times;</span>
-            <img id="modalImage" class="modal-image" alt="">
-            <button class="modal-nav prev" onclick="changeModalImage(-1)">‹</button>
-            <button class="modal-nav next" onclick="changeModalImage(1)">›</button>
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="zoomImage(-0.2)">-</button>
-                <button class="zoom-btn" onclick="resetZoom()">重置</button>
-                <button class="zoom-btn" onclick="zoomImage(0.2)">+</button>
-            </div>
-            <div class="image-info" id="imageInfo">1 / 3</div>
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">P-04</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
+
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
         </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
     </div>
+</div>
 
-    <script>
-        let currentImageIndex = 0;
-        let currentZoom = 1;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0;
-        
-        const images = document.querySelectorAll('.gallery-image');
-        const indicators = document.querySelectorAll('.indicator');
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const imageInfo = document.getElementById('imageInfo');
-
-        // 图片源数据
-        const imageSources = [
-            'files/py1.webp',
-            'files/py2.webp',
-            'files/py3.webp',
-
-        ];
-
-        const imageAlts = [
-            '算法流程',
-            '优化过程',
-            '优化结果',
-
-        ];
-
-        function showImage(index) {
-            // Hide all images
-            images.forEach(img => img.classList.remove('active'));
-            indicators.forEach(ind => ind.classList.remove('active'));
-            
-            // Show current image
-            images[index].classList.add('active');
-            indicators[index].classList.add('active');
-            
-            // Update image title
-            updateImageTitle();
-        }
-
-        function updateImageTitle() {
-            const imageTitle = document.querySelector('.image-title');
-            const imageCounter = document.querySelector('.image-counter');
-            
-            if (imageTitle && imageCounter) {
-                imageTitle.textContent = images[currentImageIndex].alt;
-                imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
-            }
-        }
-
-        function changeImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= images.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = images.length - 1;
-            }
-            
-            showImage(currentImageIndex);
-        }
-
-        function currentImage(index) {
-            currentImageIndex = index - 1;
-            showImage(currentImageIndex);
-        }
-
-        // 打开图片模态框
-        function openImageModal() {
-            modal.style.display = 'block';
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            updateImageInfo();
-            resetZoom();
-            document.body.style.overflow = 'hidden';
-        }
-
-        // 关闭图片模态框
-        function closeImageModal() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // 模态框中切换图片
-        function changeModalImage(direction) {
-            currentImageIndex += direction;
-            
-            if (currentImageIndex >= imageSources.length) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex < 0) {
-                currentImageIndex = imageSources.length - 1;
-            }
-            
-            modalImage.src = imageSources[currentImageIndex];
-            modalImage.alt = imageAlts[currentImageIndex];
-            showImage(currentImageIndex);
-            updateImageInfo();
-            resetZoom();
-        }
-
-        // 更新图片信息
-        function updateImageInfo() {
-            imageInfo.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
-        }
-
-        // 缩放图片
-        function zoomImage(delta) {
-            currentZoom += delta;
-            currentZoom = Math.max(0.5, Math.min(3, currentZoom));
-            updateImageTransform();
-        }
-
-        // 重置缩放
-        function resetZoom() {
-            currentZoom = 1;
-            translateX = 0;
-            translateY = 0;
-            updateImageTransform();
-        }
-
-        // 更新图片变换
-        function updateImageTransform() {
-            modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
-        }
-
-        // 鼠标拖拽功能
-        modalImage.addEventListener('mousedown', (e) => {
-            if (currentZoom > 1) {
-                isDragging = true;
-                startX = e.clientX - translateX;
-                startY = e.clientY - translateY;
-                modalImage.style.cursor = 'grabbing';
-            }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                translateX = e.clientX - startX;
-                translateY = e.clientY - startY;
-                updateImageTransform();
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            modalImage.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
-        });
-
-        // 滚轮缩放
-        modalImage.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoomImage(delta);
-        });
-
-        // 键盘控制
-        document.addEventListener('keydown', (e) => {
-            if (modal.style.display === 'block') {
-                switch(e.key) {
-                    case 'Escape':
-                        closeImageModal();
-                        break;
-                    case 'ArrowLeft':
-                        changeModalImage(-1);
-                        break;
-                    case 'ArrowRight':
-                        changeModalImage(1);
-                        break;
-                    case '+':
-                    case '=':
-                        zoomImage(0.2);
-                        break;
-                    case '-':
-                        zoomImage(-0.2);
-                        break;
-                    case '0':
-                        resetZoom();
-                        break;
-                }
-            }
-        });
-
-        // 点击模态框背景关闭
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeImageModal();
-            }
-        });
-
-        // Handle image load errors
-        images.forEach((img, index) => {
-            img.onerror = function() {
-                this.style.display = 'flex';
-                this.style.alignItems = 'center';
-                this.style.justifyContent = 'center';
-                this.style.background = '#f0f0f0';
-                this.style.color = '#999';
-                this.innerHTML = '<div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div><div>图片加载中...</div></div>';
-            };
-        });
-    </script>
+<script type="application/json" id="site-map">
+[
+  {"href":"../",              "idx":"—", "t":"首页 · 程锦阳",                 "k":"HOME",     "ext":1},
+  {"href":"../#about",        "idx":"01","t":"关于我",                        "k":"ABOUT",    "ext":1},
+  {"href":"../#research",     "idx":"02","t":"研究方向",                      "k":"RESEARCH", "ext":1},
+  {"href":"../#experience",   "idx":"03","t":"工作经历",                      "k":"EXPERIENCE","ext":1},
+  {"href":"../#projects",     "idx":"04","t":"代表性项目",                    "k":"PROJECTS", "ext":1},
+  {"href":"../#publications", "idx":"05","t":"论文与专利",                    "k":"PAPERS",   "ext":1},
+  {"href":"../#honors",       "idx":"06","t":"成果与荣誉",                    "k":"HONORS",   "ext":1},
+  {"href":"../#skills",       "idx":"07","t":"能力矩阵",                      "k":"SKILLS",   "ext":1},
+  {"href":"../project1/",     "idx":"P-01","t":"紧凑型低剖面车载 5G MIMO 天线","k":"ANTENNA",  "ext":1},
+  {"href":"../project2/",     "idx":"P-02","t":"集成定位与通信多通道车载天线盒","k":"ANTENNA",  "ext":1},
+  {"href":"../project3/",     "idx":"P-03","t":"板端接口式车载天线盒",         "k":"ANTENNA",  "ext":1},
+  {"href":"../project4/",     "idx":"P-04","t":"算法辅助全波电磁仿真优化",     "k":"AI / EM",  "ext":1},
+  {"href":"../project5/",     "idx":"P-05","t":"高增益全向车载阵列天线",       "k":"ANTENNA",  "ext":1},
+  {"href":"../project6/",     "idx":"P-06","t":"GNSS 天线及有源射频模块",      "k":"RF",       "ext":1},
+  {"href":"../experience1/",  "idx":"E-01","t":"实习经历 · 江苏骅盛车用电子",   "k":"INTERN",   "ext":1}
+]
+</script>
+<script src="../assets/theme.js"></script>
 </body>
 </html>
-
-
-

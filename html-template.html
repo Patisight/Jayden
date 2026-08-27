@@ -1,44 +1,237 @@
 <!DOCTYPE html>
+<!--
+  新建内容页的骨架。必须保留的部分用 [契约] 注释标出，
+  theme.js 按 id / class 接线，改名字就会丢功能。
+
+  编码约定（见 encoding-best-practices.md）：
+    1. 文件保存为 UTF-8 无 BOM
+    2. charset 声明必须在 <head> 前 1024 字节内
+    3. <html lang="zh-CN">
+    4. 提交前跑：node tools/check-site.js && node tools/verify-render.js <目录名>
+
+  样式约定：
+    - 不在页面内复制调色板。所有颜色/字体/间距取 assets/theme.css 的 :root 令牌
+      (--ink-*/--line*/--text/--muted/--dim/--cu/--sig)
+    - 页面专属样式写在一个短 <style> 里，只覆写、不重复
+    - 图标一律用内联 SVG，禁止 emoji
+    - 交互一律由 assets/theme.js 接线，禁止内联 onclick/onload
+    - HTML 属性值内禁止 ASCII 双引号，中文引用用「」；比较符号写 &lt; &gt;
+-->
 <html lang="zh-CN">
 <head>
-    <!-- 
-    防乱码最佳实践模板
-    1. 确保文件保存为UTF-8无BOM格式
-    2. charset声明必须在<head>的前1024字节内
-    3. 使用lang属性指定页面语言
-    -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>页面标题</title>
-    
-    <!-- 可选：添加HTTP头部指令 -->
-    <meta http-equiv="Content-Language" content="zh-CN">
-    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>页面标题 · 程锦阳</title>
+    <meta name="description" content="一句话摘要，用于搜索结果与分享卡片。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
     <style>
-        /* CSS样式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Microsoft YaHei', 'SimSun', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f5f5f5;
-        }
+        /* 本页专属样式。没有就不要写内容，保留空块即可。 */
     </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body>
-    <!-- 页面内容 -->
-    <h1>中文标题测试</h1>
-    <p>这是一个防乱码的HTML模板示例。</p>
-    
-    <script>
-        // JavaScript代码
-        console.log('中文字符测试');
-    </script>
+<!-- [契约] data-hud：子页滚动到顶时左下角 HUD 的页面级标签，缺省会显示 HOME -->
+<body data-hud="XX · 页面名">
+
+<!-- [契约] 滚动进度条 -->
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<!-- [契约] id="hd"：滚动后加 .pinned -->
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../" class="logo"><span>程锦阳</span><i>标签</i></a>
+        <!-- [契约] a[data-nav] 的值必须等于对应 section 的 id，滚动时高亮靠它 -->
+        <nav class="nav-links">
+            <a href="#one" data-nav="one"><sup>01</sup>第一节</a>
+            <a href="#two" data-nav="two"><sup>02</sup>第二节</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="pg-head">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../">程锦阳</a><i>/</i><a href="../#projects">代表性项目</a><i>/</i><b>XX</b>
+            </nav>
+            <!-- [契约] 全站必须且只能有一个 <h1> -->
+            <h1>页面主标题</h1>
+            <p class="pg-lede">一句话定位，<b>加粗关键词</b>。</p>
+            <div class="pg-meta">
+                <div><span class="k">Period</span><span class="v">2025.01 – 2025.06</span></div>
+                <div><span class="k">Role</span><span class="v">设计与实测</span></div>
+                <div><span class="k">Status</span><span class="v live">已交付</span></div>
+            </div>
+        </div>
+    </div>
+
+    <section class="sec" id="one">
+        <div class="wrap">
+            <!-- [契约] .sec-idx 被 HUD 读取；.sec-t 内 <em> 是英文副标题，会被裁掉不入导航 -->
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">第一节<em>/ Section</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">一句有信息量的判断，不要写空话。</p>
+            </div>
+            <div class="prose" style="max-width:74ch">
+                <p class="lead rv">首段用 <b>.lead</b>，字号略大。</p>
+                <p class="rv rv-d1">正文段落。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="sec" id="two">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">规格<em>/ Specifications</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">交付指标。</p>
+            </div>
+            <!-- 两列布局：外层 .spec-cols；单列则直接用 .spec-tbl -->
+            <div class="spec-cols">
+                <dl class="spec-tbl rv">
+                    <div><dt>参数名</dt><dd>&lt; 3 dB<u>附注</u></dd></div>
+                    <div><dt>参数名</dt><dd>数值</dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>参数名</dt><dd>数值</dd></div>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <!-- [契约] 图档：.gal-thumbs 留空由 JS 生成；灯箱也由 JS 注入，不要自己写；
+         stage 内 <img> 不要加 loading="lazy"（JS 需立即读 src） -->
+    <section class="sec" id="gallery">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">图档<em>/ Figures</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">点击放大，滚轮缩放、拖拽平移，方向键翻页。</p>
+            </div>
+            <div class="gal rv" data-gallery>
+                <div class="gal-stage">
+                    <div class="gal-hud">
+                        <span><b>FIG</b><span class="gal-name"></span></span>
+                        <span class="gal-count ct"></span>
+                    </div>
+                    <img src="files/figure1.webp" alt="图一说明" data-cap="图一说明">
+                    <img src="files/figure2.webp" alt="图二说明" data-cap="图二说明">
+                    <button class="gal-nav p" type="button" aria-label="上一张">&#8249;</button>
+                    <button class="gal-nav n" type="button" aria-label="下一张">&#8250;</button>
+                </div>
+                <div class="gal-thumbs"></div>
+                <p class="gal-cap"><b>FIG 01</b><span></span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 上/下页；单页可用 ../ 返回 -->
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="页面导航">
+            <a href="../project5/">
+                <span class="n">← Previous · P-05</span>
+                <span class="t">上一个页面</span>
+            </a>
+            <a href="../" class="rt">
+                <span class="n">Next →</span>
+                <span class="t">返回全部项目</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<!-- [契约] footer 也在 section[id] 采集范围内，用 data-hud 给 HUD 标签 -->
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>联系我。</h2>
+                <p>可以聊什么，一句话说清。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
+            </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This page</h5>
+                    <ul>
+                        <li><a href="#one">01 · 第一节</a></li>
+                        <li><a href="#two">02 · 规格</a></li>
+                        <li><a href="#gallery">03 · 图档</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../">首页</a></li>
+                        <li><a href="../#projects">全部项目</a></li>
+                        <li><a href="../#publications">论文与专利</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>页面编号 · 页面名</span>
+        </div>
+    </div>
+</footer>
+
+<!-- [契约] 四个 id 缺一不可 -->
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">PAGE</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
+
+<!-- [契约] 命令面板：#palette #palInput #palList -->
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
+    </div>
+</div>
+
+<!-- [契约] 跨页跳转项：从已发布页面原样复制，不要逐页手改文案 -->
+<script type="application/json" id="site-map">
+[
+  {"href":"../",              "idx":"—",   "t":"首页 · 程锦阳",               "k":"HOME",       "ext":1},
+  {"href":"../#about",        "idx":"01",  "t":"关于我",                      "k":"ABOUT",      "ext":1},
+  {"href":"../#research",     "idx":"02",  "t":"研究方向",                    "k":"RESEARCH",   "ext":1},
+  {"href":"../#experience",   "idx":"03",  "t":"工作经历",                    "k":"EXPERIENCE", "ext":1},
+  {"href":"../#projects",     "idx":"04",  "t":"代表性项目",                  "k":"PROJECTS",   "ext":1},
+  {"href":"../#publications", "idx":"05",  "t":"论文与专利",                  "k":"PAPERS",     "ext":1},
+  {"href":"../#honors",       "idx":"06",  "t":"成果与荣誉",                  "k":"HONORS",     "ext":1},
+  {"href":"../#skills",       "idx":"07",  "t":"能力矩阵",                    "k":"SKILLS",     "ext":1},
+  {"href":"../project1/",     "idx":"P-01","t":"紧凑型低剖面车载 5G MIMO 天线","k":"ANTENNA",    "ext":1},
+  {"href":"../project2/",     "idx":"P-02","t":"集成定位与通信多通道车载天线盒","k":"ANTENNA",    "ext":1},
+  {"href":"../project3/",     "idx":"P-03","t":"板端接口式车载天线盒",         "k":"ANTENNA",    "ext":1},
+  {"href":"../project4/",     "idx":"P-04","t":"算法辅助全波电磁仿真优化",     "k":"AI / EM",    "ext":1},
+  {"href":"../project5/",     "idx":"P-05","t":"高增益全向车载阵列天线",       "k":"ANTENNA",    "ext":1},
+  {"href":"../project6/",     "idx":"P-06","t":"GNSS 天线及有源射频模块",      "k":"RF",         "ext":1},
+  {"href":"../experience1/",  "idx":"E-01","t":"实习经历 · 江苏骅盛车用电子",   "k":"INTERN",     "ext":1}
+]
+</script>
+<script src="../assets/theme.js"></script>
 </body>
 </html>
