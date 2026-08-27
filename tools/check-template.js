@@ -42,11 +42,14 @@ chk('属性引号成对', qBad, 0);
 chk('属性值无裸 < >', gBad, 0);
 
 // theme.js 接线点必须全部存在，否则模板生成的页面会静默失能
+// site-map 已收归 theme.js 单一来源；页面改为声明 data-root
 const NEED = ['rulerFill', 'hd', 'palOpen', 'palette', 'palInput', 'palList',
-              'hudSec', 'hudName', 'hudPct', 'topBtn', 'site-map'];
+              'hudSec', 'hudName', 'hudPct', 'topBtn'];
 const have = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]));
 const missing = NEED.filter(id => !have.has(id));
 chk('theme.js 接线 id 齐备', missing.join(',') || 'all', 'all');
+chk('data-root 已声明', /\bdata-root="[^"]+"/.test(html), true);
+chk('不应再有页面级 site-map 副本', /id="site-map"/.test(html), false);
 for (const cls of ['data-gallery', 'gal-stage', 'gal-name', 'gal-count', 'gal-thumbs', 'gal-cap', 'data-hud', 'data-nav', 'sec-idx', 'sec-t']) {
   chk('标记契约 .' + cls, html.includes(cls), true);
 }

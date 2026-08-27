@@ -16,7 +16,7 @@
         .hero { position: relative; padding: 168px 0 0; overflow: hidden; }
         .hero-glow { position: absolute; top: -30%; right: -10%; width: 1100px; height: 900px; z-index: 0; background: radial-gradient(circle at 50% 50%, rgba(207, 138, 82, .10), transparent 62%); pointer-events: none; }
         .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 64px; align-items: center; position: relative; z-index: 1; }
-        .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; font-family: var(--mono); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+        .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; font-family: var(--mono); font-size: 0.8rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
         .eyebrow .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--sig); box-shadow: 0 0 0 0 rgba(79, 209, 192, .5); animation: pulse 2.4s infinite; }
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(79, 209, 192, .45); }
@@ -32,7 +32,7 @@
         .hero-lede { color: var(--muted); font-size: .95rem; max-width: 52ch; font-weight: 400; }
         .hero-lede b { color: var(--text); font-weight: 500; }
         .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
-        .contact-strip { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 40px; font-family: var(--mono); font-size: .76rem; color: var(--dim); }
+        .contact-strip { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 40px; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); }
         .contact-strip a, .contact-strip span { display: inline-flex; align-items: center; gap: 7px; transition: color .3s; }
         .contact-strip a:hover { color: var(--cu); }
         .contact-strip svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.4; }
@@ -52,12 +52,12 @@
         .scope .needle-tip { fill: var(--cu); }
         .scope .hub { fill: var(--ink-0); stroke: var(--line-3); stroke-width: 1; }
         .scope .frame { fill: none; stroke: var(--line-2); stroke-width: 1; }
-        .scope-cap { position: absolute; left: 0; bottom: -6px; display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--mono); font-size: .68rem; color: var(--dim); }
+        .scope-cap { position: absolute; left: 0; bottom: -6px; display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); }
         .scope-cap i { font-style: normal; display: inline-flex; align-items: center; gap: 6px; }
         .scope-cap i::before { content: ''; width: 12px; height: 1.5px; background: currentColor; }
         .scope-cap .k-pat { color: var(--cu); }
         .scope-cap .k-omni { color: var(--sig); }
-        .readout { position: absolute; top: 4px; right: 0; text-align: right; font-family: var(--mono); font-size: .7rem; color: var(--muted); line-height: 1.65; }
+        .readout { position: absolute; top: 4px; right: 0; text-align: right; font-family: var(--mono); font-size: 0.8rem; color: var(--muted); line-height: 1.65; }
         .readout b { color: var(--sig); font-weight: 500; }
         .readout .u { color: var(--dim); }
 
@@ -68,8 +68,8 @@
         .ledger .v { font-family: var(--mono); font-size: clamp(1.7rem, 3.4vw, 2.5rem); font-weight: 500; letter-spacing: -.03em; color: var(--text); line-height: 1; }
         .ledger .v em { font-style: normal; color: var(--cu); }
         .ledger .v small { font-size: .42em; color: var(--dim); letter-spacing: .02em; }
-        .ledger .k { margin-top: 12px; font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
-        .ledger .s { margin-top: 4px; font-size: .78rem; color: var(--muted); font-weight: 400; }
+        .ledger .k { margin-top: 12px; font-family: var(--mono); font-size: 0.8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+        .ledger .s { margin-top: 4px; font-size: 0.8rem; color: var(--muted); font-weight: 400; }
 
         /* 关于 */
         .about { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: 64px; align-items: start; }
@@ -77,50 +77,50 @@
         .portrait .pf { position: relative; border: 1px solid var(--line-2); padding: 7px; background: var(--ink-1); }
         /* 人像一律保持原始色彩：不加灰度、不加压暗遮罩 */
         .portrait img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .portrait .tag-row { margin-top: 10px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: .66rem; color: var(--dim); letter-spacing: .06em; }
+        .portrait .tag-row { margin-top: 10px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); letter-spacing: .06em; }
         .facts { display: grid; margin-top: 18px; border-top: 1px solid var(--line); }
-        .facts div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: .7rem; }
+        .facts div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 0.8rem; }
         .facts div span:first-child { color: var(--dim); letter-spacing: .04em; }
         .facts div span:last-child { color: var(--muted); text-align: right; }
         .edu { display: grid; margin: 34px 0 8px; border-top: 1px solid var(--line); }
         .edu-row { display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; padding: 18px 0; border-bottom: 1px solid var(--line); transition: background .35s var(--ease); }
         .edu-row:hover { background: rgba(255, 255, 255, .014); }
         .edu-row h3 { font-size: .98rem; font-weight: 500; }
-        .edu-row h3 i { font-style: normal; color: var(--dim); font-weight: 400; margin-left: 10px; font-size: .84rem; }
-        .edu-row .when { font-family: var(--mono); font-size: .72rem; color: var(--dim); align-self: center; white-space: nowrap; }
-        .edu-row .courses { grid-column: 1 / -1; font-size: .82rem; color: var(--muted); font-weight: 400; }
-        .edu-row .courses u { text-decoration: none; color: var(--dim); font-family: var(--mono); font-size: .7rem; letter-spacing: .06em; margin-right: 8px; }
+        .edu-row h3 i { font-style: normal; color: var(--dim); font-weight: 400; margin-left: 10px; font-size: 0.95rem; }
+        .edu-row .when { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); align-self: center; white-space: nowrap; }
+        .edu-row .courses { grid-column: 1 / -1; font-size: 0.95rem; color: var(--muted); font-weight: 400; }
+        .edu-row .courses u { text-decoration: none; color: var(--dim); font-family: var(--mono); font-size: 0.8rem; letter-spacing: .06em; margin-right: 8px; }
 
         /* 研究方向 */
         .domains { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
         .domain { background: var(--ink-1); padding: 34px 30px 30px; position: relative; transition: background .45s var(--ease); }
         .domain:hover { background: var(--ink-2); }
         .domain .gl { width: 30px; height: 30px; stroke: var(--cu); fill: none; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 26px; }
-        .domain .no { position: absolute; top: 30px; right: 30px; font-family: var(--mono); font-size: .66rem; color: var(--line-3); letter-spacing: .08em; }
+        .domain .no { position: absolute; top: 30px; right: 30px; font-family: var(--mono); font-size: 0.8rem; color: var(--line-3); letter-spacing: .08em; }
         .domain:hover .no { color: var(--cu); }
         .domain h3 { font-size: 1.06rem; font-weight: 500; letter-spacing: -.012em; margin-bottom: 10px; }
-        .domain h3 em { font-style: normal; display: block; font-family: var(--mono); font-size: .64rem; color: var(--dim); letter-spacing: .14em; text-transform: uppercase; margin-top: 5px; }
-        .domain p { color: var(--muted); font-size: .87rem; font-weight: 400; }
+        .domain h3 em { font-style: normal; display: block; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); letter-spacing: .14em; text-transform: uppercase; margin-top: 5px; }
+        .domain p { color: var(--muted); font-size: 0.95rem; font-weight: 400; }
         .domain .dl { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 7px; }
-        .domain .dl div { display: flex; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: .7rem; }
+        .domain .dl div { display: flex; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: 0.8rem; }
         .domain .dl span:first-child { color: var(--dim); }
         .domain .dl span:last-child { color: var(--sig); }
 
         /* 频段带 */
         .band { --gut: 176px; margin-top: 1px; border: 1px solid var(--line); border-top: 0; background: var(--ink-1); padding: 28px 30px 30px; }
         .band-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 26px; gap: 16px; flex-wrap: wrap; }
-        .band-h h4 { font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
-        .band-h span { font-family: var(--mono); font-size: .68rem; color: var(--dim); }
+        .band-h h4 { font-family: var(--mono); font-size: 0.8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+        .band-h span { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); }
         .axis { position: relative; height: 2px; margin-left: var(--gut); background: linear-gradient(90deg, var(--line-2), var(--cu-dim), var(--line-2)); }
         .axis .mark { position: absolute; top: 0; width: 1px; height: 8px; background: var(--line-2); transform: translateY(-1px); }
-        .axis .maj { position: absolute; top: 10px; transform: translateX(-50%); font-family: var(--mono); font-size: .64rem; color: var(--dim); }
+        .axis .maj { position: absolute; top: 10px; transform: translateX(-50%); font-family: var(--mono); font-size: 0.8rem; color: var(--dim); }
         .rows { margin-top: 28px; }
         .row { display: grid; grid-template-columns: var(--gut) 1fr; align-items: center; height: 23px; }
-        .row .lab { font-family: var(--mono); font-size: .68rem; color: var(--muted); text-align: right; padding-right: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .3s; }
+        .row .lab { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); text-align: right; padding-right: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .3s; }
         .row .lab em { font-style: normal; color: var(--dim); }
         .row:hover .lab { color: var(--cu); }
         .row.sep { height: 26px; align-items: end; }
-        .row.sep .lab { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+        .row.sep .lab { font-size: 0.8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
         .row.sep .trk { border-top: 1px solid var(--line); height: 1px; margin-bottom: 12px; }
         .trk { position: relative; height: 23px; }
         .trk::before { content: ''; position: absolute; inset: 50% 0 auto 0; height: 1px; background: var(--line); opacity: .5; }
@@ -145,78 +145,78 @@
         /* 经历时间轴 */
         .tl-item { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 34px; padding: 30px 0; border-top: 1px solid var(--line); }
         .tl-item:last-child { border-bottom: 1px solid var(--line); }
-        .tl-when { font-family: var(--mono); font-size: .74rem; color: var(--dim); padding-top: 4px; }
+        .tl-when { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); padding-top: 4px; }
         .tl-when b { display: block; color: var(--cu); font-weight: 400; margin-top: 6px; }
         .tl-body h3 { font-size: 1.08rem; font-weight: 500; letter-spacing: -.012em; }
         .tl-body h3 span { color: var(--dim); font-weight: 400; }
-        .tl-org { font-size: .84rem; color: var(--muted); margin: 5px 0 14px; font-weight: 400; }
+        .tl-org { font-size: 0.95rem; color: var(--muted); margin: 5px 0 14px; font-weight: 400; }
         .tl-org i { font-style: normal; color: var(--cu); }
         .tl-list { display: grid; gap: 8px; }
-        .tl-list li { position: relative; padding-left: 18px; color: var(--muted); font-size: .88rem; font-weight: 400; }
+        .tl-list li { position: relative; padding-left: 18px; color: var(--muted); font-size: 0.95rem; font-weight: 400; }
         .tl-list li::before { content: ''; position: absolute; left: 0; top: .68em; width: 7px; height: 1px; background: var(--cu); }
         .tl-list li b { color: var(--text); font-weight: 500; }
         .tl-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
-        .tl-link { display: inline-flex; align-items: center; gap: 7px; margin-top: 18px; font-family: var(--mono); font-size: .74rem; color: var(--cu); }
+        .tl-link { display: inline-flex; align-items: center; gap: 7px; margin-top: 18px; font-family: var(--mono); font-size: 0.8rem; color: var(--cu); }
         .tl-link .arw { transition: transform .3s var(--ease); }
         .tl-link:hover .arw { transform: translateX(4px); }
 
         /* 项目 */
         .filters { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
-        .filters button { cursor: pointer; font-family: var(--mono); font-size: .72rem; letter-spacing: .05em; color: var(--dim); background: transparent; border: 1px solid var(--line); padding: 7px 13px; border-radius: 1px; transition: color .3s, border-color .3s, background .3s; }
+        .filters button { cursor: pointer; font-family: var(--mono); font-size: 0.8rem; letter-spacing: .05em; color: var(--dim); background: transparent; border: 1px solid var(--line); padding: 7px 13px; border-radius: 1px; transition: color .3s, border-color .3s, background .3s; }
         .filters button:hover { color: var(--text); border-color: var(--line-2); }
         .filters button.on { color: var(--ink-0); background: var(--cu); border-color: var(--cu); }
-        .filters .count { margin-left: auto; align-self: center; font-family: var(--mono); font-size: .7rem; color: var(--dim); }
+        .filters .count { margin-left: auto; align-self: center; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); }
         .prj { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
         .prj-card { display: flex; flex-direction: column; padding: 26px 24px 22px; }
         .prj-card[hidden] { display: none; }
         .prj-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
-        .prj-no { font-family: var(--mono); font-size: .66rem; color: var(--line-3); letter-spacing: .1em; }
+        .prj-no { font-family: var(--mono); font-size: 0.8rem; color: var(--line-3); letter-spacing: .1em; }
         .prj-card:hover .prj-no { color: var(--cu); }
-        .prj-time { font-family: var(--mono); font-size: .66rem; color: var(--dim); white-space: nowrap; }
+        .prj-time { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); white-space: nowrap; }
         .prj-card h3 { font-size: .99rem; font-weight: 500; line-height: 1.45; letter-spacing: -.012em; margin-bottom: 10px; transition: color .3s; }
         .prj-card:hover h3 { color: var(--cu); }
-        .prj-card p { color: var(--muted); font-size: .84rem; font-weight: 400; flex: 1; }
+        .prj-card p { color: var(--muted); font-size: 0.95rem; font-weight: 400; flex: 1; }
         .specs { display: grid; gap: 5px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
-        .specs div { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: .69rem; }
+        .specs div { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 0.8rem; }
         .specs span:first-child { color: var(--dim); }
         .specs span:last-child { color: var(--sig); }
         .prj-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-        .prj-foot .go { font-family: var(--mono); font-size: .7rem; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; transition: color .3s, gap .3s var(--ease); }
+        .prj-foot .go { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; transition: color .3s, gap .3s var(--ease); }
         .prj-card:hover .prj-foot .go { color: var(--cu); gap: 11px; }
-        .prj-out { font-family: var(--mono); font-size: .64rem; color: var(--cu); border: 1px solid var(--cu-dim); padding: 2px 6px; }
+        .prj-out { font-family: var(--mono); font-size: 0.8rem; color: var(--cu); border: 1px solid var(--cu-dim); padding: 2px 6px; }
 
         /* 论文与专利 */
         .pubs { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
         .blk-h { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; }
-        .blk-h h3 { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 400; white-space: nowrap; }
+        .blk-h h3 { font-family: var(--mono); font-size: 0.8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 400; white-space: nowrap; }
         .blk-h .r { flex: 1; height: 1px; background: var(--line); }
-        .blk-h .n { font-family: var(--mono); font-size: .68rem; color: var(--cu); }
+        .blk-h .n { font-family: var(--mono); font-size: 0.8rem; color: var(--cu); }
         .paper { padding: 22px 24px; margin-bottom: 12px; }
-        .paper .venue { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono); font-size: .68rem; margin-bottom: 13px; }
+        .paper .venue { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono); font-size: 0.8rem; margin-bottom: 13px; }
         .paper .venue .rank { color: var(--ink-0); background: var(--cu); padding: 2px 7px; letter-spacing: .05em; }
         .paper .venue .rank.thesis { background: var(--sig); }
         .paper .venue .jr { color: var(--muted); }
         .paper .venue .yr { color: var(--dim); margin-left: auto; }
         .paper h4 { font-size: 1rem; font-weight: 500; line-height: 1.5; letter-spacing: -.012em; margin-bottom: 10px; }
-        .paper .auth { font-family: var(--mono); font-size: .74rem; color: var(--muted); }
+        .paper .auth { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
         .paper .auth u { text-decoration: none; color: var(--cu); border-bottom: 1px dotted var(--cu); }
-        .paper .note { margin-top: 12px; font-family: var(--mono); font-size: .68rem; color: var(--dim); }
-        .fnote { font-family: var(--mono); font-size: .7rem; color: var(--dim); margin-top: 14px; }
+        .paper .note { margin-top: 12px; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); }
+        .fnote { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); margin-top: 14px; }
         .pat { display: grid; grid-template-columns: auto 1fr; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
         .pat:first-of-type { border-top: 1px solid var(--line); }
-        .pat .no { font-family: var(--mono); font-size: .7rem; color: var(--cu); padding-top: 3px; white-space: nowrap; }
-        .pat h4 { font-size: .92rem; font-weight: 400; line-height: 1.55; }
-        .pat .meta { font-family: var(--mono); font-size: .66rem; color: var(--dim); margin-top: 6px; }
+        .pat .no { font-family: var(--mono); font-size: 0.8rem; color: var(--cu); padding-top: 3px; white-space: nowrap; }
+        .pat h4 { font-size: 0.95rem; font-weight: 400; line-height: 1.55; }
+        .pat .meta { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); margin-top: 6px; }
         .pat .meta span { color: var(--muted); }
 
         /* 能力矩阵 */
         .skl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
         .skl-grp { background: var(--ink-1); padding: 28px 30px; }
         .skl-grp h3 { font-size: .95rem; font-weight: 500; margin-bottom: 4px; }
-        .skl-grp .sub { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 22px; }
+        .skl-grp .sub { font-family: var(--mono); font-size: 0.8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 22px; }
         .meter { margin-bottom: 15px; }
-        .meter .lab { display: flex; justify-content: space-between; gap: 12px; font-size: .82rem; margin-bottom: 7px; }
-        .meter .lab span:last-child { font-family: var(--mono); font-size: .68rem; color: var(--dim); white-space: nowrap; }
+        .meter .lab { display: flex; justify-content: space-between; gap: 12px; font-size: 0.95rem; margin-bottom: 7px; }
+        .meter .lab span:last-child { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); white-space: nowrap; }
         .meter .tr { height: 2px; background: var(--line); position: relative; overflow: hidden; }
         .meter .fl { position: absolute; inset: 0 auto 0 0; width: 0; background: linear-gradient(90deg, var(--cu-dim), var(--cu)); transition: width 1.2s var(--ease); }
         .skl-grp:hover .meter .fl { background: linear-gradient(90deg, var(--cu), var(--sig)); }
@@ -229,66 +229,66 @@
         .dl-row, .cv-dl {
             display: flex; justify-content: space-between; align-items: center; gap: 12px;
             margin-top: 16px; padding: 9px 13px; border: 1px solid var(--cu-dim); border-radius: 1px;
-            font-family: var(--mono); font-size: .78rem; color: var(--cu);
+            font-family: var(--mono); font-size: 0.8rem; color: var(--cu);
             transition: background .3s, border-color .3s;
         }
         .dl-row:hover, .cv-dl:hover { background: rgba(207, 138, 82, .07); border-color: var(--cu); }
-        .dl-row .sz, .cv-dl .sz { color: var(--dim); font-size: .7rem; transition: color .3s; }
+        .dl-row .sz, .cv-dl .sz { color: var(--dim); font-size: 0.8rem; transition: color .3s; }
         .dl-row:hover .sz, .cv-dl:hover .sz { color: var(--cu); }
         .cv-dl { margin-top: 12px; }
 
         /* ===== 阅读舒适度覆写：正文放大一档，小标签保底 11px ===== */
-        .eyebrow { font-size: .76rem; }
+        .eyebrow { font-size: 0.8rem; }
         .role-line { font-size: clamp(.92rem, 1.5vw, 1.06rem); }
         .hero-lede { font-size: 1.06rem; max-width: 56ch; line-height: 1.9; }
-        .contact-strip { font-size: .82rem; }
-        .scope-cap { font-size: .72rem; }
-        .readout { font-size: .74rem; }
-        .ledger .k { font-size: .72rem; }
-        .ledger .s { font-size: .86rem; line-height: 1.7; }
-        .portrait .tag-row { font-size: .7rem; }
-        .facts div { font-size: .74rem; }
+        .contact-strip { font-size: 0.95rem; }
+        .scope-cap { font-size: 0.8rem; }
+        .readout { font-size: 0.8rem; }
+        .ledger .k { font-size: 0.8rem; }
+        .ledger .s { font-size: 0.95rem; line-height: 1.7; }
+        .portrait .tag-row { font-size: 0.8rem; }
+        .facts div { font-size: 0.8rem; }
         .edu-row h3 { font-size: 1.05rem; }
-        .edu-row h3 i { font-size: .88rem; }
-        .edu-row .when { font-size: .76rem; }
-        .edu-row .courses { font-size: .92rem; line-height: 1.8; }
-        .domain .no { font-size: .7rem; }
+        .edu-row h3 i { font-size: 0.95rem; }
+        .edu-row .when { font-size: 0.8rem; }
+        .edu-row .courses { font-size: 0.95rem; line-height: 1.8; }
+        .domain .no { font-size: 0.8rem; }
         .domain h3 { font-size: 1.12rem; }
-        .domain h3 em { font-size: .68rem; }
+        .domain h3 em { font-size: 0.8rem; }
         .domain p { font-size: .96rem; line-height: 1.85; }
-        .domain .dl div { font-size: .74rem; }
-        .band-h h4 { font-size: .74rem; }
-        .band-h span { font-size: .7rem; }
-        .axis .maj { font-size: .68rem; }
-        .row .lab { font-size: .72rem; }
+        .domain .dl div { font-size: 0.8rem; }
+        .band-h h4 { font-size: 0.8rem; }
+        .band-h span { font-size: 0.8rem; }
+        .axis .maj { font-size: 0.8rem; }
+        .row .lab { font-size: 0.8rem; }
         .band-key { font-size: .68rem; }
-        .tl-when { font-size: .78rem; }
+        .tl-when { font-size: 0.8rem; }
         .tl-body h3 { font-size: 1.12rem; }
-        .tl-org { font-size: .92rem; line-height: 1.75; }
+        .tl-org { font-size: 0.95rem; line-height: 1.75; }
         .tl-list li { font-size: .96rem; line-height: 1.85; }
-        .tl-link { font-size: .8rem; }
-        .filters button { font-size: .78rem; padding: 8px 15px; }
-        .filters .count { font-size: .74rem; }
-        .prj-no, .prj-time { font-size: .7rem; }
+        .tl-link { font-size: 0.95rem; }
+        .filters button { font-size: 0.8rem; padding: 8px 15px; }
+        .filters .count { font-size: 0.8rem; }
+        .prj-no, .prj-time { font-size: 0.8rem; }
         .prj-card h3 { font-size: 1.06rem; line-height: 1.5; }
-        .prj-card p { font-size: .91rem; line-height: 1.8; }
-        .specs div { font-size: .74rem; }
-        .prj-foot .go { font-size: .75rem; }
-        .prj-out { font-size: .68rem; }
-        .blk-h h3 { font-size: .76rem; }
-        .blk-h .n { font-size: .72rem; }
-        .paper .venue { font-size: .72rem; }
+        .prj-card p { font-size: 0.95rem; line-height: 1.8; }
+        .specs div { font-size: 0.8rem; }
+        .prj-foot .go { font-size: 0.8rem; }
+        .prj-out { font-size: 0.8rem; }
+        .blk-h h3 { font-size: 0.8rem; }
+        .blk-h .n { font-size: 0.8rem; }
+        .paper .venue { font-size: 0.8rem; }
         .paper h4 { font-size: 1.07rem; line-height: 1.55; }
-        .paper .auth { font-size: .8rem; }
-        .paper .note { font-size: .76rem; line-height: 1.75; }
-        .fnote { font-size: .78rem; }
-        .pat .no { font-size: .74rem; }
+        .paper .auth { font-size: 0.95rem; }
+        .paper .note { font-size: 0.8rem; line-height: 1.75; }
+        .fnote { font-size: 0.8rem; }
+        .pat .no { font-size: 0.8rem; }
         .pat h4 { font-size: .98rem; line-height: 1.6; }
-        .pat .meta { font-size: .74rem; }
+        .pat .meta { font-size: 0.8rem; }
         .skl-grp h3 { font-size: 1.02rem; }
-        .skl-grp .sub { font-size: .7rem; }
-        .meter .lab { font-size: .88rem; }
-        .meter .lab span:last-child { font-size: .72rem; }
+        .skl-grp .sub { font-size: 0.8rem; }
+        .meter .lab { font-size: 0.95rem; }
+        .meter .lab span:last-child { font-size: 0.8rem; }
 
         @media (max-width: 1080px) {
             .hero-grid { grid-template-columns: 1fr; gap: 48px; }
@@ -305,7 +305,7 @@
             .pubs { gap: 44px; }
             .tl-item { grid-template-columns: 1fr; gap: 14px; }
             .band { --gut: 132px; padding: 22px 18px 24px; }
-            .row .lab { font-size: .6rem; padding-right: 9px; }
+            .row .lab { font-size: 0.8rem; padding-right: 9px; }
             .row { height: 21px; }
         }
         @media (max-width: 520px) {
@@ -318,7 +318,7 @@
     </style>
     <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body>
+<body data-root=".">
 
 <div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
 
@@ -330,9 +330,10 @@
             <a href="#research" data-nav="research"><sup>02</sup>研究</a>
             <a href="#experience" data-nav="experience"><sup>03</sup>经历</a>
             <a href="#projects" data-nav="projects"><sup>04</sup>项目</a>
-            <a href="#publications" data-nav="publications"><sup>05</sup>论文专利</a>
-            <a href="#honors" data-nav="honors"><sup>06</sup>荣誉</a>
-            <a href="#skills" data-nav="skills"><sup>07</sup>技能</a>
+            <a href="#tools" data-nav="tools"><sup>05</sup>工具</a>
+            <a href="#publications" data-nav="publications"><sup>06</sup>论文专利</a>
+            <a href="#honors" data-nav="honors"><sup>07</sup>荣誉</a>
+            <a href="#skills" data-nav="skills"><sup>08</sup>技能</a>
         </nav>
         <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
             导航 <kbd>Ctrl</kbd><kbd>K</kbd>
@@ -592,37 +593,26 @@
                 <span class="sec-idx">03</span>
                 <h2 class="sec-t">工作经历<em>/ Experience</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">横向课题 → 企业实习 → 航天试验体系，一条逐步扩大的责任链。</p>
+                <p class="sec-note">两家公司：车载天线的产品化，到整星级环境与可靠性验证。</p>
             </div>
 
             <div>
                 <article class="tl-item rv">
-                    <div class="tl-when">2026.07 – 至今<b>现在</b></div>
+                    <div class="tl-when">2025.11 – 至今<b>现在</b></div>
                     <div class="tl-body">
-                        <h3>EMC 试验工程师 <span>· 正式</span></h3>
-                        <p class="tl-org">上海利正卫星 · <i>利正公司</i></p>
+                        <h3>EMC 试验工程师 <span>· 上海利正卫星</span></h3>
+                        <p class="tl-org">同一家公司连续在岗：实习入职（2025.11）→ 转正（2026.07）至今</p>
                         <ul class="tl-list">
-                            <li>负责<b>整星及单机 EMC 试验</b>，覆盖磁试验、力学试验、真空热试验等环境与可靠性科目。</li>
-                            <li>参与实验室 <b>CNAS 认可</b>相关工作：体系文件、能力范围与量值溯源。</li>
-                            <li>参与<b>试验产线建设</b>，负责流程与工装相关工作的落地。</li>
+                            <li><b>试验</b>：整星与单机级电磁兼容与环境可靠性试验 —— <b>GJB 151B/C 的 CE / CS / RE / RS 系列科目</b>，以及磁试验、力学试验、真空热试验。</li>
+                            <li><b>试验产线建设</b>：为外部建造试验室 —— 屏蔽与场地条件、测试系统配置、工装与流程落地。</li>
+                            <li><b>实验室 CNAS 认可</b>：体系文件、能力范围与量值溯源相关工作。</li>
                         </ul>
                         <div class="tl-tags">
-                            <span class="tag live">在职</span><span class="tag">整星 EMC</span>
-                            <span class="tag">真空热</span><span class="tag">CNAS</span><span class="tag">产线建设</span>
+                            <span class="tag live">在职</span><span class="tag">整星 / 单机 EMC</span>
+                            <span class="tag">GJB 151B/C</span><span class="tag">真空热</span>
+                            <span class="tag">力学 · 磁</span><span class="tag">CNAS</span><span class="tag">试验室建设</span>
                         </div>
-                    </div>
-                </article>
-
-                <article class="tl-item rv">
-                    <div class="tl-when">2025.11 – 2026.06</div>
-                    <div class="tl-body">
-                        <h3>EMC 试验工程师 <span>· 实习</span></h3>
-                        <p class="tl-org">上海利正卫星</p>
-                        <ul class="tl-list">
-                            <li>进入航天 EMC 与可靠性试验体系，参与整星、单机级电磁兼容试验执行与记录。</li>
-                            <li>参与实验室能力建设与试验流程文档整理，建立对"系统级验证"的工程判断。</li>
-                        </ul>
-                        <div class="tl-tags"><span class="tag">EMC 试验</span><span class="tag">试验记录</span><span class="tag">实验室能力</span></div>
+                        <a class="tl-link" href="emc1/"><span>查看试验科目与测量框图</span><span class="arw">→</span></a>
                     </div>
                 </article>
 
@@ -638,19 +628,6 @@
                         </ul>
                         <div class="tl-tags"><span class="tag">板端接口</span><span class="tag">阵列天线</span><span class="tag">暗室实测</span><span class="tag">专利撰写</span></div>
                         <a class="tl-link" href="experience1/"><span>查看详细经历</span><span class="arw">→</span></a>
-                    </div>
-                </article>
-
-                <article class="tl-item rv">
-                    <div class="tl-when">2023.10 – 2025.04<b>横向课题</b></div>
-                    <div class="tl-body">
-                        <h3>企业横向课题负责人 <span>· 在校承接</span></h3>
-                        <p class="tl-org">江苏骅盛车用电子 · 车载天线方向</p>
-                        <ul class="tl-list">
-                            <li>承接两项企业横向课题：紧凑型低剖面车载 5G MIMO 天线、集成定位与通信多通道车载天线盒。</li>
-                            <li>产出 <b>1 篇 IEEE AWPL 第一作者论文</b> 与 <b>3 项发明专利</b>，方案均已进入企业产品路径。</li>
-                        </ul>
-                        <div class="tl-tags"><span class="tag">需求拆解</span><span class="tag">指标交付</span><span class="tag">产学研转化</span></div>
                     </div>
                 </article>
             </div>
@@ -763,11 +740,89 @@
         </div>
     </section>
 
-    <!-- ============ 05 论文与专利 ============ -->
-    <section class="sec" id="publications">
+    <!-- ============ 05 软件与工具 ============ -->
+    <section class="sec" id="tools">
         <div class="wrap">
             <div class="sec-head rv">
                 <span class="sec-idx">05</span>
+                <h2 class="sec-t">软件与工具<em>/ Tools</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">把重复的工程劳动写成工具，是我给自己省时间的方式。</p>
+            </div>
+
+            <div class="notice rv">
+                <span class="tag-l">运行条件</span>
+                <div>
+                    下列工具的可运行性并不相同，已按实际情况标注：<b>S-03 是纯静态网页，可直接在线打开</b>；
+                    <b>S-01 依赖本机 HFSS 与后端服务、S-02 依赖真实频谱仪或内置模拟器</b>，
+                    二者无法在浏览器里执行，站内只呈现界面与能力，不提供在线运行。
+                </div>
+            </div>
+
+            <div class="prj">
+                <a class="card prj-card rv" href="https://github.com/Patisight/HFSS-Optimizer" target="_blank" rel="noopener">
+                    <span class="brk"></span>
+                    <div class="prj-top"><span class="prj-no">S-01</span><span class="prj-time">2025.07 – 至今</span></div>
+                    <h3>HFSS 天线自动化优化系统</h3>
+                    <p>用 PyAEDT 驱动 HFSS 完成"参数写入 — 求解 — 取值 — 评估"闭环，把多目标寻优从人工扫描中解放出来；支持多 HFSS 实例并行评估，结果输出 Pareto 前沿与收敛曲线。</p>
+                    <div class="specs">
+                        <div><span>算法</span><span>MOPSO · NSGA-II/III · CMA-ES · MOEA/D · RVEA</span></div>
+                        <div><span>代理模型</span><span>Bayesian MOBO · GPFlow SVG-P</span></div>
+                        <div><span>界面</span><span>Web (FastAPI + Vue3) · PyQt6</span></div>
+                        <div><span>许可</span><span>MIT · 已开源</span></div>
+                    </div>
+                    <div class="prj-foot">
+                        <span class="go">GitHub 仓库<span aria-hidden="true">→</span></span>
+                        <span><span class="tag cu">已开源</span> <span class="tag">需本机 HFSS</span></span>
+                    </div>
+                </a>
+
+                <div class="card prj-card rv rv-d1">
+                    <span class="brk"></span>
+                    <div class="prj-top"><span class="prj-no">S-02</span><span class="prj-time">2026 上半年</span></div>
+                    <h3>KSW-VSA01 频谱仪上位机</h3>
+                    <p>为坤恒顺为频谱仪自写的控制上位机：以太网 SCPI 指令通信，频谱与零扫宽时域双模式显示，远端参数控制与迹线导出，并内置模拟器可在无仪器条件下演示。</p>
+                    <div class="specs">
+                        <div><span>技术栈</span><span>Python · PySide6 · pyqtgraph</span></div>
+                        <div><span>通信</span><span>TCP + ASCII SCPI</span></div>
+                        <div><span>能力</span><span>峰值标记 · 通道功率 · CSV 导出</span></div>
+                        <div><span>可靠性</span><span>四步连接诊断 · 78 项闭环测试</span></div>
+                    </div>
+                    <div class="prj-foot">
+                        <span class="go" style="color:var(--dim)">仓库整理中，随后发布</span>
+                        <span><span class="tag">需实机或模拟器</span></span>
+                    </div>
+                </div>
+
+                <a class="card prj-card rv rv-d2" href="tools/hall-thruster/" target="_blank" rel="noopener">
+                    <span class="brk"></span>
+                    <div class="prj-top"><span class="prj-no">S-03</span><span class="prj-time">2026.08</span></div>
+                    <h3>霍尔推力器 3D 交互教学</h3>
+                    <p>单文件 Three.js 网页，把 SPT-100 类霍尔推力器拆成可点击的陶瓷通道、磁极与线圈、阳极、空心阴极；带电粒子运动按真实机理仿真电子霍尔漂移、氙电离级联、离子加速与中和束，电压/磁场/流量滑杆实时改变物理行为。</p>
+                    <div class="specs">
+                        <div><span>技术栈</span><span>Three.js · WebGL · CSS2D</span></div>
+                        <div><span>对象</span><span>SPT-100 量级</span></div>
+                        <div><span>数值来源</span><span>公开文献（Goebel &amp; Katz）</span></div>
+                        <div><span>体积</span><span>单文件，无构建</span></div>
+                    </div>
+                    <div class="prj-foot">
+                        <span class="go">直接打开演示<span aria-hidden="true">→</span></span>
+                        <span><span class="tag live">可在线运行</span></span>
+                    </div>
+                </a>
+            </div>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.88rem;color:var(--dim);margin-top:22px">
+                S-01 / S-02 的界面演示截图待补充；GitHub Pages 有容量限制，站内只放渲染结果图，不放工程本体。
+            </p>
+        </div>
+    </section>
+
+    <!-- ============ 06 论文与专利 ============ -->
+    <section class="sec" id="publications">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">06</span>
                 <h2 class="sec-t">论文与专利<em>/ Publications &amp; Patents</em></h2>
                 <span class="sec-rule"></span>
                 <p class="sec-note">技术方案与知识产权一一对应，论文与学位论文均可下载 PDF。</p>
@@ -836,11 +891,11 @@
         </div>
     </section>
 
-    <!-- ============ 06 荣誉 ============ -->
+    <!-- ============ 07 荣誉 ============ -->
     <section class="sec" id="honors">
         <div class="wrap">
             <div class="sec-head rv">
-                <span class="sec-idx">06</span>
+                <span class="sec-idx">07</span>
                 <h2 class="sec-t">成果与荣誉<em>/ Honors</em></h2>
                 <span class="sec-rule"></span>
                 <p class="sec-note">奖学金以成绩为准，竞赛奖项以省赛及以上为准。</p>
@@ -896,11 +951,11 @@
         </div>
     </section>
 
-    <!-- ============ 07 技能 ============ -->
+    <!-- ============ 08 技能 ============ -->
     <section class="sec" id="skills">
         <div class="wrap">
             <div class="sec-head rv">
-                <span class="sec-idx">07</span>
+                <span class="sec-idx">08</span>
                 <h2 class="sec-t">能力矩阵<em>/ Capability</em></h2>
                 <span class="sec-rule"></span>
                 <p class="sec-note">按"能独立交付到什么程度"排序，而不是按"听说过什么"。</p>
@@ -1007,18 +1062,13 @@
         <div class="pal-in">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
             <input id="palInput" type="text" placeholder="跳转到章节 / 项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
-            <kbd class="mono" style="font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+            <kbd class="mono" style="font-size: 0.8rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
         </div>
         <ul class="pal-list" id="palList"></ul>
         <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
     </div>
 </div>
 
-<script type="application/json" id="site-map">[
-    {"href":"downloads/chengjinyang-resume.pdf","idx":"DL","t":"个人简历（PDF）","k":"RESUME","ext":1},
-    {"href":"downloads/chengjinyang-master-thesis.pdf","idx":"DL","t":"硕士学位论文 · 紧凑型车载天线系统研究（PDF）","k":"THESIS","ext":1},
-    {"href":"downloads/A_Compact_Low-Profile_Vehicular_5G_MIMO_Antenna_System.pdf","idx":"DL","t":"IEEE AWPL 论文（PDF）","k":"PAPER","ext":1}
-]</script>
 <script src="assets/theme.js"></script>
 <script>
 /* ===== 首页专属：方向图、扫描针、频段带、解码、项目筛选 ===== */

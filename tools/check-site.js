@@ -3,10 +3,11 @@
          node tools/check-site.js --fix-hint 额外打印每项检查的定位提示 */
 const fs = require('fs');
 const path = require('path');
+const PII = require('./_pii-rules.js');
 
 const root = path.resolve(__dirname, '..');
 const PAGES = ['index.html', 'project1', 'project2', 'project3', 'project4',
-               'project5', 'project6', 'experience1'].map(p =>
+               'project5', 'project6', 'emc1', 'experience1'].map(p =>
   path.join(root, p.endsWith('.html') ? p : path.join(p, 'index.html')));
 const ASSETS = ['assets/theme.css', 'assets/theme.js'].map(p => path.join(root, p));
 
@@ -76,11 +77,14 @@ for (const f of PAGES) {
   if (!html.includes('src="' + pre + 'assets/theme.js"')) bad(rel, '未引用 assets/theme.js');
   else console.log('  ok    引用 theme.js');
 
-  // 手机号
+  // 手机号：用通用形态匹配，检测器内不含任何真实号码字面量
   total++;
-  const ph = html.match(/18860467402|188[\s-]?6046[\s-]?7402|tel:/gi);
-  if (ph) bad(rel, '手机号残留 ' + JSON.stringify([...new Set(ph)]));
-  else console.log('  ok    无手机号 / tel:');
+  const pii = PII.findPII(html);
+  const telHits = [...html.matchAll(PII.TEL_HREF)];
+  if (pii.length || telHits.length) {
+    bad(rel, '手机号残留 ' + pii.map(p => p.masked).join(', ') +
+      (telHits.length ? ' + tel: 链接 ×' + telHits.length : ''));
+  } else console.log('  ok    无手机号 / tel:');
 
   // emoji
   total++;
@@ -97,7 +101,7 @@ for (const f of PAGES) {
   // 旧主题死链：指向不存在的研究锚点
   total++;
   const dead = [...html.matchAll(/href="\.\.\/index\.html#([^"]+)"/g)]
-    .map(m => m[1]).filter(a => !['about', 'research', 'experience', 'projects', 'publications', 'honors', 'skills', 'contact', 'home'].includes(a));
+    .map(m => m[1]).filter(a => !['about', 'research', 'experience', 'projects', 'tools', 'publications', 'honors', 'skills', 'contact', 'home'].includes(a));
   if (dead.length) bad(rel, '首页死锚点: #' + [...new Set(dead)].join(', #'));
   else console.log('  ok    跨页锚点有效');
 
@@ -146,6 +150,18 @@ for (const f of PAGES) {
   else console.log('  ok    属性引号成对');
   if (gBad.length) bad(rel, '属性值内含裸 < > ×' + gBad.length + ' → ' + gBad[0]);
   else console.log('  ok    属性值无裸 < >');
+
+  // 导航与章节编号自洽（重排编号时最容易出错）
+  total += 2;
+  const secIds = new Set([...html.matchAll(/<(?:section|footer)[^>]*\bid="([^"]+)"/g)].map(m => m[1]));
+  const navs = [...html.matchAll(/data-nav="([^"]+)"/g)].map(m => m[1]);
+  const dangling = navs.filter(x => !secIds.has(x));
+  if (dangling.length) bad(rel, '导航指向不存在的区块: ' + [...new Set(dangling)].join(', '));
+  else console.log('  ok    导航 ' + navs.length + ' 项全部命中 section');
+  const idxs = [...html.matchAll(/class="sec-idx"[^>]*>\s*([0-9]{2})\s*</g)].map(m => m[1]);
+  const dup = idxs.filter((x, i) => idxs.indexOf(x) !== i);
+  if (dup.length) bad(rel, '章节编号重复: ' + [...new Set(dup)].join(', ') + '（共 ' + idxs.length + ' 节）');
+  else console.log('  ok    章节编号唯一 (' + idxs.length + ' 节: ' + (idxs.join(' ') || '—') + ')');
 
   // 每个页面必须恰有一个 h1（旧子页缺 h1）
   total++;

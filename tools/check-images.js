@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const PAGES = ['index.html', 'project1', 'project2', 'project3', 'project4', 'project5', 'project6', 'experience1']
+const PAGES = ['index.html', 'project1', 'project2', 'project3', 'project4', 'project5', 'project6', 'emc1', 'experience1']
   .map(p => path.join(root, p.endsWith('.html') ? p : path.join(p, 'index.html')));
 
 function sniff(head) {

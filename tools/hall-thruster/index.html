@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>霍尔推进器 · 原理 3D 交互解析</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>" />
+<style>
+  :root{
+    --bg:#04060c; --panel:rgba(9,15,26,.86); --line:rgba(120,185,255,.20);
+    --acc:#4dd8ff; --acc2:#ffb057; --txt:#dbe7f5; --dim:#8fa3ba; --pink:#ff7ad9;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{width:100%; height:100%; overflow:hidden; background:var(--bg);
+    color:var(--txt); font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;}
+  #c3d{position:fixed; inset:0; z-index:0}
+  #hud{position:fixed; inset:0; pointer-events:none; z-index:5}
+  #hud > *{pointer-events:auto}
+  ::-webkit-scrollbar{width:8px; height:8px}
+  ::-webkit-scrollbar-thumb{background:rgba(120,185,255,.25); border-radius:4px}
+
+  /* ---------- top bar ---------- */
+  #topbar{position:fixed; top:0; left:0; right:0; height:56px; z-index:30; display:flex;
+    align-items:center; gap:10px; padding:0 14px; background:linear-gradient(180deg, rgba(6,10,18,.92), rgba(6,10,18,.55));
+    border-bottom:1px solid var(--line); backdrop-filter:blur(8px)}
+  #logo{display:flex; align-items:center; gap:10px; min-width:0}
+  #logo .ico{font-size:26px}
+  #logo .tt{line-height:1.1}
+  #logo .tt b{font-size:16px; letter-spacing:2px; background:linear-gradient(90deg,#7fe2ff,#ffb057);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  #logo .tt small{display:block; color:var(--dim); font-size:10.5px; letter-spacing:1px}
+  nav{display:flex; gap:4px; margin-left:auto}
+  nav button{border:1px solid transparent; background:transparent; color:var(--dim); padding:7px 13px;
+    font-size:13px; cursor:pointer; border-radius:8px; font-family:inherit; transition:.18s; white-space:nowrap}
+  nav button:hover{color:#fff; background:rgba(120,185,255,.10)}
+  nav button.on{color:var(--acc); border-color:rgba(77,216,255,.45); background:rgba(77,216,255,.10); box-shadow:0 0 12px rgba(77,216,255,.15)}
+  @media(max-width:1180px){ nav button{padding:6px 9px; font-size:12px} }
+  @media(max-width:860px){ #logo .tt small{display:none} nav{position:fixed; top:56px; left:0; right:0; z-index:29; flex-wrap:wrap;
+      background:rgba(6,10,18,.94); padding:6px; gap:3px; display:none} nav.open{display:flex} }
+
+  /* ---------- left panel ---------- */
+  #left{position:fixed; top:66px; left:12px; width:236px; z-index:25; max-height:calc(100vh - 130px);
+    display:flex; flex-direction:column; gap:12px; overflow-y:auto; padding-right:2px; scrollbar-width:thin}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px;
+    backdrop-filter:blur(8px); box-shadow:0 6px 24px rgba(0,0,0,.35)}
+  .card h4{font-size:12px; color:var(--acc); letter-spacing:2px; margin-bottom:9px; display:flex; align-items:center; gap:6px}
+  .card h4::before{content:""; width:3px; height:13px; background:var(--acc); border-radius:2px}
+  #modules{display:flex; flex-direction:column; gap:3px; max-height:300px; overflow:auto}
+  #modules button{display:flex; align-items:center; gap:8px; text-align:left; background:transparent; border:1px solid transparent;
+    color:var(--txt); padding:6px 8px; border-radius:8px; cursor:pointer; font-size:12.5px; font-family:inherit; transition:.15s}
+  #modules button .dot{width:9px; height:9px; border-radius:50%; flex:none; box-shadow:0 0 6px currentColor}
+  #modules button:hover{background:rgba(120,185,255,.10)}
+  #modules button.on{background:rgba(77,216,255,.12); border-color:rgba(77,216,255,.4)}
+  #layers{display:flex; flex-direction:column; gap:6px}
+  #layers label{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--txt); cursor:pointer; user-select:none}
+  #layers input{accent-color:var(--acc); width:15px; height:15px; cursor:pointer}
+  #layers label.qrow{justify-content:space-between; gap:10px}
+  #layers select{background:rgba(9,15,26,.92); color:var(--txt); border:1px solid var(--line); border-radius:6px;
+    padding:2px 8px; font-size:12px; font-family:inherit; cursor:pointer}
+  #legend{margin-top:2px}
+  #legend .lg{display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--dim); margin:4px 0}
+  #legend .lg i{width:11px; height:11px; border-radius:50%; flex:none}
+  #charts .chartTabs{display:flex; gap:4px; margin-bottom:7px; flex-wrap:wrap}
+  #charts .chartTabs button{flex:1; min-width:44px; background:rgba(120,185,255,.07); border:1px solid rgba(120,185,255,.2);
+    color:var(--dim); font-size:11px; padding:4px 2px; border-radius:6px; cursor:pointer; font-family:inherit; transition:.15s; white-space:nowrap}
+  #charts .chartTabs button:hover{color:#fff; background:rgba(77,216,255,.14)}
+  #charts .chartTabs button.on{color:#04121c; background:var(--acc); font-weight:600}
+  #charts canvas{width:100%; height:auto; background:rgba(5,10,20,.85); border:1px solid rgba(120,185,255,.18); border-radius:8px; display:block}
+  #charts .cTitle{font-size:11px; color:var(--dim); margin-top:6px; line-height:1.5}
+  #charts .zoomBtn{float:right; font-size:10.5px; color:var(--acc); background:rgba(77,216,255,.10); border:1px solid rgba(77,216,255,.35);
+    border-radius:6px; padding:1px 7px; cursor:pointer; font-family:inherit; transition:.15s}
+  #charts .zoomBtn:hover{background:rgba(77,216,255,.22)}
+  #chartModal{position:fixed; inset:0; z-index:80; display:none; align-items:center; justify-content:center;
+    background:rgba(3,6,12,.84); backdrop-filter:blur(6px)}
+  #chartModal.open{display:flex}
+  .chartModalBox{background:rgba(9,16,28,.97); border:1px solid rgba(120,185,255,.35); border-radius:14px; padding:16px;
+    max-width:min(92vw, 880px); width:92vw; text-align:center}
+  .chartModalBox canvas{width:100%; height:auto; border-radius:10px; background:rgba(5,10,20,.9)}
+  #chartModalTitle{color:var(--txt); font-size:13.5px; margin:10px 0 9px; min-height:18px; letter-spacing:.5px}
+  #chartModalClose{padding:7px 20px; border-radius:8px; cursor:pointer; border:1px solid rgba(77,216,255,.4);
+    background:rgba(77,216,255,.12); color:var(--acc); font-family:inherit; font-size:12.5px; letter-spacing:1px}
+  #chartModalClose:hover{background:rgba(77,216,255,.22)}
+  @media(max-width:1180px){ #left{width:206px} }
+  @media(max-width:860px){ #left{display:none; top:108px; width:232px; z-index:40} #left.open{display:flex} }
+
+  /* ---------- right panel ---------- */
+  #right{position:fixed; top:66px; right:12px; width:356px; z-index:25; max-height:calc(100vh - 96px);
+    display:flex; flex-direction:column; gap:10px}
+  #stats{font-size:12px}
+  #stats .grid{display:grid; grid-template-columns:1fr 1fr; gap:5px}
+  #stats .cell{background:rgba(120,185,255,.05); border:1px solid rgba(120,185,255,.12); border-radius:8px; padding:5px 8px; line-height:1.25}
+  #stats .cell b{display:block; font-size:13px; color:#fff; font-variant-numeric:tabular-nums}
+  #stats .cell span{color:var(--dim); font-size:10.5px}
+  #stats .cell.hot b{color:var(--acc2)}
+  #info{overflow-y:auto; scrollbar-width:thin}
+  #info h2{font-size:15px; margin-bottom:8px; line-height:1.35}
+  #info h2 .tag{font-size:10.5px; color:#06121e; background:var(--acc); padding:2px 7px; border-radius:20px; vertical-align:2px; margin-right:7px; letter-spacing:1px}
+  #info h3{font-size:12.5px; color:var(--acc2); margin:12px 0 5px; letter-spacing:1px}
+  #info p, #info li{font-size:12.5px; line-height:1.75; color:#c8d6e6}
+  #info ul, #info ol{padding-left:18px; margin:4px 0}
+  #info li{margin:3px 0}
+  #info .formula{font-family:"Cambria Math","Times New Roman",serif; font-style:italic; color:#ffe08a;
+    background:rgba(255,176,87,.08); border:1px solid rgba(255,176,87,.25); border-radius:7px;
+    padding:4px 10px; margin:6px 0; display:inline-block; font-size:13.5px}
+  #info .formula.block{display:block; text-align:center; font-size:15px; letter-spacing:.5px}
+  #info .callout{background:rgba(77,216,255,.07); border-left:3px solid var(--acc); border-radius:0 8px 8px 0;
+    padding:7px 10px; font-size:12px; color:#cfe9f7; margin:8px 0; line-height:1.7}
+  #info .callout.warn{border-color:var(--acc2); background:rgba(255,176,87,.07); color:#ffe3c2}
+  #info .knum{display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:8px 0}
+  #info .knum .cell{background:rgba(120,185,255,.05); border:1px solid rgba(120,185,255,.12); border-radius:8px; padding:5px 8px}
+  #info .knum .cell b{color:#fff; font-size:12.5px}
+  #info .knum .cell span{color:var(--dim); font-size:10.5px}
+  #info table{width:100%; border-collapse:collapse; font-size:11.5px; margin:6px 0}
+  #info td, #info th{border:1px solid rgba(120,185,255,.16); padding:4px 7px; color:#c8d6e6}
+  #info th{color:var(--acc); background:rgba(77,216,255,.06); font-weight:600}
+  #back2sec{margin-top:10px; width:100%; padding:7px; font-size:12px; border-radius:8px; cursor:pointer;
+    background:rgba(120,185,255,.08); color:var(--acc); border:1px solid rgba(77,216,255,.35); font-family:inherit}
+  #back2sec:hover{background:rgba(77,216,255,.16)}
+  @media(max-width:1180px){ #right{width:320px} }
+  @media(max-width:860px){ #right{display:none; top:108px; width:min(92vw,360px); z-index:41; max-height:calc(100vh - 200px)}
+    #right.open{display:flex} }
+
+  /* ---------- bottom bar ---------- */
+  #bottom{position:fixed; left:12px; right:12px; bottom:10px; z-index:35; display:flex; gap:12px; align-items:flex-end}
+  #controls{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:10px 14px;
+    backdrop-filter:blur(10px); display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; box-shadow:0 8px 30px rgba(0,0,0,.4)}
+  .ctl{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--dim); white-space:nowrap}
+  .ctl b{color:#fff; min-width:78px; text-align:right; font-variant-numeric:tabular-nums}
+  .ctl input[type=range]{width:118px; accent-color:var(--acc); cursor:pointer}
+  .ctl.unit b{min-width:0}
+  .btn{border:1px solid rgba(120,185,255,.3); background:rgba(120,185,255,.07); color:var(--txt); padding:6px 12px;
+    border-radius:9px; cursor:pointer; font-size:12.5px; font-family:inherit; transition:.15s}
+  .btn:hover{background:rgba(77,216,255,.16); border-color:rgba(77,216,255,.5)}
+  .btn.on{background:rgba(77,216,255,.16); color:var(--acc); border-color:rgba(77,216,255,.55)}
+  #playBtn{font-size:15px; padding:6px 14px; color:var(--acc)}
+  .preset{display:flex; gap:5px}
+  .preset .btn{padding:4px 9px; font-size:11px}
+  @media(max-width:860px){ #bottom{flex-direction:column; align-items:stretch; gap:6px}
+    #controls{gap:6px 12px} .ctl input[type=range]{width:86px} }
+
+  /* ---------- legend overlay ---------- */
+  #leg{position:fixed; left:12px; bottom:96px; z-index:20; font-size:11.5px; color:var(--dim);
+    background:rgba(9,15,26,.72); border:1px solid var(--line); border-radius:10px; padding:9px 11px; pointer-events:none; line-height:1.9; max-width:220px}
+  #leg i{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px}
+  @media(max-width:860px){ #leg{display:none} }
+
+  /* ---------- labels (CSS2D) ---------- */
+  .chip{pointer-events:none; display:flex; align-items:center; gap:4px; color:#d9ecff; font-size:11px; white-space:nowrap;
+    text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.8); background:rgba(6,12,22,.55); border:1px solid rgba(120,185,255,.35);
+    border-radius:6px; padding:1px 6px; backdrop-filter:blur(2px)}
+  .chip i{width:7px; height:7px; border-radius:50%; flex:none}
+  .chip.clickable{pointer-events:auto; cursor:pointer; transition:.15s}
+  .chip.clickable:hover{background:rgba(77,216,255,.25); border-color:var(--acc)}
+  .chip.on{background:rgba(77,216,255,.28); border-color:var(--acc); color:#fff; box-shadow:0 0 10px rgba(77,216,255,.5)}
+  .chip.eq{border-color:rgba(255,255,255,.25); background:rgba(0,0,0,.42)}
+
+  /* ---------- intro / toasts ---------- */
+  #intro{position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(1200px 700px at 50% 40%, rgba(10,22,42,.96), rgba(3,5,10,.98))}
+  #intro.hide{opacity:0; pointer-events:none; transition:opacity .5s}
+  #introBox{text-align:center; max-width:640px; padding:30px; border:1px solid var(--line); border-radius:18px;
+    background:rgba(10,16,28,.7); backdrop-filter:blur(10px)}
+  #introBox h1{font-size:26px; letter-spacing:3px; margin-bottom:6px; background:linear-gradient(90deg,#7fe2ff,#ffb057);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  #introBox .sub{color:var(--dim); font-size:13px; letter-spacing:2px; margin-bottom:18px}
+  #introBox .ops{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:20px}
+  #introBox .op{background:rgba(120,185,255,.05); border:1px solid rgba(120,185,255,.14); border-radius:10px; padding:10px 6px}
+  #introBox .op .k{font-size:20px}
+  #introBox .op .t{font-size:11.5px; color:var(--dim); margin-top:4px}
+  #introBtn{font-size:15px; padding:10px 34px; border-radius:12px; border:1px solid rgba(77,216,255,.5);
+    background:linear-gradient(135deg, rgba(77,216,255,.22), rgba(255,176,87,.18)); color:#fff; cursor:pointer; font-family:inherit; letter-spacing:2px}
+  #introBtn:hover{box-shadow:0 0 22px rgba(77,216,255,.4)}
+  @media(max-width:700px){ #introBox .ops{grid-template-columns:1fr} }
+
+  .panelbtn{display:none; position:fixed; z-index:42; bottom:86px; right:12px; padding:6px 10px; font-size:12px}
+  @media(max-width:860px){ .panelbtn{display:block} }
+</style>
+</head>
+<body>
+
+<div id="c3d"></div>
+
+<!-- 3D labels (CSS2D) -->
+<div id="hud"></div>
+
+<!-- TOP BAR -->
+<header id="topbar">
+  <div id="logo">
+    <div class="ico">🛰️</div>
+    <div class="tt"><b>霍尔推进器 · 原理 3D 解析</b><small>HALL EFFECT THRUSTER — 交互式教学演示</small></div>
+  </div>
+  <nav id="nav">
+    <button data-sec="overview" class="on">总览</button>
+    <button data-sec="structure">结构解剖</button>
+    <button data-sec="magnet">磁场约束</button>
+    <button data-sec="ionize">碰撞电离</button>
+    <button data-sec="accelerate">静电加速</button>
+    <button data-sec="plume">羽流中和</button>
+  </nav>
+</header>
+
+<!-- LEFT PANEL -->
+<aside id="left">
+  <div class="card">
+    <h4>结构模块（点击高亮）</h4>
+    <div id="modules"></div>
+  </div>
+  <div class="card">
+    <h4>图层</h4>
+    <div id="layers">
+      <label><input type="checkbox" id="Lcut" checked/> 剖切视窗</label>
+      <label><input type="checkbox" id="Lfield" checked/> 磁力线</label>
+      <label><input type="checkbox" id="Lequipot"/> 等位面 · 电场</label>
+      <label><input type="checkbox" id="Lpart" checked/> 粒子与轨迹</label>
+      <label><input type="checkbox" id="Llabel" checked/> 部件标签</label>
+      <label><input type="checkbox" id="Lcircuit"/> 供电回路</label>
+      <label><input type="checkbox" id="Lbloom"/> 辉光 Bloom（掉帧时自动关闭）</label>
+      <label class="qrow"><span>画质</span>
+        <select id="qSel">
+          <option value="high">高</option>
+          <option value="mid" selected>中</option>
+          <option value="low">低</option>
+        </select>
+      </label>
+    </div>
+  </div>
+  <div class="card" id="legend">
+    <h4>图例</h4>
+    <div class="lg"><i style="background:#5ef0ff"></i>电子 e⁻（周向霍尔漂移 / 中和束）</div>
+    <div class="lg"><i style="background:#9fffe0"></i>青绿轨迹 = 典型电子（回旋 + 漂移）</div>
+    <div class="lg"><i style="background:#ffb35c"></i>氙离子 Xe⁺（轴向加速喷出）</div>
+    <div class="lg"><i style="background:#aab7c4"></i>中性氙原子 Xe（低速注入）</div>
+    <div class="lg"><i style="background:#7ee0ff"></i>磁力线（通道内近似径向 + 磁路返回）</div>
+    <div class="lg"><i style="background:linear-gradient(90deg,#ff5d5d,#5da2ff)"></i>等位面（红→蓝：高→低压）</div>
+  </div>
+  <div class="card" id="charts">
+    <h4>2D 辅助曲线 <button id="chartZoom" class="zoomBtn" title="点击放大查看">⤢ 放大</button></h4>
+    <div class="chartTabs">
+      <button class="on" data-c="axial">轴向剖面</button>
+      <button data-c="layers">结构剖面</button>
+      <button data-c="mag">磁场约束</button>
+      <button data-c="sigma">电离截面</button>
+      <button data-c="elec">电子运动</button>
+    </div>
+    <canvas id="chartMain" width="412" height="300"></canvas>
+    <div class="cTitle" id="chartTitle">轴向剖面：φ(y) · E(y) · vᵢ(y)</div>
+  </div>
+</aside>
+
+<!-- RIGHT PANEL -->
+<aside id="right">
+  <div class="card" id="stats">
+    <h4>实时工况（工程估算）</h4>
+    <div class="grid">
+      <div class="cell"><b id="sv_i">—</b><span>排气速度 v_i</span></div>
+      <div class="cell hot"><b id="sF">—</b><span>推力 F</span></div>
+      <div class="cell"><b id="sIsp">—</b><span>比冲 I_sp</span></div>
+      <div class="cell"><b id="sP">—</b><span>放电功率 P</span></div>
+      <div class="cell"><b id="sId">—</b><span>放电电流 I_d</span></div>
+      <div class="cell hot"><b id="sEta">—</b><span>总效率 η_T</span></div>
+      <div class="cell"><b id="sEtam">—</b><span>推进剂利用率 η_m</span></div>
+      <div class="cell"><b id="srLe">—</b><span>电子回旋半径 r_Le</span></div>
+      <div class="cell"><b id="srLi">—</b><span>离子回旋半径 r_Li</span></div>
+      <div class="cell"><b id="sCount">—</b><span>仿真电离 / 逃逸</span></div>
+    </div>
+  </div>
+  <div class="card" id="info"></div>
+  <button id="back2sec" style="display:none">← 返回章节</button>
+</aside>
+
+<!-- BOTTOM BAR -->
+<div id="bottom">
+  <div id="controls">
+    <button class="btn" id="playBtn" title="播放/暂停 (空格)">⏸ 暂停</button>
+    <div class="ctl"><span>速率</span>
+      <button class="btn presetbtn" data-s="0.5">0.5×</button>
+      <button class="btn presetbtn on" data-s="1">1×</button>
+      <button class="btn presetbtn" data-s="2">2×</button>
+    </div>
+    <div class="ctl"><span>放电电压</span><b id="vVd">300 V</b><input type="range" id="rVd" min="100" max="600" step="10" value="300"/></div>
+    <div class="ctl"><span>磁场强度</span><b id="vB">170 G</b><input type="range" id="rB" min="0" max="300" step="5" value="170"/></div>
+    <div class="ctl"><span>氙流量</span><b id="vM">5.0 mg/s</b><input type="range" id="rM" min="2" max="8" step="0.2" value="5"/></div>
+    <div class="preset">
+      <button class="btn" id="pNom">标称</button>
+      <button class="btn" id="pNoB">磁场=0</button>
+      <button class="btn" id="pHiV">高比冲</button>
+      <button class="btn" id="pFront">正视</button>
+      <button class="btn" id="pTop">俯视</button>
+      <button class="btn" id="resetView">重置视角</button>
+    </div>
+  </div>
+</div>
+
+<div id="leg">
+  <i style="background:#5ef0ff"></i>青色点：电子（霍尔电流周向漂移）<br/>
+  <i style="background:#9fffe0"></i>青绿轨迹：典型电子回旋 + 漂移（含拉莫尔圆）<br/>
+  <i style="background:#ffb35c"></i>橙色轨迹：氙离子（被静电场加速喷出）<br/>
+  <i style="background:#aab7c4"></i>灰色点：中性氙（缓慢注入通道）<br/>
+  <i style="background:#7ee0ff"></i>亮线＝通道内近似<b>径向</b>磁场；暗线＝磁路返回（箭头示方向）<br/>
+  白色闪光 = 碰撞电离事件 e⁻+Xe → Xe⁺+2e⁻
+</div>
+
+<!-- INTRO -->
+<div id="intro">
+  <div id="introBox">
+    <h1>霍尔推进器 · 原理 3D 交互解析</h1>
+    <div class="sub">HALL EFFECT THRUSTER — 磁场约束电子 · 静电场加速离子</div>
+    <div class="ops">
+      <div class="op"><div class="k">🖱️</div><div class="t">拖拽旋转 · 滚轮缩放视角</div></div>
+      <div class="op"><div class="k">👆</div><div class="t">点击任意部件/标签 高亮并查看原理</div></div>
+      <div class="op"><div class="k">🎚️</div><div class="t">调节电压 / 磁场 / 流量，观察实时变化</div></div>
+    </div>
+    <button id="introBtn">开始探索 ▶</button>
+    <div style="margin-top:14px; font-size:10.5px; color:#5f7690; line-height:1.7">
+      剖切面会<b style="color:#7fe2ff">跟随你的视角转动</b>；磁力线在<b style="color:#7fe2ff">通道内近似径向</b>（只在出口附近保留小幅磁透镜上拱），并用更暗的线画出磁路返回；左侧新增 <b style="color:#ffd166">2D 辅助曲线</b>面板（轴向剖面 / 磁场约束 / 电离截面 / 电子运动）。<br/>
+      粒子轨迹与时间尺度经艺术化压缩以适配人眼观察；漂移方向、能量关系、约束机制等物理规律保持严格。<br/>
+      数值参考 SPT-100 级霍尔推进器公开文献（Morozov 磁透镜位形；Goebel &amp; Katz《Fundamentals of Electric Propulsion》）。
+    </div>
+  </div>
+</div>
+
+<button class="panelbtn" id="togglePanels">☰ 面板</button>
+
+<!-- 2D 图表放大弹窗 -->
+<div id="chartModal">
+  <div class="chartModalBox">
+    <canvas id="chartBig" width="824" height="600"></canvas>
+    <div id="chartModalTitle"></div>
+    <button id="chartModalClose">关闭 ✕</button>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+/* ================================================================
+   0. 全局参数 / 常量
+   ================================================================ */
+const P = {
+  Vd: 300, B: 170, mdot: 5.0, timeScale: 1,
+  paused: false,
+  layer: { cut:true, field:true, equipot:false, particles:true, labels:true, circuit:false },
+  zones: 'none',            // 'none' | 'hall' | 'ion' | 'accel'
+  section: 'overview', selected: null,
+};
+const CH_L = 3.2;           // 通道深度
+const RI = 3.5, RO = 5.0, RM = 4.25;   // 通道内/外/中半径 (cm 量级)
+const EXIT_Y = 0;           // 出口平面
+const ANODE_Y = -2.95;
+const aPot = 2.2;           // 电位分布指数
+const KB = 170, KD = 1.1;   // 磁场参考 & 漂移系数
+const eC = 1.602e-19, mXe = 2.18e-25, me = 9.109e-31, g0 = 9.80665;
+
+// ---------- 物理场模型 ----------
+function potentialFrac(y){          // φ/Vd, 1=阳极 0=出口外
+  const u = (y + CH_L) / CH_L;
+  if (u <= 0) return 1;
+  return Math.max(0, 1 - Math.pow(u, aPot));
+}
+function eRel(y){                   // |E| 相对值 (正=+Y)
+  const u = (y + CH_L) / CH_L;
+  if (u <= 0) return 0;
+  if (u >= 1) return 0;
+  return aPot * Math.pow(u, aPot - 1);
+}
+function bHat(y){                   // B 轴向包络, 峰值在出口稍上游
+  return Math.exp(-Math.pow((y + 0.5) / 0.8, 2));
+}
+function omegaDrift(y, r){          // E×B 周向漂移角速度 (rad/s)
+  const eb = (P.B <= 8) ? 0 : eRel(y) / Math.max(bHat(y), 0.05);
+  const env = Math.max(0, 1 - Math.pow((r - RM) / 0.9, 2));
+  let w = KD * (P.Vd / 300) * eb * (KB / Math.max(P.B, 8)) * env;
+  return THREE.MathUtils.clamp(w, 0.12, 7.0);
+}
+function electronRL(){ return THREE.MathUtils.clamp(0.34 * (KB / Math.max(P.B, 20)), 0.05, 2.2); }
+function electronWG(){ return THREE.MathUtils.clamp(2 * Math.PI * 2.2 * (P.B / KB), 0, 20); }
+function ionExitV(){ return 6.5 * Math.sqrt(P.Vd / 300); }
+function neutralV(){ return 0.38 + 0.06 * Math.random(); }
+
+/* ================================================================
+   1. 渲染器 / 相机 / 后期
+   ================================================================ */
+const container = document.getElementById('c3d');
+
+// ---------- 能力探测 / 画质档位（性能） ----------
+function gpuClass(){
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl2') || c.getContext('webgl');
+    if (!gl) return 'unknown';
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const s = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    const lc = gl.getExtension('WEBGL_lose_context');        // 探测用的上下文立刻释放，别占着浏览器的 WebGL 名额
+    if (lc) lc.loseContext();
+    if (/swiftshader|llvmpipe|software|basic render/i.test(s)) return 'soft';
+    if (/intel|uhd graphics|hd graphics|mesa|vega \d|r[234]0/i.test(s)) return 'igpu';
+    return 'dgpu';
+  } catch (e){ return 'unknown'; }
+}
+const GPU = gpuClass();
+// 集显 / 软件渲染 / 少于等于 4 核 → 视为弱机：默认关辉光、自适应更容易降级
+const WEAK = GPU === 'soft' || GPU === 'igpu' || (navigator.hardwareConcurrency || 8) <= 4;
+const QUALITY = {
+  high: { dpr:1.5, stars:1300 },
+  mid : { dpr:1.25, stars:760 },
+  low : { dpr:1.0, stars:300 },
+};
+let qKey = 'mid';             // 画质下拉默认「中」
+let qUserSet = false;         // 用户手动选过 → 自适应不再改档
+let bloomUserSet = false;     // 用户手动勾过 → 不再自动开关辉光
+let bloomAuto = !WEAK;        // 弱机/集显默认关闭 bloom
+
+// HiDPI 屏（DPR ≥ 1.5）不再额外开 MSAA：像素密度足以压住锯齿，省一份多重采样缓冲。
+// 注意：antialias 只能在创建上下文时决定，之后切画质不会改变它。
+const renderer = new THREE.WebGLRenderer({ antialias:(window.devicePixelRatio || 1) < 1.5,
+  powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, QUALITY[qKey].dpr));   // 上限 1.8 → 1.5
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.86;   // 1.12 → 0.86：整体压暗，避免加法发光层糊成一片白
+renderer.localClippingEnabled = true;   // 允许仅对结构材质做剖切（粒子/场线不受影响）
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x04060c);
+
+const camera = new THREE.PerspectiveCamera(46, innerWidth/innerHeight, 0.1, 400);
+camera.position.set(10.5, 5.0, 12.5);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.target.set(0, -0.6, 0);
+controls.minDistance = 4; controls.maxDistance = 60;
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+// threshold 0.55 → 0.82：只有真正该发光的东西（羽流核心、离子点、电离闪光）过阈值；
+// strength 0.95 → 0.55、radius 0.42 → 0.35，避免把半透明结构整体泛白。
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.35, 0.82);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+// bloom 关闭时直接 renderer.render()，整条后期链（含 5 级 mip 模糊）都不参与
+let bloomOn = bloomAuto;
+bloom.enabled = bloomOn;
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(innerWidth, innerHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.left = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+container.appendChild(labelRenderer.domElement);
+
+// ---------- 灯光（整体下调，配合 exposure 0.86） ----------
+scene.add(new THREE.AmbientLight(0x3a4a66, 0.50));
+scene.add(new THREE.HemisphereLight(0x9db8e0, 0x0a0e18, 0.62));
+const key = new THREE.DirectionalLight(0xffffff, 0.95); key.position.set(5, 8, 7); scene.add(key);
+const fill = new THREE.DirectionalLight(0x5a8cff, 0.30); fill.position.set(-7, 3, -5); scene.add(fill);
+const cy = new THREE.PointLight(0x4dd8ff, 0.5, 40); cy.position.set(0, 3, 0); scene.add(cy);   // 1.1 → 0.5
+const or = new THREE.PointLight(0xff9a3c, 0.32, 30); or.position.set(0, -2, 6); scene.add(or);  // 0.7 → 0.32
+
+// ---------- 星点背景（数量按画质档位裁剪，不再重建缓冲） ----------
+const starGeo = new THREE.BufferGeometry();
+const STAR_MAX = 1300, starPos = new Float32Array(STAR_MAX * 3);
+for (let i = 0; i < STAR_MAX; i++) {
+  const v = new THREE.Vector3().randomDirection().multiplyScalar(55 + Math.random() * 45);
+  starPos.set([v.x, v.y, v.z], i * 3);
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color:0xbfd8ff, size:0.28, sizeAttenuation:true,
+  transparent:true, opacity:0.6, blending:THREE.AdditiveBlending, depthWrite:false }));
+stars.renderOrder = -1;
+scene.add(stars);
+
+const grid = new THREE.PolarGridHelper(14, 18, 6, 60, 0x2a4a74, 0x14263c);
+grid.position.y = -6.5; grid.material.transparent = true; grid.material.opacity = 0.22;
+scene.add(grid);
+
+// ---------- 辉光贴图 (canvas 径向渐变) ----------
+function glowTexture(inner='#ffffff', outer='rgba(255,255,255,0)'){
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d');
+  const gr = g.createRadialGradient(32,32,2,32,32,32);
+  gr.addColorStop(0, inner); gr.addColorStop(0.35, outer); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gr; g.fillRect(0,0,64,64);
+  const t = new THREE.CanvasTexture(c); return t;
+}
+const TEX_GLOW = glowTexture();
+
+/* ================================================================
+   2. 几何工具 (环形段挤出 / 剖切盖板)
+   ================================================================ */
+function shapeSector(rIn, rOut, a0deg, a1deg, N){
+  const pts = [];
+  const rad = d => d * Math.PI / 180;
+  for (let i = 0; i <= N; i++){
+    const a = rad(a0deg + (a1deg - a0deg) * i / N);
+    pts.push(new THREE.Vector2(rOut * Math.cos(a), rOut * Math.sin(a)));
+  }
+  for (let i = N; i >= 0; i--){
+    const a = rad(a0deg + (a1deg - a0deg) * i / N);
+    pts.push(new THREE.Vector2(rIn * Math.cos(a), rIn * Math.sin(a)));
+  }
+  return new THREE.Shape(pts);
+}
+// 环形段实体: 沿 +Y 从 yBottom 到 yBottom+height; cut=true 时保留楔形开口 [10°,80°]
+function ringSolid(rIn, rOut, yBottom, height, cut, N=64){
+  const a0 = cut ? -10 : 0, a1 = cut ? 280 : 360;
+  const geo = new THREE.ExtrudeGeometry(shapeSector(rIn, rOut, a0, a1, N), { depth: height, bevelEnabled:false });
+  geo.rotateX(-Math.PI / 2);
+  geo.translate(0, yBottom, 0);
+  return geo;
+}
+/* ================================================================
+   3. 构建推进器 (各模块加入 moduleRegistry)
+   ================================================================ */
+const moduleRegistry = [];
+const pickables = [];
+function regModule(id, name, color, group, anchor, camera, matExtra=[]){
+  const mats = matExtra.slice();
+  group.traverse(o => { if (o.isMesh && !mats.includes(o.material)) mats.push(o.material); });
+  moduleRegistry.push({ id, name, color, group, anchor, camera, mats });
+  group.traverse(o => { if (o.isMesh){ o.userData.mid = id; pickables.push(o); } });
+  return moduleRegistry[moduleRegistry.length - 1];
+}
+const allLabels = [];   // 统一登记所有 CSS2D 标签，便于整体开关/剖切隐藏
+// CSS2D 逐帧 render 会让十几个 DOM 标签一起重排：只在"视角/可见性真的变了"时更新（见 animate）
+let labelDirty = true;
+// 用 1e9 作哨兵值（不能用 NaN：NaN 的比较永远为 false，首帧会被判成"没动"）
+const labelCamState = { px:1e9, py:1e9, pz:1e9, qx:0, qy:0, qz:0, qw:0, tx:1e9, ty:1e9, tz:1e9 };
+const _tmpV = new THREE.Vector3();
+let _clipN = new THREE.Vector3(0, 0, 1), _clipC = 0;
+function makeChip(text, color, clickId, eq=false){
+  const d = document.createElement('div');
+  d.className = 'chip' + (clickId ? ' clickable' : '') + (eq ? ' eq' : '');
+  d.innerHTML = `<i style="background:${color}"></i><span>${text}</span>`;
+  if (clickId) d.addEventListener('click', e => { e.stopPropagation(); selectModule(clickId); });
+  const l = new CSS2DObject(d);
+  allLabels.push(l);
+  return l;
+}
+function applyLabelVisibility(){
+  const show = P.layer.labels;
+  for (const l of allLabels){
+    let vis = show;
+    if (vis && cutApplied && _clipN){
+      l.getWorldPosition(_tmpV);
+      if (_tmpV.dot(_clipN) - _clipC < 0) vis = false;   // 剖切时隐藏背向观察者的标签
+    }
+    l.visible = vis;
+  }
+  labelDirty = true;               // 可见性变了 → 让 CSS2D 至少重排一次
+}
+function addLabel(parent, text, color, pos, clickId, eq=false){
+  const l = makeChip(text, color, clickId, eq);
+  l.position.copy(pos); parent.add(l); return l;
+}
+
+const thruster = new THREE.Group(); scene.add(thruster);
+
+// ---- 3.1 陶瓷放电通道 (内外壁) ----
+// 渲染秩序（renderOrder）：0 不透明结构 → 2 剖切截面 → 6 半透明陶瓷壁 → 8 区域块 →
+// 12 等位面 → 16 磁力线 → 18 羽流 → 20 霍尔电流 → 24 轨迹 → 26 粒子 → 28 闪光。
+// 透明件一律 depthWrite:false，配合上面的分层，避免"后画的被先画的吞掉"这类顺序敏感问题。
+const matCer = new THREE.MeshStandardMaterial({ color:0xd7dee6, roughness:0.55, metalness:0.05,
+  transparent:true, opacity:0.30, side:THREE.DoubleSide, depthWrite:false });
+const gChannel = new THREE.Group();
+let wallInner = null, wallOuter = null;
+function buildChannel(){
+  gChannel.clear();
+  wallInner = new THREE.Mesh(ringSolid(2.9, RI, -CH_L, CH_L, false), matCer.clone());
+  wallOuter = new THREE.Mesh(ringSolid(RO, 5.72, -CH_L, CH_L, false), matCer.clone());
+  wallInner.renderOrder = 6; wallOuter.renderOrder = 6;
+  gChannel.add(wallInner, wallOuter);
+}
+buildChannel();
+thruster.add(gChannel);
+regModule('channel', '放电通道（BN 陶瓷）', '#9fb6cc', gChannel,
+  new THREE.Vector3(1.6, -1.3, 1.8), { pos:[7.6,1.4,8.2], tgt:[1.6,-1.3,1.8] });
+
+// ---- 3.2 阳极 / 气体分配器 ----
+const matAnode = new THREE.MeshStandardMaterial({ color:0xc9a86a, metalness:0.85, roughness:0.32, emissive:0x2a1202, emissiveIntensity:0.5 });
+const gAnode = new THREE.Group();
+function buildAnode(){
+  gAnode.clear();
+  gAnode.add(new THREE.Mesh(ringSolid(3.62, RO - 0.08, ANODE_Y - 0.05, 0.14, false), matAnode.clone()));
+  // 进气口小孔点缀
+  const holes = new THREE.Group();
+  for (let k = 0; k < 16; k++){
+    const th = (k / 16) * Math.PI * 2;
+    const h = new THREE.Mesh(new THREE.CircleGeometry(0.07, 12),
+      new THREE.MeshBasicMaterial({ color:0x0a0a12 }));
+    h.rotation.x = -Math.PI / 2;
+    h.position.set((RI + 0.7) * Math.cos(th), ANODE_Y + 0.08, (RI + 0.7) * Math.sin(th));
+    holes.add(h);
+  }
+  gAnode.add(holes);
+}
+buildAnode();
+thruster.add(gAnode);
+regModule('anode', '阳极 · 气体分配器', '#e0c070', gAnode,
+  new THREE.Vector3(0, -2.9, 0), { pos:[6.2,-5.4,7.4], tgt:[0,-2.9,0] });
+
+// ---- 3.3 磁路 (内/外磁极, 线圈, 轭, 外壳) ----
+const matIron = new THREE.MeshStandardMaterial({ color:0x6a7690, metalness:0.6, roughness:0.42 });
+const matCoil = new THREE.MeshStandardMaterial({ color:0xc07a42, metalness:0.85, roughness:0.32, emissive:0x3a1a06, emissiveIntensity:0.35 });
+const gMagnet = new THREE.Group();
+
+const coilGeo = (r, tube, arcDeg) => {
+  const g = new THREE.TorusGeometry(r, tube, 18, 48, arcDeg * Math.PI / 180);
+  g.rotateX(Math.PI / 2); g.rotateZ(0); return g;
+};
+function buildMagnet(){
+  gMagnet.clear();
+  gMagnet.add(new THREE.Mesh(ringSolid(1.0, 2.9, -3.6, 3.35, false), matIron.clone()));
+  gMagnet.add(new THREE.Mesh(ringSolid(5.72, 6.25, -3.6, 3.35, false), matIron.clone()));
+  gMagnet.add(new THREE.Mesh(ringSolid(0, 7.25, -3.95, 0.35, false), matIron.clone()));
+  gMagnet.add(new THREE.Mesh(ringSolid(6.25, 7.3, -3.6, 3.35, false), matIron.clone()));
+  // 线圈: 内外各一（完整环，剖切由全局裁剪面完成）
+  const innerCoil = new THREE.Mesh(coilGeo(1.75, 0.4, 360), matCoil.clone());
+  innerCoil.position.y = -1.7; innerCoil.rotation.y = 0;
+  const outerCoil1 = new THREE.Mesh(coilGeo(5.98, 0.36, 360), matCoil.clone());
+  outerCoil1.position.y = -2.9;
+  const outerCoil2 = new THREE.Mesh(coilGeo(5.98, 0.36, 360), matCoil.clone());
+  outerCoil2.position.y = -0.95;
+  gMagnet.add(innerCoil, outerCoil1, outerCoil2);
+}
+buildMagnet();
+thruster.add(gMagnet);
+regModule('magnet', '磁路（线圈 + 极靴）', '#7fa8e8', gMagnet,
+  new THREE.Vector3(0, -1.9, 0), { pos:[8.6,-1.6,5.2], tgt:[0,-1.9,0] });
+
+// ---- 3.3b 剖切截面填充（随观察视角旋转，配合全局裁剪面形成"剖面随视角走"） ----
+// 0.95 → 0.5：旧值几乎不透明，把通道内部的粒子/磁场全糊在截面后面。
+const CUT_CENTER = new THREE.Vector3(0, -0.6, 0);
+const crossSectionGroup = new THREE.Group();
+scene.add(crossSectionGroup);
+function addXFill(rIn, rOut, y0, h, color, opacity=0.5, modId=null){
+  const w = Math.max(0.02, rOut - rIn), hh = Math.max(0.02, h);
+  const m = new THREE.MeshBasicMaterial({ color, transparent:true, opacity, side:THREE.DoubleSide, depthWrite:false });
+  const geo = new THREE.PlaneGeometry(w, hh);
+  const mid = (rIn + rOut) / 2;
+  for (const s of [-1, 1]){
+    const q = new THREE.Mesh(geo, m);
+    q.position.set(s * mid, y0 + h / 2, 0);
+    q.renderOrder = 2;                                       // 截面：不透明结构之后、其余透明件之前
+    if (modId){ q.userData.mid = modId; pickables.push(q); }   // 剖面可点击 → 对应模块
+    crossSectionGroup.add(q);
+  }
+}
+addXFill(2.9, RI, -CH_L, CH_L, 0xd7dee6, 0.5, 'channel');   // 陶瓷内壁
+addXFill(RO, 5.72, -CH_L, CH_L, 0xd7dee6, 0.5, 'channel');  // 陶瓷外壁
+addXFill(3.62, RO - 0.08, ANODE_Y - 0.05, 0.14, 0xc9a86a, 0.55, 'anode');   // 阳极
+addXFill(1.0, 2.9, -3.6, 3.35, 0x7a869e, 0.5, 'magnet');    // 内磁极
+addXFill(5.72, 6.25, -3.6, 3.35, 0x7a869e, 0.5, 'magnet');  // 外磁极
+addXFill(0, 7.25, -3.95, 0.35, 0x7a869e, 0.55, 'magnet');   // 底部轭铁
+addXFill(6.25, 7.3, -3.6, 3.35, 0x7a869e, 0.5, 'magnet');   // 外壳
+
+// ---- 3.4 空心阴极 (出口外侧偏轴) ----
+const CAT_TH = 200 * Math.PI / 180, CAT_R = 6.6, CAT_Y = 0.85;
+const gCathode = new THREE.Group();
+const matCatBody = new THREE.MeshStandardMaterial({ color:0x4a5464, metalness:0.7, roughness:0.35 });
+const catBody = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.3, 1.5, 16), matCatBody);
+catBody.rotation.z = Math.PI / 2; catBody.position.set(CAT_R, CAT_Y, 0); catBody.rotation.y = -CAT_TH;
+catBody.rotateY(Math.PI / 2); // 指向推进器轴
+catBody.position.set(CAT_R * Math.cos(CAT_TH), CAT_Y, CAT_R * Math.sin(CAT_TH));
+gCathode.add(catBody);
+const catTip = new THREE.Mesh(new THREE.CircleGeometry(0.18, 16),
+  new THREE.MeshBasicMaterial({ color:0xffe2b0 }));
+catTip.position.copy(new THREE.Vector3(0, CAT_Y, 0).add(
+  new THREE.Vector3(-CAT_R, 0, 0).applyAxisAngle(new THREE.Vector3(0,1,0), CAT_TH).multiplyScalar(-0.75)));
+catTip.lookAt(0, CAT_Y + 0.3, 0);
+gCathode.add(catTip);
+const catGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map:TEX_GLOW, color:0xffd9a0, transparent:true, opacity:0.55, blending:THREE.AdditiveBlending, depthWrite:false }));
+catGlow.scale.set(0.8, 0.8, 1); catGlow.position.copy(catTip.position);
+catGlow.renderOrder = 28;
+gCathode.add(catGlow);
+const catMount = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 3.2, 8), matIron.clone());
+catMount.position.copy(new THREE.Vector3(CAT_R * 0.55 * Math.cos(CAT_TH), (CAT_Y - 2.0), CAT_R * 0.55 * Math.sin(CAT_TH)));
+catMount.rotation.z = Math.PI / 2 - 0.15;
+catMount.rotation.y = -CAT_TH;
+gCathode.add(catMount);
+thruster.add(gCathode);
+const catPos = new THREE.Vector3(CAT_R * Math.cos(CAT_TH), CAT_Y, CAT_R * Math.sin(CAT_TH));
+regModule('cathode', '空心阴极（电子发射源）', '#ffc07a', gCathode, catPos,
+  { pos:[catPos.x + 3.4, catPos.y + 2.0, catPos.z + 3.6], tgt:[catPos.x*0.6, catPos.y, catPos.z*0.6] });
+
+// ---- 3.5 航天器本体 (背景) ----
+const bus = new THREE.Mesh(new THREE.BoxGeometry(7, 1.1, 7),
+  new THREE.MeshStandardMaterial({ color:0x2c3648, metalness:0.5, roughness:0.6 }));
+bus.position.y = -4.9; thruster.add(bus);
+const busRing = new THREE.Mesh(new THREE.CylinderGeometry(6.2, 6.2, 0.5, 32),
+  new THREE.MeshStandardMaterial({ color:0x3a465c, metalness:0.6, roughness:0.5 }));
+busRing.position.y = -4.35; thruster.add(busRing);
+
+// ---- 3.6 磁力线：通道内近似「径向」，磁路返回段视觉降权 ----
+// 物理：霍尔推力器放电通道内的磁场主要是径向的 —— B 沿半径方向，同时垂直于轴向电场 E 与
+// 方位向霍尔漂移电流 J_H，J×B 才给出轴向加速。所以通道段画成近似沿 r 的直线：同一方位角上
+// 轴向坐标 y 在 r∈[RI,RO] 内只变化 0.05（通道长 3.2 的 1.6%），仅在靠近出口的外极面间隙处保留
+// 一个幅度 0.30 的上拱（磁透镜），不再像旧版那样把整条线拉成鼓包。
+// 外磁极 → 底部轭铁 → 内磁极 的返回段只用于说明"磁路闭合"：只用一半方位复制、亮度降到通道段的
+// 1/4，让读者一眼读到的信息是"通道里是径向场"。
+const fieldGroup = new THREE.Group(); scene.add(fieldGroup);
+const fieldMats = [];              // [0]通道段 [1]返回段 [2]通道箭头 [3]返回箭头
+const FIELD_OP = [0.55, 0.14, 0.5, 0.16];   // 不透明度上限（每帧再按 P.B 缩放）
+// (r, y)：r = 到轴心的半径（曲线里的 x，绕轴旋转后成为水平距离），y = 轴向（出口 y=0，阳极 y=-2.95）
+// 极靴端面 r≤2.9 / r≥5.72；陶瓷壁 2.9–3.5 与 5.0–5.72；放电通道 3.5–5.0
+const FIELD_PROF = [
+  [2.55, -0.30],   //  0 内磁极端面
+  [2.90, -0.30],   //  1 陶瓷内壁内表面
+  [3.20, -0.29],   //  2
+  [3.50, -0.28],   //  3 通道内边界 RI
+  [3.90, -0.27],   //  4
+  [4.25, -0.26],   //  5 通道中部 RM
+  [4.60, -0.25],   //  6
+  [5.00, -0.23],   //  7 通道外边界 RO
+  [5.30, -0.15],   //  8 出口前上拱（磁透镜，幅度小）
+  [5.55,  0.00],   //  9 上拱峰值（旧版为 0.58）
+  [5.72, -0.06],   // 10 外磁极端面
+  [5.95, -1.35],   // 11 外磁路向下
+  [6.15, -2.55],   // 12
+  [6.30, -3.30],   // 13 底部轭铁返回
+  [5.60, -3.55],   // 14
+  [4.00, -3.65],   // 15
+  [2.50, -3.60],   // 16
+  [1.40, -3.45],   // 17
+  [1.20, -2.20],   // 18 内磁路向上
+  [1.25, -0.95],   // 19
+];
+// "通道段"判据：位于两个极面之间的间隙内（几何判定，不依赖参数位置）
+function isChPt(r, y){ return y > -0.75 && r > 2.4 && r < 5.78; }
+function buildFieldLines(){
+  fieldGroup.clear(); fieldMats.length = 0;
+  const ctrl = FIELD_PROF.map(p => new THREE.Vector3(p[0], p[1], 0));
+  const curve = new THREE.CatmullRomCurve3(ctrl, true);
+  const N = 96, azs = 6, az0 = 0.12;
+  // 剖面只采样一次，所有方位角复用（pr=半径, py=轴向）
+  const pr = new Float64Array(N + 1), py = new Float64Array(N + 1), _c = new THREE.Vector3();
+  for (let j = 0; j <= N; j++){ curve.getPoint(j / N, _c); pr[j] = _c.x; py[j] = _c.y; }
+  const chJs = [], rtJs = [];
+  for (let j = 0; j < N; j++)
+    (isChPt(pr[j], py[j]) && isChPt(pr[j+1], py[j+1]) ? chJs : rtJs).push(j);
+
+  const cHi = new THREE.Color(0x9feaff), cLo = new THREE.Color(0x2a5f95);
+  const vCh = [], cCh = [], vRt = [];
+  for (let k = 0; k < azs; k++){
+    const az = (k / azs) * Math.PI * 2 + az0, ca = Math.cos(az), sa = Math.sin(az);
+    const skipRet = (k % 2 === 1);                  // 返回段只画一半方位 → 视觉更细、不打架
+    for (const j of chJs){
+      vCh.push(pr[j] * ca, py[j], pr[j] * sa, pr[j+1] * ca, py[j+1], pr[j+1] * sa);
+      const cc = new THREE.Color().lerpColors(cLo, cHi, bHat((py[j] + py[j+1]) / 2));
+      cCh.push(cc.r, cc.g, cc.b, cc.r, cc.g, cc.b);
+    }
+    if (skipRet) continue;
+    for (const j of rtJs) vRt.push(pr[j] * ca, py[j], pr[j] * sa, pr[j+1] * ca, py[j+1], pr[j+1] * sa);
+  }
+  const mkLines = (v, c, col, op) => {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
+    if (c) g.setAttribute('color', new THREE.Float32BufferAttribute(c, 3));
+    const m = new THREE.LineBasicMaterial({ color:col, vertexColors:!!c, transparent:true, opacity:op,
+      blending:THREE.AdditiveBlending, depthWrite:false });
+    const ls = new THREE.LineSegments(g, m);
+    ls.renderOrder = 16;                            // 发光叠加层：结构之后、粒子轨迹之前
+    fieldGroup.add(ls);
+    fieldMats.push(m);
+  };
+  mkLines(vCh, cCh, 0xffffff, FIELD_OP[0]);         // 通道内：亮，读得出"径向"
+  mkLines(vRt, null, 0x2f5f90, FIELD_OP[1]);        // 磁路返回：暗一档
+
+  // 方向箭头（锥体沿磁力线切线）：通道段 4 个/方位、返回段 3 个/方位
+  const coneGeo = new THREE.ConeGeometry(0.11, 0.26, 8);
+  coneGeo.rotateX(Math.PI / 2);                 // 锥尖指向 +Z
+  const arrowMat = new THREE.MeshBasicMaterial({ color:0x9feaff, transparent:true, opacity:FIELD_OP[2], depthWrite:false });
+  const arrowMatR = new THREE.MeshBasicMaterial({ color:0x3f78a8, transparent:true, opacity:FIELD_OP[3], depthWrite:false });
+  fieldMats.push(arrowMat, arrowMatR);
+  const _tg = new THREE.Vector3(), _z1 = new THREE.Vector3(0, 0, 1);
+  const placeArrows = (js, count, mat) => {
+    if (!js.length) return;
+    for (let a = 0; a < count; a++){
+      const j = js[Math.min(js.length - 1, Math.floor((a + 0.5) * js.length / count))];
+      const dr = pr[j+1] - pr[j], dy = py[j+1] - py[j];
+      for (let k = 0; k < azs; k += 2){              // 每隔一个方位放箭头，避免过密
+        const az = (k / azs) * Math.PI * 2 + az0, ca = Math.cos(az), sa = Math.sin(az);
+        _tg.set(dr * ca, dy, dr * sa);
+        if (_tg.lengthSq() < 1e-10) continue;
+        const cone = new THREE.Mesh(coneGeo, mat);
+        cone.position.set(pr[j] * ca, py[j], pr[j] * sa);
+        cone.quaternion.setFromUnitVectors(_z1, _tg.normalize());
+        cone.renderOrder = 16;
+        fieldGroup.add(cone);
+      }
+    }
+  };
+  placeArrows(chJs, 4, arrowMat);
+  placeArrows(rtJs, 3, arrowMatR);
+}
+buildFieldLines();
+
+// ---- 3.7 电场箭头 (随 Vd 缩放) ----
+const eFieldGroup = new THREE.Group(); scene.add(eFieldGroup);
+function buildEArrows(){
+  eFieldGroup.clear();
+  const shaftMat = new THREE.MeshBasicMaterial({ color:0xff6b4a });
+  const headMat = new THREE.MeshBasicMaterial({ color:0xffa08a });
+  const heights = [-2.3, -1.7, -1.15, -0.7, -0.35, -0.12];
+  const azs = [0, 90, 180, 270];
+  const maxE = eRel(-0.12);
+  for (const az of azs){
+    for (const y of heights){
+      const len = 0.55 + 1.55 * (eRel(y) / maxE);
+      const g = new THREE.Group();
+      const sh = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, len, 8), shaftMat);
+      sh.position.y = len / 2;
+      const hd = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.34, 10), headMat);
+      hd.position.y = len + 0.17;
+      g.add(sh, hd);
+      g.userData.len = len + 0.34;
+      const th = az * Math.PI / 180;
+      g.position.set(RM * Math.cos(th), y, RM * Math.sin(th));
+      eFieldGroup.add(g);
+    }
+  }
+}
+buildEArrows();
+
+// ---- 3.8 等位面圆环 + 标签 ----
+const equipGroup = new THREE.Group(); scene.add(equipGroup);
+const equipRingMats = [], equipLabels = [];
+const EQUIP_U = [0.05, 0.35, 0.6, 0.78, 0.9, 0.975];
+function buildEquipot(){
+  equipGroup.clear(); equipRingMats.length = 0; equipLabels.length = 0;
+  const cHi = new THREE.Color(0xff5d5d), cLo = new THREE.Color(0x5da2ff);
+  for (const u of EQUIP_U){
+    const y = -CH_L + CH_L * u;
+    const f = 1 - Math.pow(u, aPot);
+    const col = cHi.clone().lerp(cLo, f);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(RM, 0.035, 8, 72),
+      new THREE.MeshBasicMaterial({ color:col, transparent:true, opacity:0.6, depthWrite:false }));
+    ring.rotation.x = Math.PI / 2; ring.position.y = y;
+    ring.renderOrder = 12;
+    equipGroup.add(ring);
+    equipRingMats.push(ring.material);
+    const chip = makeChip(`φ≈${Math.round(f * 100)} V`, '#' + col.getHexString(), null, true);
+    chip.position.set(0, y + 0.18, RM - 0.15);
+    equipGroup.add(chip); equipLabels.push(chip);
+  }
+}
+buildEquipot();
+function updateEquipotLabels(){
+  for (let i = 0; i < EQUIP_U.length; i++){
+    const u = EQUIP_U[i], f = 1 - Math.pow(u, aPot);
+    const el = equipLabels[i].element.querySelector('span');
+    if (el) el.textContent = `φ≈${Math.round(f * P.Vd)} V`;
+  }
+}
+
+// ---- 3.9 区域标记 (电离区 / 加速区 / 霍尔电流) ----
+const zonesGroup = new THREE.Group(); scene.add(zonesGroup);
+const zoneIon = new THREE.Group(), zoneAccel = new THREE.Group(), zoneHall = new THREE.Group();
+zonesGroup.add(zoneIon, zoneAccel, zoneHall);
+
+const ionMat = new THREE.MeshBasicMaterial({ color:0xff6ad9, transparent:true, opacity:0.055, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide });
+const accMat = new THREE.MeshBasicMaterial({ color:0x5ad8ff, transparent:true, opacity:0.055, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide });
+function buildZones(){
+  zoneIon.clear(); zoneAccel.clear();
+  const zi = new THREE.Mesh(ringSolid(RI + 0.05, RO - 0.05, -1.55, 1.05, false), ionMat.clone());
+  const za = new THREE.Mesh(ringSolid(RI + 0.05, RO - 0.05, -0.6, 0.72, false), accMat.clone());
+  zi.renderOrder = 8; za.renderOrder = 8;            // 区域高亮：陶瓷壁之后、场线之前
+  zoneIon.add(zi); zoneAccel.add(za);
+  addLabel(zoneIon, '电离区', '#ff7ad9', new THREE.Vector3(RM, -0.95, 0), null);
+  addLabel(zoneAccel, '加速区', '#5ad8ff', new THREE.Vector3(RM, -0.2, 0), null);
+}
+buildZones();
+
+// 霍尔电流虚线环 + 方向箭头（箭头放在世界坐标，避免随 zoneHall 双重旋转）
+const hallDashes = new THREE.Group();
+const segN = 36;
+for (let i = 0; i < segN; i++){
+  const a0 = (i / segN) * Math.PI * 2, a1 = a0 + Math.PI / segN * 0.62;
+  const g = new THREE.CylinderGeometry(0.03, 0.03, RM * 2 * Math.sin((a1 - a0) / 2), 4);
+  g.rotateZ(Math.PI / 2);
+  const seg = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color:0x59e6ff, transparent:true, opacity:0.5, depthWrite:false }));
+  seg.position.set(RM * Math.cos((a0 + a1) / 2), -0.55, RM * Math.sin((a0 + a1) / 2));
+  seg.rotation.y = -(a0 + a1) / 2;
+  seg.renderOrder = 20;
+  hallDashes.add(seg);
+}
+zoneHall.add(hallDashes);
+const hallArrowGeo = new THREE.ConeGeometry(0.16, 0.4, 10);
+hallArrowGeo.rotateX(Math.PI / 2); // 锥尖指向 +Z
+const hallArrow = new THREE.Mesh(hallArrowGeo,
+  new THREE.MeshBasicMaterial({ color:0x7ff0ff, transparent:true, opacity:0.6, depthWrite:false }));
+hallArrow.renderOrder = 20;
+const hallArrowRoot = new THREE.Group();
+hallArrowRoot.add(hallArrow);
+scene.add(hallArrowRoot);
+addLabel(zoneHall, '霍尔电流 I_H（E×B 漂移）', '#59e6ff', new THREE.Vector3(RM, -0.95, 1.6), null);
+
+// ---- 3.9b 剖切只作用于结构材质：收集 通道/阳极/磁路/阴极/区域 的材质 ----
+const clipMats = [];
+function collectClipMats(){
+  clipMats.length = 0;
+  for (const id of ['channel','anode','magnet','cathode']){
+    const m = moduleRegistry.find(x => x.id === id);
+    if (m) m.mats.forEach(mat => { if (!clipMats.includes(mat)) clipMats.push(mat); });
+  }
+  zoneIon.traverse(o => { if (o.isMesh) clipMats.push(o.material); });
+  zoneAccel.traverse(o => { if (o.isMesh) clipMats.push(o.material); });
+}
+collectClipMats();
+
+// ---- 3.10 羽流体积光 ----
+const plumeGroup = new THREE.Group(); scene.add(plumeGroup);
+function plumeCone(rBot, rTop, h, color, opacity){
+  const g = new THREE.CylinderGeometry(rTop, rBot, h, 48, 18, true);
+  const pos = g.attributes.position;
+  const col = new Float32Array(pos.count * 3);
+  for (let i = 0; i < pos.count; i++){
+    const yy = pos.getY(i);          // -h/2 .. h/2
+    const t = (yy + h / 2) / h;      // 0 出口 -> 1 远端
+    const a = Math.pow(1 - t, 1.4);
+    const c = new THREE.Color(color).multiplyScalar(a * 0.9);
+    col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  g.translate(0, h / 2, 0);
+  const m = new THREE.MeshBasicMaterial({ vertexColors:true, transparent:true, opacity,
+    blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide });
+  const mesh = new THREE.Mesh(g, m);
+  mesh.renderOrder = 18;            // 体积光在结构之后、粒子之前，避免把通道口糊白
+  return mesh;
+}
+// 0.34/0.42 → 0.22/0.26：双层加法锥体叠加 + bloom 后原本在出口处糊成一片白
+const plumeOut = plumeCone(2.4, 5.4, 8.0, 0x6f9dff, 0.22);
+const plumeIn = plumeCone(1.9, 3.6, 7.0, 0xbfe2ff, 0.26);
+plumeGroup.add(plumeOut, plumeIn);
+plumeGroup.position.y = EXIT_Y;
+regModule('plume', '离子羽流（推力来源）', '#ffb057', plumeGroup,
+  new THREE.Vector3(0, 3.2, 0), { pos:[7.2,6.4,7.8], tgt:[0,2.4,0] });
+
+// ---- 3.11 供电回路 (阳极→电源→阴极) ----
+const circuitGroup = new THREE.Group(); scene.add(circuitGroup);
+const POWER_BOX = new THREE.Vector3(0, -6.35, -4.5);
+function buildCircuit(){
+  circuitGroup.clear();
+  const aP = new THREE.Vector3(RM, ANODE_Y + 0.05, 0);
+  const aDown = new THREE.Vector3(RM, -3.4, 0);
+  const boxIn = new THREE.Vector3(1.2, -6.2, -4.5);
+  const boxOut = new THREE.Vector3(0.5, -5.2, -5.5);
+  const up1 = new THREE.Vector3(CAT_R * 0.6 * Math.cos(CAT_TH), -1.6, CAT_R * 0.6 * Math.sin(CAT_TH));
+  const curve = new THREE.CatmullRomCurve3([aP, aDown, boxIn, boxOut, up1, catPos.clone().add(new THREE.Vector3(0,0.4,0))]);
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 80, 0.05, 8, false),
+    new THREE.MeshStandardMaterial({ color:0x7c8ba0, metalness:0.7, roughness:0.35, transparent:true, opacity:0.85, depthWrite:false }));
+  tube.renderOrder = 4;
+  circuitGroup.add(tube);
+  const box = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.9, 1.0),
+    new THREE.MeshStandardMaterial({ color:0x3a465c, metalness:0.6, roughness:0.5, emissive:0x0a1424, emissiveIntensity:0.6 }));
+  box.position.copy(POWER_BOX); circuitGroup.add(box);
+  const boxChip = makeChip('⚡ 放电电源 V_d', '#ffd270', null);
+  boxChip.position.set(POWER_BOX.x, POWER_BOX.y - 0.95, POWER_BOX.z);
+  circuitGroup.add(boxChip);
+  circuitDots = [];
+  for (let i = 0; i < 4; i++){
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:TEX_GLOW, color:0x5ef0ff, transparent:true, opacity:0.6, blending:THREE.AdditiveBlending, depthWrite:false }));
+    s.scale.set(0.22, 0.22, 1); s.renderOrder = 26; circuitGroup.add(s); circuitDots.push({ s, curve, off: i / 4 });
+  }
+}
+let circuitDots = [];
+buildCircuit();
+
+// ---- 3.12 模块标签 ----
+const labelGroup = new THREE.Group(); scene.add(labelGroup);
+const moduleLabels = {};
+function addModuleLabel(mod, off){
+  const l = makeChip(mod.name, '#' + new THREE.Color(mod.color).getHexString(), mod.id);
+  l.position.copy(mod.anchor).add(off);
+  labelGroup.add(l); mod._label = l;
+}
+addModuleLabel(moduleRegistry[0], new THREE.Vector3(0, 0.9, 0.2));   // channel
+addModuleLabel(moduleRegistry[1], new THREE.Vector3(0, 0, 0.8));     // anode
+addModuleLabel(moduleRegistry[2], new THREE.Vector3(0, 0.5, 0.5));   // magnet
+addModuleLabel(moduleRegistry[3], new THREE.Vector3(0.5, 0.9, 0.4)); // cathode
+addModuleLabel(moduleRegistry[4], new THREE.Vector3(0, -1.6, 0.4));  // plume
+
+/* ================================================================
+   4. 粒子系统 (电子/中性氙/氙离子 + 轨迹)
+   ================================================================ */
+const TAU = Math.PI * 2;
+
+// 复用的临时向量 / 颜色：主循环与仿真里一律 set/copy，不再 new（避免每帧产生垃圾 → GC 掉帧）
+const _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _v3 = new THREE.Vector3();
+const _axX = new THREE.Vector3(1, 0, 0), _axY = new THREE.Vector3(0, 1, 0), _axZ = new THREE.Vector3(0, 0, 1);
+const COL_IONIZE = new THREE.Color(0xcfd8ff), COL_WALLHIT = new THREE.Color(0xff9a3c);
+
+// 轨迹：预分配环形缓冲（Float32Array + 游标）。采样点不再 pos.clone()，也不再整体搬移数组。
+function makeTrail(count, len, color){
+  const S = (len - 1) * 6;
+  const buf = new Float32Array(count * S);
+  const col = new Float32Array(count * S);
+  for (let i = 0; i < count; i++){
+    for (let k = 0; k < len - 1; k++){
+      const b = 1 - (k / (len - 1)) * 0.93;
+      const c = new THREE.Color(color).multiplyScalar(b);
+      const base = i * S + k * 6;
+      for (let q = 0; q < 2; q++){
+        col[base + q*3] = c.r; col[base + q*3+1] = c.g; col[base + q*3+2] = c.b;
+      }
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(buf, 3));
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const m = new THREE.LineBasicMaterial({ vertexColors:true, transparent:true, opacity:0.6,
+    blending:THREE.AdditiveBlending, depthWrite:false });
+  const seg = new THREE.LineSegments(g, m);
+  seg.renderOrder = 24;                       // 轨迹层：在所有发光体积/场线之后、粒子点之前
+  scene.add(seg);
+  return { len, count, buf, seg,
+           ring: new Float32Array(count * len * 3),   // 坐标环（ newest 在 head）
+           head: new Uint16Array(count),
+           fill: new Uint8Array(count),               // 已积累的有效样本数
+           timer: new Float32Array(count),
+           dirty: new Uint8Array(count),              // 本帧有新采样 → 需要重写该粒子的线段
+           on: new Uint8Array(count) };               // 上一帧是否激活（用于只在退出时清零一次）
+}
+function trailRecord(tr, i, pos, dt, interval){
+  tr.timer[i] += dt;
+  if (tr.timer[i] < interval) return;
+  tr.timer[i] = 0;
+  const L = tr.len;
+  let h = tr.head[i] + 1; if (h >= L) h = 0;
+  tr.head[i] = h;
+  const o = (i * L + h) * 3;
+  tr.ring[o] = pos.x; tr.ring[o+1] = pos.y; tr.ring[o+2] = pos.z;
+  if (tr.fill[i] < L) tr.fill[i]++;
+  tr.dirty[i] = 1;
+}
+function trailFlush(tr, active){
+  const b = tr.buf, L = tr.len, S = (L - 1) * 6, rb0 = L * 3;
+  let any = false;
+  for (let i = 0; i < tr.count; i++){
+    const base = i * S;
+    if (!active[i]){
+      // 未激活：只在"刚失去激活"那一帧清一次零，之后完全跳过（旧版每帧整段清零）
+      if (tr.on[i]){ b.fill(0, base, base + S); tr.on[i] = 0; tr.fill[i] = 0; tr.head[i] = 0; tr.dirty[i] = 0; any = true; }
+      continue;
+    }
+    tr.on[i] = 1;
+    if (!tr.dirty[i]) continue;               // 本帧没有新采样 → 缓冲仍是上一帧结果，不用重写
+    tr.dirty[i] = 0;
+    any = true;
+    const h = tr.head[i], f = tr.fill[i], rb = i * rb0;
+    for (let k = 0; k < L - 1; k++){
+      const o = base + k * 6;
+      if (k + 1 >= f){ b[o] = b[o+1] = b[o+2] = b[o+3] = b[o+4] = b[o+5] = 0; continue; }
+      let ia = h - k; if (ia < 0) ia += L;
+      let ib = h - k - 1; if (ib < 0) ib += L;
+      const a = rb + ia * 3, c = rb + ib * 3;
+      b[o] = tr.ring[a]; b[o+1] = tr.ring[a+1]; b[o+2] = tr.ring[a+2];
+      b[o+3] = tr.ring[c]; b[o+4] = tr.ring[c+1]; b[o+5] = tr.ring[c+2];
+    }
+  }
+  if (any) tr.seg.geometry.attributes.position.needsUpdate = true;
+}
+function makePoints(count, size, color, opacity=0.8){
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
+  const c = new THREE.Color(color);
+  const cols = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++){ const b = 0.75 + Math.random() * 0.25; cols[i*3]=c.r*b; cols[i*3+1]=c.g*b; cols[i*3+2]=c.b*b; }
+  g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+  const pts = new THREE.Points(g, new THREE.PointsMaterial({ map:TEX_GLOW, size, sizeAttenuation:true,
+    vertexColors:true, transparent:true, opacity, blending:THREE.AdditiveBlending, depthWrite:false }));
+  pts.renderOrder = 26;
+  scene.add(pts);
+  return pts;
+}
+function setPoint(pts, i, v){
+  pts.geometry.attributes.position.array[i*3] = v.x;
+  pts.geometry.attributes.position.array[i*3+1] = v.y;
+  pts.geometry.attributes.position.array[i*3+2] = v.z;
+}
+
+// --- 通道电子 (霍尔漂移) ---
+const NE = 46, NION = 88, NBEAM = 14;
+const NEG = makePoints(NE, 0.17, 0x5ef0ff);
+const NE_TRAIL = makeTrail(NE, 15, 0x5ef0ff);
+const ionsPts = makePoints(NION, 0.21, 0xffb35c);
+const ION_TRAIL = makeTrail(NION, 26, 0xffb35c);
+const beamPts = makePoints(NBEAM, 0.15, 0xa9f4ff);
+const BEAM_TRAIL = makeTrail(NBEAM, 10, 0xa9f4ff);
+
+// 高亮"典型电子"：超长轨迹展示回旋(拉莫尔)运动 + 周向漂移，并画出可见的回旋圆
+const FEAT_TRAIL = makeTrail(1, 150, 0x9fffe0);
+const activeF = new Uint8Array(1);
+const _gyroPts = [];
+for (let i = 0; i < 48; i++){ const a = (i / 48) * Math.PI * 2; _gyroPts.push(new THREE.Vector3(Math.cos(a), Math.sin(a), 0)); }
+const gyroCircle = new THREE.Line(new THREE.BufferGeometry().setFromPoints(_gyroPts),
+  new THREE.LineBasicMaterial({ color:0x7fffe0, transparent:true, opacity:0.5, depthWrite:false }));
+gyroCircle.renderOrder = 24;
+scene.add(gyroCircle);
+
+const electrons = [];
+const respawnQ = [];            // {t, kind}
+let simT = 0;
+
+function electronEntry(e){
+  const tgt = new THREE.Vector3(
+    (RM + (Math.random() - 0.5) * 0.8) * Math.cos(Math.random() * TAU),
+    -0.12,
+    (RM + (Math.random() - 0.5) * 0.8) * Math.sin(Math.random() * TAU));
+  const ctrl = catPos.clone().multiplyScalar(0.55).add(tgt.clone().multiplyScalar(0.45))
+    .add(new THREE.Vector3(0, 2.4, 0));
+  e.path = new THREE.QuadraticBezierCurve3(catPos.clone().add(new THREE.Vector3(0, 0.2, 0)), ctrl, tgt);
+  e.mode = 'flyIn'; e.t = 0; e.dur = 0.9 + Math.random() * 0.7;
+  e.th = Math.atan2(tgt.z, tgt.x); e.r = RM; e.yb = -0.7 + (Math.random() - 0.5) * 0.5;
+  e.ph = Math.random() * TAU; e.bph = Math.random() * TAU; e.bounce = Math.random() * TAU;
+}
+function spawnElectron(e){
+  e.active = true; electronEntry(e);
+}
+for (let i = 0; i < NE; i++){
+  const e = { active:false, mode:'idle', pos:new THREE.Vector3(), th:0, r:RM, yb:-0.7, gy:0, t:0, dur:1, ph:0, bph:0, bounce:0, path:null };
+  if (i < NE) { e.active = true; spawnElectron(e); }
+  electrons.push(e);
+}
+// 少量直接以 hall 起始
+electrons.forEach((e, i) => { if (e.active){ e.mode = 'hall'; e.th = (i / NE) * TAU; e.r = RM + (Math.random()-0.5)*0.8; e.gy = -0.7 + (Math.random()-0.5)*0.5; } });
+
+// --- 束流电子 (中和) ---
+const beams = [];
+for (let i = 0; i < NBEAM; i++){
+  beams.push({ active:true, pos:new THREE.Vector3(), t:0, dur:1.6, path:null });
+}
+function beamPath(){
+  const p0 = catPos.clone();
+  const p1 = new THREE.Vector3((Math.random() - 0.5) * 2.4, 1.5 + Math.random() * 4.0, (Math.random() - 0.5) * 2.4);
+  const ctrl = p0.clone().multiplyScalar(0.5).add(p1.clone().multiplyScalar(0.5)).add(new THREE.Vector3(0, 0.8, 0));
+  return new THREE.QuadraticBezierCurve3(p0, ctrl, p1);
+}
+beams.forEach(b => { b.path = beamPath(); });
+
+// --- 中性氙 ---
+const NEUT_POOL = 90;
+const NEUT = [];
+const neutralPts = [];
+function neutralTarget(){ return Math.round(22 + 6 * P.mdot); }
+function spawnNeutral(n){
+  n.active = true;
+  n.r = RI + 0.3 + Math.random() * (RO - RI - 0.6);
+  n.th = Math.random() * TAU;
+  n.y = ANODE_Y + 0.15;
+  n.v = neutralV();
+  n.dvx = (Math.random() - 0.5) * 0.12;
+  n.dvr = 0.02 + Math.random() * 0.06;
+}
+for (let i = 0; i < NEUT_POOL; i++){
+  const n = { active:false, pos:new THREE.Vector3(), r:RM, th:0, y:ANODE_Y, v:0.4, dvx:0, dvr:0 };
+  neutralPts.push(n);
+}
+NEUT.push(...neutralPts);
+const neutralPoints = makePoints(NEUT_POOL, 0.13, 0xaab7c4, 0.7);
+
+// --- 离子池 ---
+const ions = [];
+for (let i = 0; i < NION; i++){
+  ions.push({ active:false, pos:new THREE.Vector3(), v:new THREE.Vector3(), vy:0, divA:Math.random()*TAU, divR:0.5+Math.random()*1.2, age:0 });
+}
+
+// --- 闪光池 ---
+const flashes = [];
+for (let i = 0; i < 9; i++){
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:TEX_GLOW, color:0xffffff, transparent:true,
+    opacity:0, blending:THREE.AdditiveBlending, depthWrite:false }));
+  s.scale.set(0.01, 0.01, 1); s.renderOrder = 28; scene.add(s);
+  flashes.push({ s, life:0, max:0, col:new THREE.Color(0xffffff) });
+}
+function spawnFlash(pos, color, size=0.5){
+  let f = flashes.find(x => x.life <= 0);
+  if (!f) f = flashes[Math.floor(Math.random() * flashes.length)];
+  f.life = f.max = 0.38; f.s.position.copy(pos); f.s.material.color.copy(color);
+  f.size = size;
+}
+
+// --- 粒子总数与活性 ---
+const activeE = new Uint8Array(NE), activeI = new Uint8Array(NION), activeB = new Uint8Array(NBEAM);
+const counters = { ion: 0, esc: 0 };
+
+/* ================================================================
+   5. 仿真主更新
+   ================================================================ */
+function spawnIon(pos){
+  const ion = ions.find(x => !x.active) || ions[0];
+  ion.active = true; ion.pos.copy(pos); ion.v.set(0, 0.3, 0); ion.vy = 0.3;
+  ion.divA = Math.random() * TAU; ion.divR = 0.4 + Math.random() * 1.4; ion.age = 0;
+  return ion;
+}
+
+function simStep(dt){
+  simT += dt;
+  const dtIon = dt;
+
+  // ---- 电子 ----
+  const rL = electronRL(), wG = electronWG();
+  for (let i = 0; i < NE; i++){
+    const e = electrons[i]; e.activeE = e.active;
+    if (!e.active){ activeE[i] = 0; setPoint(NEG, i, HIDDEN); continue; }
+    let p = e.pos;
+    if (e.mode === 'flyIn'){
+      e.t += dt / e.dur;
+      if (e.t >= 1){ e.t = 1;
+        if (P.B < 10) e.mode = 'fall';
+        else { e.mode = 'hall'; e.gy = -0.7 + (Math.random()-0.5)*0.6; e.bph = Math.random()*TAU; }
+      }
+      p.copy(e.path.getPoint(e.t, _v3));
+    } else if (e.mode === 'hall'){
+      e.th += omegaDrift(e.gy, e.r) * dt;
+      e.bph += dt * 0.85; e.bounce += dt;
+      e.gy = e.yb + 0.5 * Math.sin(e.bounce + e.bph);
+      // 泄漏 (低磁场时更频繁)
+      const leak = 0.05 * THREE.MathUtils.clamp((60 - P.B) / 60, 0, 1) * dt;
+      if (P.B < 45 && Math.random() < leak) e.mode = 'fall';
+      // 碰撞电离
+      if (e.gy > -2.0 && e.gy < 0.3){
+        for (let j = 0; j < NEUT.length; j++){
+          const n = NEUT[j];
+          if (!n.active || n.y < -2.4 || n.y > 0.4) continue;
+          const dx = p.x - n.pos.x, dy = p.y - n.pos.y, dz = p.z - n.pos.z;
+          if (dx*dx + dy*dy + dz*dz < 0.16){
+            const rate = THREE.MathUtils.clamp(P.Vd / 250, 0.3, 1.3) * THREE.MathUtils.clamp(P.B / 60, 0, 1.2);
+            if (Math.random() < 0.035 * dt * 60 * rate){
+              n.active = false;
+              spawnIon(n.pos);
+              spawnFlash(n.pos, COL_IONIZE, 0.55);
+              counters.ion++;
+              respawnQ.push({ t: simT + 0.5 + Math.random() * 1.2, kind:'n' });
+              break;
+            }
+          }
+        }
+      }
+      p.set(e.r * Math.cos(e.th), e.gy, e.r * Math.sin(e.th));
+      // 回旋叠加
+      if (P.B >= 10){
+        e.ph += wG * dt;
+        _v1.set(-Math.sin(e.th), 0, Math.cos(e.th));
+        p.addScaledVector(_v1, rL * Math.cos(e.ph)).addScaledVector(_axY, rL * Math.sin(e.ph));
+      }
+    } else if (e.mode === 'fall'){
+      e.th += omegaDrift(e.gy, e.r) * 0.25 * dt;
+      e.gy -= 1.15 * Math.sqrt(P.Vd / 300) * dt;
+      if (P.B >= 10){
+        e.ph += wG * dt;
+        p.set(e.r * Math.cos(e.th), e.gy, e.r * Math.sin(e.th));
+        _v1.set(-Math.sin(e.th), 0, Math.cos(e.th));
+        p.addScaledVector(_v1, rL * Math.cos(e.ph)).addScaledVector(_axY, rL * Math.sin(e.ph));
+      } else {
+        p.set(e.r * Math.cos(e.th), e.gy, e.r * Math.sin(e.th));
+      }
+      if (e.gy < -3.2){
+        spawnFlash(p, COL_WALLHIT, 0.35);
+        e.active = false; activeE[i] = 0;
+        respawnQ.push({ t: simT + 0.4 + Math.random() * 1.0, kind:'e' });
+      }
+    }
+    // 记录轨迹
+    if (e.active){
+      trailRecord(NE_TRAIL, i, p, dt, 0.016);
+      setPoint(NEG, i, p); activeE[i] = 1;
+    }
+  }
+
+  // ---- 高亮典型电子（0 号）：长轨迹 + 拉莫尔回旋圆 ----
+  {
+    const f0 = electrons[0];
+    if (f0 && f0.active){
+      activeF[0] = 1;
+      trailRecord(FEAT_TRAIL, 0, f0.pos, dt, 0.012);
+      if (f0.mode === 'hall' && P.layer.particles){
+        const rL0 = electronRL();
+        _v1.set(f0.r * Math.cos(f0.th), f0.gy, f0.r * Math.sin(f0.th));
+        _v2.set(Math.cos(f0.th), 0, Math.sin(f0.th));
+        gyroCircle.visible = true;
+        gyroCircle.position.copy(_v1);
+        gyroCircle.scale.set(rL0, rL0, rL0);
+        gyroCircle.quaternion.setFromUnitVectors(_axZ, _v2);
+      } else {
+        gyroCircle.visible = false;
+      }
+    } else {
+      activeF[0] = 0;
+      gyroCircle.visible = false;
+    }
+  }
+
+  // ---- 束流电子 (中和) ----
+  for (let i = 0; i < NBEAM; i++){
+    const b = beams[i];
+    b.t += dt / b.dur;
+    if (b.t >= 1){ b.t = 0; b.path = beamPath(); }
+    b.path.getPoint(b.t, b.pos);                  // 直接写入 b.pos，不再分配临时向量
+    trailRecord(BEAM_TRAIL, i, b.pos, dt, 0.02);
+    setPoint(beamPts, i, b.pos); activeB[i] = 1;
+  }
+
+  // ---- 中性氙 ----
+  const nTarget = neutralTarget();
+  let nCount = 0;
+  for (let i = 0; i < NEUT.length; i++){
+    const n = NEUT[i];
+    if (!n.active){ if (nCount < nTarget && Math.random() < dt * 2) { spawnNeutral(n); nCount++; } continue; }
+    nCount++;
+    n.th += n.dvx * dt;
+    n.r += n.dvr * dt;
+    n.y += n.v * dt;
+    n.pos.set(n.r * Math.cos(n.th), n.y, n.r * Math.sin(n.th));
+    if (n.y > 7.4){ n.active = false; counters.esc++; respawnQ.push({ t: simT + 3.2 * (5 / P.mdot), kind:'n' }); }
+    // 稍加随机抖动
+    if (n.y < 0.5 && Math.random() < 0.3) n.th += (Math.random() - 0.5) * 0.02;
+  }
+
+  // ---- 离子 ----
+  const vExit = ionExitV();
+  for (let i = 0; i < NION; i++){
+    const ion = ions[i];
+    if (!ion.active){ activeI[i] = 0; setPoint(ionsPts, i, HIDDEN); continue; }
+    ion.age += dt;
+    const pf = potentialFrac(ion.pos.y);
+    ion.vy = vExit * Math.sqrt(Math.max(0.05, pf));
+    let vx = 0, vz = 0;
+    if (ion.pos.y > EXIT_Y){
+      // 出口后发散
+      const sp = vExit * (0.86 + Math.random() * 0.1);
+      ion.vy = sp;
+      ion.divR += (0.10 + Math.random() * 0.05) * dt;
+      vx = sp * 0.16 * Math.cos(ion.divA) * Math.min(ion.divR, 1.2) * (ion.age > 1 ? 1 : 0.3);
+      vz = sp * 0.16 * Math.sin(ion.divA) * Math.min(ion.divR, 1.2) * (ion.age > 1 ? 1 : 0.3);
+    }
+    ion.v.set(vx, ion.vy, vz);
+    ion.pos.addScaledVector(ion.v, dtIon);
+    if (ion.pos.y > 8.4 || ion.age > 6){ ion.active = false; activeI[i] = 0; }
+    if (ion.active){
+      trailRecord(ION_TRAIL, i, ion.pos, dt, 0.045);
+      setPoint(ionsPts, i, ion.pos); activeI[i] = 1;
+    }
+  }
+
+  // ---- 重生队列 ----
+  for (let k = respawnQ.length - 1; k >= 0; k--){
+    const q = respawnQ[k];
+    if (simT >= q.t){
+      if (q.kind === 'e'){ const e = electrons.find(x => !x.active); if (e) spawnElectron(e); }
+      else { const n = NEUT.find(x => !x.active); if (n) spawnNeutral(n); }
+      respawnQ.splice(k, 1);
+    }
+  }
+
+  // ---- 闪光 ----
+  for (const f of flashes){
+    if (f.life > 0){
+      f.life -= dt;
+      const t = 1 - f.life / f.max;
+      const s = 0.15 + 0.85 * t;
+      f.s.scale.set(f.size * s, f.size * s, 1);
+      f.s.material.opacity = (1 - t) * 0.8;
+    } else f.s.material.opacity = 0;
+  }
+}
+
+// ---- 常驻中性位置更新独立 (上面循环里已处理位置, 这里同步 point) ----
+const HIDDEN = new THREE.Vector3(0, -500, 0);
+function flushNeutralPoints(){
+  const arr = neutralPoints.geometry.attributes.position.array;
+  for (let i = 0; i < NEUT.length; i++){
+    const n = NEUT[i];
+    if (n.active){ arr[i*3] = n.pos.x; arr[i*3+1] = n.pos.y; arr[i*3+2] = n.pos.z; }
+    else { arr[i*3] = 0; arr[i*3+1] = -500; arr[i*3+2] = 0; }
+  }
+  neutralPoints.geometry.attributes.position.needsUpdate = true;
+}
+
+/* ================================================================
+   6. UI 与交互
+   ================================================================ */
+// --- 模块列表 ---
+const moduleListEl = document.getElementById('modules');
+moduleRegistry.forEach((m, idx) => {
+  const b = document.createElement('button');
+  b.dataset.mid = m.id;
+  b.innerHTML = `<span class="dot" style="color:${m.color};background:${m.color}"></span>${m.name}`;
+  b.addEventListener('click', () => selectModule(m.id));
+  moduleListEl.appendChild(b);
+});
+
+// --- 图层复选框 ---
+const layerChecks = {
+  cut: document.getElementById('Lcut'), field: document.getElementById('Lfield'),
+  equipot: document.getElementById('Lequipot'), particles: document.getElementById('Lpart'),
+  labels: document.getElementById('Llabel'), circuit: document.getElementById('Lcircuit'),
+};
+Object.entries(layerChecks).forEach(([k, el]) => {
+  el.checked = P.layer[k];
+  el.addEventListener('change', () => { P.layer[k] = el.checked; applyLayers(); });
+});
+function applyLayers(){
+  const L = P.layer;
+  // 剖切: 全部 ringSolid 用 cut 版本重建
+  applyCut(L.cut);
+  fieldGroup.visible = L.field;
+  equipGroup.visible = L.equipot;
+  eFieldGroup.visible = L.equipot;
+  const partVis = L.particles;
+  NEG.visible = NE_TRAIL.seg.visible = partVis;
+  ionsPts.visible = ION_TRAIL.seg.visible = partVis;
+  beamPts.visible = BEAM_TRAIL.seg.visible = partVis;
+  FEAT_TRAIL.seg.visible = partVis;
+  if (neutralPoints) neutralPoints.visible = partVis;
+  applyLabelVisibility();
+  circuitGroup.visible = L.circuit;
+  zoneIon.visible = zoneAccel.visible = false;
+  zoneHall.visible = false;
+  if (hallArrowRoot) hallArrowRoot.visible = false;
+  if (P.zones === 'hall'){ zoneHall.visible = true; if (hallArrowRoot) hallArrowRoot.visible = true; }
+  if (P.zones === 'ion') zoneIon.visible = true;
+  if (P.zones === 'accel') zoneAccel.visible = true;
+  plumeGroup.visible = true;
+}
+
+// --- 辉光 / 画质：手动开关 + 自适应降级（性能） ---
+const bloomChk = document.getElementById('Lbloom'), qSel = document.getElementById('qSel');
+function syncBloomUI(){
+  bloomChk.checked = bloomOn;
+  bloomChk.title = bloomUserSet ? '已手动设定：不再自动开关'
+    : (WEAK ? '自动：检测到集显/弱机，默认关闭，帧率恢复后自动打开' : '自动：掉帧时自动关闭，帧率恢复后自动打开');
+}
+function setBloom(on){ bloomOn = !!on; bloom.enabled = bloomOn; syncBloomUI(); }
+function setQuality(k, byUser){
+  if (!QUALITY[k]) return;
+  qKey = k;
+  if (byUser) qUserSet = true;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, QUALITY[k].dpr));
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  labelRenderer.setSize(innerWidth, innerHeight);
+  starGeo.setDrawRange(0, QUALITY[k].stars);       // 星点只裁绘制区间，不重建缓冲
+  if (qSel.value !== k) qSel.value = k;
+  labelDirty = true;
+}
+bloomChk.addEventListener('change', () => {
+  bloomUserSet = true; bloomAuto = bloomChk.checked; setBloom(bloomChk.checked);
+});
+qSel.addEventListener('change', () => setQuality(qSel.value, true));
+// 自适应：每 ~0.6s 评估一次平滑帧率；先关辉光，仍然不够再降画质。
+// 用户手动设定过的项目，自适应不再插手（但降级门限更保守：只有 <30fps 才动画质）。
+const perf = { acc:0, n:0, fps:60, cool:0, lbl:0 };
+function perfTick(dt){
+  perf.acc += dt; perf.n++;
+  if (perf.acc < 0.6) return;
+  perf.fps = perf.fps * 0.5 + (perf.n / perf.acc) * 0.5;
+  perf.acc = 0; perf.n = 0;
+  if (perf.cool > 0){ perf.cool -= 0.6; return; }
+  if (!bloomUserSet){
+    if (bloomOn && perf.fps < 45){ setBloom(false); perf.cool = 3; return; }
+    if (!bloomOn && perf.fps > 58 && !WEAK){ setBloom(true); perf.cool = 6; return; }
+  }
+  if (!qUserSet && perf.fps < 30 && qKey !== 'low'){
+    setQuality(qKey === 'high' ? 'mid' : 'low', false); perf.cool = 6;
+  }
+}
+
+// --- 剖切视窗：只剖结构材质（粒子/场线/羽流不受影响），切口始终正对观察者 ---
+const clipPlane = new THREE.Plane();
+const CLIP_ARR = [clipPlane];      // 复用同一个数组：不再每帧给每个材质发一个新数组
+const NO_CLIP = [];
+// 初值 null（不是 true）：保证第一次 applyCut 一定真正执行赋值。
+// 旧版靠 animate 每帧重发来兜住这件事，现在逐帧重发被去掉了，必须由这里补齐。
+let cutApplied = null;
+function applyCut(cut){
+  if (cutApplied === cut) return;
+  cutApplied = cut;
+  crossSectionGroup.visible = cut;
+  for (const m of clipMats){
+    m.clippingPlanes = cut ? CLIP_ARR : NO_CLIP;     // 只在状态变化时赋值；剖切面本身逐帧就地 set()
+  }
+  labelDirty = true;
+  applyLabelVisibility();
+}
+
+// --- 章节切换 ---
+const SECTIONS = {
+  overview: { label:'总览', cam:{ pos:[11.5,6,13.5], tgt:[0,-0.5,0] }, layers:{cut:true, field:true, equipot:false, particles:true, labels:true, circuit:false}, zones:'none', timescale:1 },
+  structure: { label:'结构解剖', cam:{ pos:[8.2,2.6,10], tgt:[0,-1.6,0] }, layers:{cut:true, field:false, equipot:false, particles:true, labels:true, circuit:true}, zones:'none', timescale:1 },
+  magnet: { label:'磁场约束', cam:{ pos:[8.6,0.6,6.8], tgt:[0,-0.8,0] }, layers:{cut:true, field:true, equipot:false, particles:true, labels:true, circuit:false}, zones:'hall', timescale:1 },
+  ionize: { label:'碰撞电离', cam:{ pos:[6.4,0.4,6.4], tgt:[1.4,-0.9,1.4] }, layers:{cut:true, field:false, equipot:false, particles:true, labels:true, circuit:false}, zones:'ion', timescale:0.8 },
+  accelerate: { label:'静电加速', cam:{ pos:[8.6,0.9,5.4], tgt:[1.2,-0.5,1.2] }, layers:{cut:true, field:false, equipot:true, particles:true, labels:true, circuit:false}, zones:'accel', timescale:1 },
+  plume: { label:'羽流中和', cam:{ pos:[7.4,6.2,8.2], tgt:[0,2.6,0] }, layers:{cut:true, field:false, equipot:false, particles:true, labels:true, circuit:false}, zones:'none', timescale:1 },
+};
+function applySection(sec){
+  P.section = sec;
+  const S = SECTIONS[sec];
+  Object.assign(P.layer, S.layers);
+  P.zones = S.zones;
+  P.timeScale = S.timescale;
+  Object.entries(layerChecks).forEach(([k, el]) => el.checked = P.layer[k]);
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.sec === sec));
+  setSpeedUI();
+  moveCamera(S.cam.pos, S.cam.tgt);
+  applyLayers();
+  deselectModule();
+  setInfo(SECTIONS_CONTENT[sec]);
+  currentSection = sec;
+}
+let currentSection = 'overview';
+document.querySelectorAll('#nav button').forEach(b => {
+  b.addEventListener('click', () => applySection(b.dataset.sec));
+});
+
+// --- 相机补间 ---
+let camTween = null;
+function moveCamera(pos, tgt){
+  camTween = { p0: camera.position.clone(), t0: controls.target.clone(),
+    p1: new THREE.Vector3(...pos), t1: new THREE.Vector3(...tgt), t: 0, dur: 1.1 };
+}
+function updateCamTween(dt){
+  if (!camTween) return;
+  camTween.t += dt / camTween.dur;
+  const t = THREE.MathUtils.smoothstep(camTween.t, 0, 1);
+  camera.position.lerpVectors(camTween.p0, camTween.p1, t);
+  controls.target.lerpVectors(camTween.t0, camTween.t1, t);
+  if (camTween.t >= 1) camTween = null;
+}
+
+// --- 模块选择高亮 ---
+let selectedId = null;
+let selectedMod = null;          // 缓存当前选中模块：animate 里不再每帧 find
+function selectModule(id){
+  selectedId = id;
+  const m = moduleRegistry.find(x => x.id === id);
+  if (!m) { selectedMod = null; return; }
+  selectedMod = m;
+  // 高亮
+  moduleRegistry.forEach(mod => {
+    const sel = mod.id === id;
+    mod.mats.forEach(mat => {
+      if (!mat.userData.base){ mat.userData.base = { c: mat.color.clone(), e: mat.emissive ? mat.emissive.clone() : null, ei: mat.emissiveIntensity || 0, o: mat.opacity, to: mat.transparent }; }
+      if (sel){
+        mat.color.copy(mat.userData.base.c).multiplyScalar(1.15);
+        if (mat.emissive){ mat.emissive.set(m.color); mat.emissiveIntensity = 0.8; }
+        mat.opacity = mat.userData.base.to ? Math.min(0.6, mat.userData.base.o * 1.6) : 1;
+      } else {
+        mat.color.copy(mat.userData.base.c).multiplyScalar(0.42);
+        if (mat.emissive) mat.emissiveIntensity = mat.userData.base.ei * 0.3;
+        mat.opacity = mat.userData.base.to ? mat.userData.base.o * 0.5 : 1;
+      }
+    });
+  });
+  // 列表 & 标签
+  document.querySelectorAll('#modules button').forEach(b => b.classList.toggle('on', b.dataset.mid === id));
+  moduleRegistry.forEach(mod => { if (mod._label) mod._label.element.classList.toggle('on', mod.id === id); });
+  // 相机
+  moveCamera(m.camera.pos, m.camera.tgt);
+  // 信息
+  setInfo(MODULE_DETAIL[id]);
+  showBackBtn(true);
+}
+function deselectModule(){
+  if (!selectedId) return;
+  selectedId = null;
+  selectedMod = null;
+  moduleRegistry.forEach(mod => {
+    mod.mats.forEach(mat => {
+      if (mat.userData.base){
+        mat.color.copy(mat.userData.base.c);
+        if (mat.emissive) mat.emissive.copy(mat.userData.base.e);
+        mat.emissiveIntensity = mat.userData.base.ei;
+        mat.opacity = mat.userData.base.o;
+      }
+    });
+    if (mod._label) mod._label.element.classList.remove('on');
+  });
+  document.querySelectorAll('#modules button').forEach(b => b.classList.remove('on'));
+  showBackBtn(false);
+}
+function showBackBtn(show){
+  const el = document.getElementById('back2sec');
+  if (el) el.style.display = show ? 'block' : 'none';
+}
+
+// --- 拾取 ---
+const raycaster = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+let downXY = null;
+renderer.domElement.addEventListener('pointerdown', e => { downXY = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!downXY) return;
+  if (Math.hypot(e.clientX - downXY[0], e.clientY - downXY[1]) > 6) { downXY = null; return; }
+  downXY = null;
+  ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  const hits = raycaster.intersectObjects(pickables, false);
+  if (hits.length){
+    const id = hits[0].object.userData.mid;
+    if (id) selectModule(id);
+  }
+});
+
+// --- 滑块 / 按钮 ---
+const rVd = document.getElementById('rVd'), rB = document.getElementById('rB'), rM = document.getElementById('rM');
+function readSliders(){
+  P.Vd = +rVd.value; P.B = +rB.value; P.mdot = +rM.value;
+  document.getElementById('vVd').textContent = P.Vd + ' V';
+  document.getElementById('vB').textContent = P.B + ' G';
+  document.getElementById('vM').textContent = P.mdot.toFixed(1) + ' mg/s';
+  updateEquipotLabels();
+  applyCircuitSpeed();
+  computeStats();
+  refreshAllCharts();
+}
+rVd.addEventListener('input', readSliders);
+rB.addEventListener('input', readSliders);
+rM.addEventListener('input', readSliders);
+
+document.getElementById('playBtn').addEventListener('click', togglePlay);
+function togglePlay(){
+  P.paused = !P.paused;
+  document.getElementById('playBtn').textContent = P.paused ? '▶ 播放' : '⏸ 暂停';
+}
+document.querySelectorAll('.presetbtn').forEach(b => {
+  b.addEventListener('click', () => {
+    P.timeScale = +b.dataset.s; setSpeedUI();
+  });
+});
+function setSpeedUI(){
+  document.querySelectorAll('.presetbtn').forEach(b => b.classList.toggle('on', +b.dataset.s === P.timeScale));
+}
+document.getElementById('pNom').addEventListener('click', () => { rVd.value=300; rB.value=170; rM.value=5; readSliders(); });
+document.getElementById('pNoB').addEventListener('click', () => { rB.value=0; readSliders(); applySection('magnet'); });
+document.getElementById('pHiV').addEventListener('click', () => { rVd.value=500; rB.value=220; rM.value=4; readSliders(); });
+document.getElementById('pFront').addEventListener('click', () => { moveCamera([0, 0.6, 11], [0, -1.0, 0]); });
+document.getElementById('pTop').addEventListener('click', () => { moveCamera([0.01, 12.5, 0.01], [0, -0.4, 0]); });
+document.getElementById('resetView').addEventListener('click', () => {
+  const S = SECTIONS[P.section];
+  if (S) moveCamera(S.cam.pos, S.cam.tgt);
+});
+document.getElementById('back2sec').addEventListener('click', () => {
+  deselectModule();
+  const S = SECTIONS[P.section];
+  if (S) moveCamera(S.cam.pos, S.cam.tgt);
+});
+window.addEventListener('keydown', e => {
+  if (e.code === 'Space' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); togglePlay(); }
+});
+
+// 面板折叠 (窄屏)
+document.getElementById('togglePanels').addEventListener('click', () => {
+  document.getElementById('left').classList.toggle('open');
+  document.getElementById('right').classList.toggle('open');
+});
+document.getElementById('introBtn').addEventListener('click', () => {
+  document.getElementById('intro').classList.add('hide');
+});
+
+// --- 实时统计 ---
+function computeStats(){
+  const B_T = P.B * 1e-4;
+  const vi = Math.sqrt(2 * eC * P.Vd / mXe);                 // m/s
+  const etaM = 0.92 * (1 - Math.exp(-P.B / 60));              // 推进剂利用率
+  const F = P.mdot * 1e-6 * etaM * vi * 0.90 * 0.97;          // N
+  const Isp = F / (P.mdot * 1e-6 * g0);
+  const Iion = (P.mdot * 1e-6 * etaM) / mXe * eC;
+  const Id = Iion / 0.72;
+  const Pw = P.Vd * Id;
+  const etaT = Pw > 0 ? (F * F) / (2 * P.mdot * 1e-6 * Pw) : 0;
+  const Te = 15;
+  const vTe = Math.sqrt(2 * Te * eC / me);
+  const rLe = B_T > 0 ? me * vTe / (eC * B_T) * 1000 : Infinity;   // mm
+  const rLi = B_T > 0 ? mXe * vi / (eC * B_T) : Infinity;          // m
+
+  const el = id => document.getElementById(id);
+  el('sv_i').textContent = (vi / 1000).toFixed(1) + ' km/s';
+  el('sF').textContent = (F * 1000).toFixed(1) + ' mN';
+  el('sIsp').textContent = Isp.toFixed(0) + ' s';
+  el('sP').textContent = (Pw / 1000).toFixed(2) + ' kW';
+  el('sId').textContent = Id.toFixed(2) + ' A';
+  el('sEta').textContent = (etaT * 100).toFixed(1) + ' %';
+  el('sEtam').textContent = (etaM * 100).toFixed(1) + ' %';
+  el('srLe').textContent = B_T > 0 ? rLe.toFixed(2) + ' mm' : '∞';
+  el('srLi').textContent = B_T > 0 ? (rLi).toFixed(2) + ' m' : '∞';
+  el('sCount').textContent = `${counters.ion} / ${counters.esc}`;
+}
+setInterval(computeStats, 500);
+function applyCircuitSpeed(){}
+
+/* ================================================================
+   6.5 2D 辅助曲线（画布绘图，随滑块实时更新）
+   ================================================================ */
+const chartCanvas = document.getElementById('chartMain');
+const chartCtx = chartCanvas ? chartCanvas.getContext('2d') : null;
+const bigCanvas = document.getElementById('chartBig');
+const bigCtx = bigCanvas ? bigCanvas.getContext('2d') : null;
+// 绘图使用"逻辑坐标系"206×150，再按 _CS 缩放输出 → 高 DPI 下不模糊
+const LOG_W = 206, LOG_H = 150;
+let _CC = chartCtx, _CS = 2, _CW = LOG_W, _CH = LOG_H;
+let chartTab = 'axial';
+
+function useChartContext(ctx, scale){
+  _CC = ctx; _CS = scale || 2; _CW = LOG_W; _CH = LOG_H;
+  ctx.setTransform(_CS, 0, 0, _CS, 0, 0);
+}
+function redrawCharts(){
+  if (!chartCtx) return;
+  useChartContext(chartCtx, 2);
+  drawChartMain();
+}
+function refreshAllCharts(){
+  redrawCharts();
+  const modal = document.getElementById('chartModal');
+  if (bigCtx && modal && modal.classList.contains('open')){
+    useChartContext(bigCtx, 4);
+    drawChartMain();
+  }
+}
+document.querySelectorAll('#charts .chartTabs button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#charts .chartTabs button').forEach(x => x.classList.toggle('on', x === b));
+    chartTab = b.dataset.c;
+    refreshAllCharts();
+  });
+});
+document.getElementById('chartZoom').addEventListener('click', () => {
+  if (!bigCtx) return;
+  document.getElementById('chartModal').classList.add('open');
+  useChartContext(bigCtx, 4);
+  drawChartMain();
+});
+document.getElementById('chartModalClose').addEventListener('click', () => {
+  document.getElementById('chartModal').classList.remove('open');
+});
+document.getElementById('chartModal').addEventListener('click', e => {
+  if (e.target.id === 'chartModal') document.getElementById('chartModal').classList.remove('open');
+});
+
+function xenonSigma(E){
+  if (E < 12.13) return 0;                       // 第一电离能 12.13 eV
+  const x = E - 12.13;
+  return 2.6e-20 * x * Math.exp(-x / 90) / (90 * Math.exp(-1));  // 峰值 ≈2.6e-20 m² @ ~100 eV
+}
+function chRL(){ const B_T = P.B * 1e-4; const vTe = Math.sqrt(2 * 15 * eC / me); return B_T > 0 ? (me * vTe / (eC * B_T) * 1000).toFixed(2) : '∞'; }
+function chOmT(){ const B_T = P.B * 1e-4; return B_T > 0 ? Math.round(eC * B_T / me / 3e7) : 0; }
+
+function chSetup(){
+  if (!_CC) return;
+  const ctx = _CC;
+  ctx.clearRect(0, 0, _CW, _CH);
+  ctx.fillStyle = 'rgba(5,10,20,0.96)';
+  ctx.fillRect(0, 0, _CW, _CH);
+  ctx.strokeStyle = 'rgba(120,185,255,0.13)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++){
+    const y = 12 + (_CH - 30) * i / 4;
+    ctx.beginPath(); ctx.moveTo(28, y); ctx.lineTo(_CW - 6, y); ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(150,195,255,0.55)';
+  ctx.beginPath(); ctx.moveTo(28, 12); ctx.lineTo(28, _CH - 18); ctx.lineTo(_CW - 6, _CH - 18); ctx.stroke();
+}
+function chLegend(items){
+  if (!_CC) return;
+  const ctx = _CC;
+  let lx = 34, ly = 20;
+  ctx.font = '9px "PingFang SC","Microsoft YaHei",sans-serif';
+  for (const it of items){
+    ctx.fillStyle = it.color;
+    ctx.fillRect(lx, ly - 6, 7, 7);
+    ctx.fillStyle = '#cfe0f2';
+    ctx.textAlign = 'left';
+    ctx.fillText(it.label, lx + 10, ly);
+    lx += 12 + ctx.measureText(it.label).width + 10;
+  }
+}
+function chSeries(specs, xmin, xmax){
+  if (!_CC) return;
+  const ctx = _CC;
+  const N = 90, iw = _CW - 34, ih = _CH - 30;
+  const samples = specs.map(s => {
+    const vals = [];
+    let mn = Infinity, mx = -Infinity;
+    for (let i = 0; i <= N; i++){
+      const t = xmin + (xmax - xmin) * i / N;
+      const v = s.f(t);
+      vals.push(v);
+      if (v < mn) mn = v; if (v > mx) mx = v;
+    }
+    return { s, vals, mn, mx };
+  });
+  for (const S of samples){
+    const span = (S.mx - S.mn) || 1;
+    ctx.beginPath();
+    ctx.strokeStyle = S.s.color;
+    ctx.lineWidth = 1.7;
+    for (let i = 0; i <= N; i++){
+      const t = xmin + (xmax - xmin) * i / N;
+      const x = 28 + (t - xmin) / (xmax - xmin) * iw;
+      const y = 12 + ih - ((S.vals[i] - S.mn) / span) * ih * 0.94 - ih * 0.03;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+}
+function chShade(x0, x1, color, xmin, xmax){
+  if (!_CC) return;
+  const ctx = _CC;
+  const iw = _CW - 34;
+  const X = t => 28 + (t - xmin) / (xmax - xmin) * iw;
+  ctx.fillStyle = color;
+  ctx.fillRect(X(x0), 12, X(x1) - X(x0), _CH - 30);
+}
+function chMarkLine(x, label, color, xmin, xmax){
+  if (!_CC) return;
+  const ctx = _CC;
+  const iw = _CW - 34;
+  const px = 28 + (x - xmin) / (xmax - xmin) * iw;
+  ctx.strokeStyle = color;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(px, 12); ctx.lineTo(px, _CH - 18); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = color;
+  ctx.font = '8.5px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(label, Math.max(34, Math.min(_CW - 20, px)), 10);
+  ctx.textAlign = 'left';
+}
+function chXAxis(xmin, xmax, ticks, label){
+  if (!_CC) return;
+  const ctx = _CC;
+  ctx.fillStyle = '#8fa3ba';
+  ctx.font = '8.5px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'center';
+  for (let i = 0; i <= ticks; i++){
+    const t = xmin + (xmax - xmin) * i / ticks;
+    const x = 28 + (t - xmin) / (xmax - xmin) * (_CW - 34);
+    ctx.fillText(t.toFixed(1), x, _CH - 6);
+  }
+  ctx.textAlign = 'right';
+  ctx.fillText(label, _CW - 4, _CH - 6);
+}
+function chNote(text){
+  if (!_CC) return;
+  const ctx = _CC;
+  ctx.fillStyle = '#a9d8ff';
+  ctx.font = '9px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(text, 30, _CH - 8);
+}
+function chArrow(x0, y0, x1, y1, color, lw=1.8){
+  const ctx = _CC;
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  const a = Math.atan2(y1 - y0, x1 - x0), s = 5;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x1 - s * Math.cos(a - 0.45), y1 - s * Math.sin(a - 0.45));
+  ctx.lineTo(x1 - s * Math.cos(a + 0.45), y1 - s * Math.sin(a + 0.45));
+  ctx.closePath(); ctx.fill();
+}
+function drawElecSchematic(){
+  const ctx = _CC;
+  // B 场（径向）竖线
+  ctx.strokeStyle = '#7ee0ff'; ctx.lineWidth = 2;
+  chArrow(40, _CH - 40, 40, 34, '#7ee0ff');
+  ctx.fillStyle = '#7ee0ff'; ctx.font = '9px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'left'; ctx.fillText('B(径向)', 12, 30);
+  // 绕 B 的回旋螺旋（在画面中表现为正弦包络）
+  ctx.strokeStyle = '#5ef0ff'; ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  for (let i = 0; i <= 80; i++){
+    const t = i / 80;
+    const px = 40 + 9 * Math.sin(t * Math.PI * 6);
+    const py = 36 + (_CH - 76) * t;
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.fillStyle = '#5ef0ff'; ctx.fillText('① 电子回旋（拉莫尔圆 r_Le）', 56, 44);
+  // E×B 周向漂移（霍尔电流）
+  chArrow(52, _CH - 30, 150, _CH - 30, '#ffd166');
+  ctx.fillStyle = '#ffd166'; ctx.fillText('② E×B 周向漂移 = 霍尔电流 I_H', 54, _CH - 36);
+  // 轴向迁移
+  chArrow(168, _CH - 44, 168, _CH - 70, '#ffb35c');
+  ctx.fillStyle = '#ffb35c'; ctx.fillText('③ 轴向迁移（缓慢，参与电离）', 60, _CH - 58);
+}
+
+// 结构分层剖面示意图（r-y 截面：一层层到底是什么、电场/磁场怎么来）
+function drawLayersSchematic(){
+  const ctx = _CC;
+  const x0 = 16, xw = 176;            // r 0 → x0, r=7.6 → x0+xw
+  const yTop = 10, yh = 116;          // y=1 → yTop, y=-4.2 → yTop+yh
+  const X = r => x0 + (r / 7.6) * xw;
+  const Y = y => yTop + ((1 - y) / 5.2) * yh;
+  const band = (r0, r1, y0, y1, color) => {
+    ctx.fillStyle = color;
+    ctx.fillRect(X(r0), Y(y1), X(r1) - X(r0), Y(y0) - Y(y1));
+  };
+  // —— 从内到外一层层画 ——
+  band(0, 1.0, -3.2, 0, 'rgba(12,20,34,0.55)');     // 轴孔（空腔）
+  band(1.0, 2.9, -3.6, -0.25, '#6f7f9b');           // 内磁路（内极靴+内线圈）
+  band(2.9, 3.5, -3.2, 0, '#d7dee6');               // 内陶瓷壁
+  band(3.5, 5.0, -3.2, 0, '#2f5378');               // 放电通道（等离子体运行区）
+  band(5.0, 5.72, -3.2, 0, '#d7dee6');              // 外陶瓷壁
+  band(5.72, 6.25, -3.6, -0.25, '#6f7f9b');         // 外磁路（外极靴+外线圈）
+  band(6.25, 7.3, -3.6, -0.25, '#5a6478');          // 外壳
+  band(0, 7.25, -3.95, -3.6, '#4a5466');            // 底部轭铁（磁路返回）
+  band(3.62, 4.92, -3.05, -2.86, '#c9a86a');        // 阳极（兼气体分配器）
+  // 轴线
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, Y(-3.95)); ctx.lineTo(x0, Y(0.7)); ctx.stroke();
+  ctx.setLineDash([2, 2]);
+  ctx.beginPath(); ctx.moveTo(X(4.25), Y(-3.3)); ctx.lineTo(X(4.25), Y(0.05)); ctx.stroke();
+  ctx.setLineDash([]);
+  // 标签
+  ctx.font = '7.5px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#cfe0f2';
+  ctx.fillText('轴孔', X(0.1), Y(-0.4));
+  ctx.fillText('内磁路', X(1.05), Y(-2.9));
+  ctx.fillText('内陶瓷', X(2.93), Y(-1.2));
+  ctx.fillStyle = '#9fd8ff';
+  ctx.fillText('放电通道', X(3.55), Y(-1.3));
+  ctx.fillStyle = '#cfe0f2';
+  ctx.fillText('外陶瓷', X(5.05), Y(-1.2));
+  ctx.fillText('外磁路', X(5.78), Y(-2.9));
+  ctx.fillText('外壳', X(6.4), Y(-2.9));
+  ctx.fillStyle = '#ffd9a0';
+  ctx.fillText('阳极 +V', X(3.68), Y(-2.94));
+  ctx.fillStyle = '#8fa3ba';
+  ctx.fillText('轭铁', X(2.3), Y(-3.72));
+  // 出口 + E 场方向
+  chArrow(X(4.25), Y(-0.02), X(4.25), Y(0.55), '#59e6ff', 1.4);
+  ctx.fillStyle = '#59e6ff';
+  ctx.fillText('出口 y=0', X(3.2), Y(0.62));
+  chArrow(X(4.0), Y(-2.6), X(4.0), Y(-1.9), '#ff8a6a', 1.4);
+  ctx.fillStyle = '#ff8a6a';
+  ctx.fillText('E 轴向 →加速离子', X(2.6), Y(-2.28));
+  // B 径向箭头（通道内）
+  chArrow(X(3.6), Y(-0.5), X(4.9), Y(-0.5), '#9feaff', 1.4);
+  ctx.fillStyle = '#9feaff';
+  ctx.fillText('B 径向（内极→外极）', X(3.55), Y(-0.72));
+}
+
+function drawChartMain(){
+  if (!_CC) return;
+  const titleEl = document.getElementById('chartTitle');
+  const bigTitleEl = document.getElementById('chartModalTitle');
+  const setT = t => { if (titleEl) titleEl.textContent = t; if (bigTitleEl) bigTitleEl.textContent = t; };
+  if (chartTab === 'axial'){
+    setT('轴向剖面：φ(y) · E(y) · vᵢ(y)（电位陡降处 = 加速区）');
+    chSetup();
+    chLegend([{label:'φ/Vd', color:'#ff6b6b'}, {label:'E/E_max', color:'#ffb057'}, {label:'vᵢ km/s', color:'#59e6ff'}]);
+    chSeries([
+      { f: y => potentialFrac(y), color: '#ff6b6b' },
+      { f: y => eRel(y), color: '#ffb057' },
+      { f: y => Math.sqrt(2 * eC * P.Vd * Math.max(0, potentialFrac(y)) / mXe) / 1000, color: '#59e6ff' },
+    ], -3.2, 0.6);
+    chMarkLine(0, '出口', '#ffb057', -3.2, 0.6);
+    chXAxis(-3.2, 0.6, 5, '轴向 y (cm)');
+  } else if (chartTab === 'layers'){
+    setT('结构剖面（r-y）：一层层是什么 · E/B 方向');
+    chSetup();
+    drawLayersSchematic();
+  } else if (chartTab === 'mag'){
+    setT('通道内径向磁场 B_r(y) 与电子约束');
+    chSetup();
+    chLegend([{label:'B_r (G)', color:'#59e6ff'}]);
+    chSeries([{ f: y => P.B * bHat(y), color: '#59e6ff' }], -3.2, 0.6);
+    chShade(-1.55, -0.5, 'rgba(255,106,217,0.10)', -3.2, 0.6);
+    chShade(-0.6, 0.12, 'rgba(90,216,255,0.12)', -3.2, 0.6);
+    chMarkLine(-0.5, 'B 峰值', '#9feaff', -3.2, 0.6);
+    chXAxis(-3.2, 0.6, 5, '轴向 y (cm)');
+    chNote(`r_Le≈${chRL()} mm · ωce·τ≈${chOmT()}（电子磁化，离子不磁化）`);
+  } else if (chartTab === 'sigma'){
+    setT('氙 Xe 电离截面 σ(Eₑ)（阈值 12.13 eV）');
+    chSetup();
+    chLegend([{label:'σ (10⁻²⁰ m²)', color:'#ffd166'}]);
+    chSeries([{ f: e => xenonSigma(e) / 1e-20, color: '#ffd166' }], 0, 250);
+    chMarkLine(12.13, '阈值 12.13 eV', '#ff6b6b', 0, 250);
+    chXAxis(0, 250, 5, '电子能量 Eₑ (eV)');
+  } else if (chartTab === 'elec'){
+    setT('电子运动分解：回旋 + E×B 周向漂移 + 轴向迁移');
+    chSetup();
+    drawElecSchematic();
+  }
+}
+window.drawChartMain = drawChartMain;
+
+/* ================================================================
+   7. 讲解内容
+   ================================================================ */
+const infoEl = document.getElementById('info');
+function setInfo(html){
+  infoEl.innerHTML = html || '';
+  infoEl.scrollTop = 0;
+}
+function fmt(){ }
+
+const SECTIONS_CONTENT = {
+overview: `
+<h2><span class="tag">总览</span>霍尔推进器是什么？</h2>
+<p>霍尔推进器（Hall Effect Thruster，亦称稳态等离子体推进器 SPT）是一种<strong>电磁式电推进装置</strong>：用<strong>径向磁场约束电子</strong>、用<strong>轴向静电场加速离子</strong>。它没有离子推进器那样的栅极，电流密度高、结构简单，是目前空间电推进应用最广的类型（通信卫星位置保持、星座组网、深空主推进）。</p>
+<h3>五步工作流程</h3>
+<ol>
+<li><b>注气：</b>氙气经<b>阳极气体分配器</b>从通道底部均匀注入环形放电通道；</li>
+<li><b>发电子：</b>外置<b>空心阴极</b>发射电子，其中一部分进入通道被径向磁场捕获；</li>
+<li><b>约束与电离：</b>电子在正交电磁场中沿周向做 <i>E×B</i> 漂移（<b>霍尔电流</b>），滞留时间长，反复碰撞电离氙原子：e⁻ + Xe → Xe⁺ + 2e⁻；</li>
+<li><b>加速：</b>氙离子几乎不受磁场影响（不磁化），在出口附近的电位降落区被<b>静电场</b>加速到 10~20 km/s 喷出；</li>
+<li><b>中和：</b>阴极发出的另一部分电子汇入羽流中和离子束，保持等离子体准中性，喷流反作用产生推力。</li>
+</ol>
+<div class="formula block">F = ṁ · η<sub>m</sub> · v<sub>e</sub>　　I<sub>sp</sub> = v<sub>e</sub> / g<sub>0</sub></div>
+<h3>为什么用电推进？</h3>
+<p>化学火箭受限于化学能，排气速度极限约 4.5 km/s；电推进的能量来自电源（太阳能/核能），排气速度可达 <b>15~50 km/s</b>。代价是推力小、靠长时间积累 Δv——非常适合无大气、需长期加速的任务。</p>
+<h3>典型指标（SPT-100 级）</h3>
+<table><tr><th>参数</th><th>典型值</th></tr>
+<tr><td>功率 / 电压 / 电流</td><td>1.35 kW / 300 V / 4.5 A</td></tr>
+<tr><td>推力 / 比冲</td><td>≈80 mN / 1600 s</td></tr>
+<tr><td>效率</td><td>45~50%</td></tr>
+<tr><td>工质</td><td>氙 Xe（亦用氪/氩/碘）</td></tr></table>
+<div class="callout">💡 动手试试：拖拽旋转视角；点击左侧模块或 3D 中的部件标签即可高亮并查看原理；拖动底部滑块改变电压 / 磁场 / 流量，右侧数据会实时响应。</div>`,
+structure: `
+<h2><span class="tag">结构解剖</span>一层层到底是什么？</h2>
+<p>先记住一句话：<b>霍尔推进器只有"一个阳极、一个阴极"</b>。看起来"好几层"，其实每层各有分工。以中轴线为起点，<b>从内到外</b>是这样排的（见左栏「2D 辅助曲线 → 结构剖面」的彩色分层图）：</p>
+<ol>
+<li><b>最内芯＝内磁路</b>：内极靴 + 内励磁线圈（铁芯），通电后在这里"产生"磁力线；</li>
+<li><b>内陶瓷壁</b>：耐溅射陶瓷（BN），把磁路与等离子体隔开；</li>
+<li><b>放电通道</b>：内外陶瓷壁之间的<b>环形缝隙</b>（约 15 mm 宽），这里就是中性氙被电离、离子被加速的"舞台"；</li>
+<li><b>外陶瓷壁</b>：另一圈陶瓷；</li>
+<li><b>最外圈＝外磁路</b>：外极靴 + 外励磁线圈 + 外壳，与内磁路配对把磁力线从通道一侧引到另一侧；</li>
+<li><b>通道底部＝阳极</b>：一个金属环（兼气体分配器），接放电正压 V<sub>d</sub> 并均匀喷注氙——<b>它只有一个，不在每一层</b>；</li>
+<li><b>底部再往后＝轭铁</b>：连接内外磁路的"铁桥"，让磁力线闭合。</li>
+</ol>
+<p>所以：<b>内磁路 + 外磁路 + 轭铁 = 磁路系统</b>（内外两圈线圈）；<b>两层陶瓷围出来的环缝 = 放电通道</b>；<b>通道底部的金属环 = 阳极</b>。剖视图里不同颜色就代表不同层——灰色铁芯是磁路，浅色陶瓷是绝缘壁，铜色是阳极，深蓝是等离子体通道。</p>
+<div class="callout">💡 <b>电场怎么来的？</b> 阳极加 +V<sub>d</sub>，出口外的等离子体/阴极侧约 0 V，于是在通道内形成<b>沿轴向（从阳极指向出口）的电场 E</b>。注意：E 是<b>轴向</b>的（把离子往前推），不是"从内到外"。</div>
+<div class="callout">💡 <b>磁场怎么来的？</b> 内外线圈通电、电流方向相反，在出口区形成<b>近似径向</b>的磁场 B（峰值 100~250 G，靠近出口）。正交的 E⊥B 正是霍尔推进器的核心。</div>
+<div class="callout">💡 打开左侧「供电回路」图层：一条线从<b>阳极</b>引出 → 放电电源 → <b>空心阴极</b>。电子在通道内被阳极收集后，经外部电源回到阴极、再进入通道，放电电流由此闭合。</div>`,
+magnet: `
+<h2><span class="tag">磁场约束</span>电子被"冻结"在磁力线上</h2>
+<h3>磁场在通道里到底怎么分布？</h3>
+<p>内外励磁线圈电流方向相反，在出口区形成<b>近似纯径向</b>的磁场。磁力线从<b>内磁极端面</b>穿出，跨过通道指向<b>外磁极端面</b>（B<sub>r</sub> ≫ B<sub>θ</sub>, B<sub>z</sub>），并经外磁极 → 底部轭铁 → 内磁极<b>闭合</b>成完整回路。径向磁场沿轴向的分布近似高斯形：<b>峰值位于出口稍上游</b>（约 -0.5 cm 处），向通道底部迅速衰减（见左栏「磁场约束」曲线，B<sub>r</sub>(y)）。磁力线凸向出口，与等位面近似重合——这就是 Morozov <b>磁透镜</b>位形，它把加速区"钉"在出口附近。</p>
+<div class="formula block">B<sub>r</sub>(y) ≈ B<sub>peak</sub>·e<sup>−(y+0.5)²/0.8²</sup>　（峰值 100~250 G）</div>
+<h3>电子到底是什么样的运动轨迹？</h3>
+<p>一个磁化电子同时做三种运动（见左栏「电子运动」示意 + 3D 中高亮青绿轨迹）：</p>
+<ol>
+<li><b>① 回旋（拉莫尔运动）</b>：绕磁力线高速打转，半径 r<sub>Le</sub> = m<sub>e</sub>v<sub>⊥</sub>/(eB) ≈ 0.8 mm，频率 ω<sub>ce</sub> ≈ 10⁹~10¹⁰ rad/s，速度方向被磁场"锁死"；</li>
+<li><b>② E×B 周向漂移（霍尔电流）</b>：在正交场中沿方位角方向闭合漂移 v<sub>E×B</sub> = E×B/B²，绕通道一圈圈转，驻留时间因此被拉长数千倍；</li>
+<li><b>③ 轴向迁移</b>：缓慢沿磁力线漂向出口（伴随碰撞、湍流扩散），一边迁移一边电离氙原子。</li>
+</ol>
+<div class="formula block">v<sub>E×B</sub> = E × B / B²　　r<sub>Le</sub> = m<sub>e</sub>v<sub>⊥</sub>/(eB)　　ω<sub>ce</sub>τ<sub>e</sub> ≫ 1（数百~数千）</div>
+<h3>回旋半径对比（B = 170 G 时）</h3>
+<div class="knum">
+<div class="cell"><b>r<sub>Le</sub> ≈ 0.8 mm</b><span>电子回旋半径</span></div>
+<div class="cell"><b>通道宽 ≈ 15 mm</b><span>放电通道环缝</span></div>
+<div class="cell"><b>r<sub>Li</sub> ≈ 0.17 m</b><span>离子回旋半径（≫ 通道！）</span></div>
+</div>
+<p><b>电子</b>被磁场牢牢"冻结"，沿磁力线回旋 + 周向漂移，难以直接打到阳极，驻留时间被拉长<b>数千倍</b>；<b>离子</b>质量大、回旋半径达米级，磁场对它几乎"透明"，可自由穿越通道被电场加速。这正是"磁场只管电子、静电场只管离子"的分工。</p>
+<div class="callout warn">⚡ 把底部「磁场强度」滑到 0：磁力线变暗、电子不再回旋/漂移，直接冲向阳极，电离崩塌、推力消失——这就是霍尔推进器"没有磁场就停摆"的原因。</div>
+<div class="callout">💡 查看左栏「2D 辅助曲线」→「磁场约束」：B<sub>r</sub>(y) 曲线在出口稍上游达到峰值，同时显示 r<sub>Le</sub> 与霍尔参数 ω<sub>ce</sub>τ 随 B 的变化——磁场越强，电子越"动弹不得"。</div>`,
+ionize: `
+<h2><span class="tag">碰撞电离</span>e⁻ + Xe → Xe⁺ + 2e⁻</h2>
+<p>被约束的电子在通道内长驻留，反复与中性氙原子碰撞。当电子动能超过电离阈值时发生<b>碰撞电离</b>：</p>
+<div class="formula block">e⁻ + Xe → Xe⁺ + 2e⁻　（电离阈值 12.13 eV）</div>
+<ul>
+<li>电离截面峰值 σ<sub>max</sub> ≈ 2.5×10⁻²⁰ m²（≈2.5 Å²，电子能 ~100 eV）；</li>
+<li>电离区电子温度 T<sub>e</sub> ≈ 10~25 eV，高于阈值保证持续电离；</li>
+<li>电离速率 R = n<sub>e</sub>·n<sub>n</sub>·⟨σ v<sub>e</sub>⟩，正比于电子与中性密度；</li>
+<li>推进剂利用率 η<sub>m</sub> 可达 85~95%（电离 + 未电离逃逸竞争）；</li>
+<li>还会产生约 10% 的 Xe²⁺ 以及电荷交换（CEX）慢离子，后者是羽流溅射航天器表面的来源。</li>
+</ul>
+<div class="callout">💡 观察：青色电子在通道内回旋并周向漂移，撞上灰色中性氙时产生<b>白色闪光</b>——那一刻中性原子变成了橙色氙离子。把磁场调高，电子驻留更久、闪光更密；磁场归零则闪光停止。</div>`,
+accelerate: `
+<h2><span class="tag">静电加速</span>离子获得动能 eV_d</h2>
+<p>离子的加速本质是<b>静电加速</b>：从电位高处（≈阳极电位）出发，落到出口零电位，动能恰好等于跨越的电位差：</p>
+<div class="formula block">½m<sub>i</sub>v<sub>i</sub>² = e·Δφ<sub>eff</sub>　→　v<sub>i</sub> = √(2eV<sub>d</sub>/m<sub>i</sub>)</div>
+<div class="knum">
+<div class="cell"><b>21 km/s（300 V 理想）</b><span>氙离子排气速度</span></div>
+<div class="cell"><b>~15~18 km/s</b><span>计入电压利用率/发散/多荷后</span></div>
+<div class="cell"><b>1600~2100 s</b><span>对应比冲 I<sub>sp</sub></span></div>
+</div>
+<p>电位分布如右侧等位面所示：<b>大部分压降集中在出口附近约 1 cm 内</b>（E ≈ 10⁴~10⁵ V/m），与磁场峰值区重合——由磁透镜位形决定。离子一旦电离，就立刻被当地电场加速，无需任何栅极，因此束流密度远高于栅极型离子推进器。</p>
+<div class="callout">💡 拖动「放电电压」：离子速度按 √V<sub>d</sub> 增长（排气速度、推力、比冲同步上升，功率按 ~V<sub>d</sub>³ᐟ² 增长）。</div>`,
+plume: `
+<h2><span class="tag">羽流中和</span>推力来自准中性束流</h2>
+<p>高速氙离子喷出后形成<b>羽流</b>，其动量流反作用即推力。但若离子束带电而不中和，空间电荷会立刻把离子拽回航天器，推力崩塌，航天器也会持续充负电——因此空心阴极必须<b>向束流中注入电子</b>：</p>
+<div class="formula block">n<sub>e</sub> ≈ n<sub>i</sub>　（准中性束流）　→　F = ṁ·η<sub>m</sub>·v<sub>e</sub></div>
+<ul>
+<li>同一个阴极"一鱼两吃"：向通道供电子（电离源）+ 向束流注电子（中和源）；</li>
+<li>羽流发散半角约 20~45°，推力有效值计入 <i>cos</i> 发散修正；</li>
+<li>推力 F 数十~数百 mN，比冲 1000~2500 s，效率 45~60%；</li>
+<li>工程关注：CEX 慢离子回流溅射、羽流对太阳能帆板/天线的污染。</li>
+</ul>
+<div class="callout">💡 从出口后方看：橙色离子束正喷向上方，浅青色电子轨迹从阴极追入束流"补电"——两者汇合成近中性的羽流。</div>`,
+};
+
+const MODULE_DETAIL = {
+channel: `
+<h2><span class="tag">放电通道</span>BN 陶瓷环形环缝</h2>
+<p>由内外两圈耐溅射陶瓷（氮化硼 BN / SiC 复合）围成的<b>环形缝隙</b>，是电离与加速发生的"舞台"。内、外陶瓷壁厚度约 1~2 cm，直径约 100 mm（SPT-100 级）。</p>
+<ul>
+<li>通道内维持近中性的等离子体：n<sub>e</sub> ≈ n<sub>i</sub> ≈ 10¹⁷~10¹⁸ m⁻³；</li>
+<li>内壁受离子轰击与热流冲刷，陶瓷的二次电子发射还会影响近壁等离子体鞘层；</li>
+<li>环形（而非筒形）结构使磁场位形更紧凑、电流密度与功率密度更高。</li>
+</ul>
+<div class="callout">💡 磁化电子在通道内长驻留→电离率高；离子"看到"的是纯静电加速区。通道长度只有约 3 cm，却能承载 1~10 kW 放电。</div>`,
+anode: `
+<h2><span class="tag">阳极 · 气体分配器</span>放电正极 + 工质入口</h2>
+<p>位于通道底部的金属环形件，承担<b>双重职能</b>：</p>
+<ul>
+<li><b>电气阳极：</b>加放电正压 V<sub>d</sub>（200~500 V），收集通过通道回流到阳极的电子，构成放电电流；</li>
+<li><b>气体分配器：</b>沿环向均匀分布小孔，以数 mg/s 的流量注入氙，保证通道内中性密度均匀。</li>
+</ul>
+<div class="formula block">阳极电位 ≈ V<sub>d</sub>　→　压降主体落在通道出口附近</div>
+<div class="callout">💡 拖动「氙流量」：流量升高 → 中性密度增大 → 电离次数增多，但若太高，推进剂利用率先升后降（大量氙来不及电离就逃逸）。</div>`,
+magnet: `
+<h2><span class="tag">磁路系统</span>径向磁场 + 磁透镜</h2>
+<p>由<b>内磁极、外磁极、励磁线圈与底部轭铁</b>组成闭合磁路。内外线圈电流方向相反，使磁力线从内磁极穿出、经通道出口区回到外磁极，形成<b>近似纯径向</b>的磁场（峰值 100~250 G ≈ 0.01~0.025 T）。</p>
+<div class="formula block">B<sub>r</sub> ≫ B<sub>θ</sub>, B<sub>z</sub>　（磁场几乎全径向）</div>
+<ul>
+<li>磁透镜位形（Morozov）：磁力线<b>凸向出口</b>，与等位面近似重合 → 加速区被"钉"在出口附近；</li>
+<li>电子被磁化（r<sub>Le</sub> ~ mm），离子不磁化（r<sub>Li</sub> ~ m）→ 磁场"只看得到电子"；</li>
+<li>磁感应强度由线圈电流控制，是调节放电特性的关键旋钮。</li>
+</ul>
+<div class="callout warn">⚡ 试把磁场调到 0：电子不再回旋/漂移，直接被阳极吸走，电离率骤降，推力消失——磁场是这台机器的"心脏"。</div>`,
+cathode: `
+<h2><span class="tag">空心阴极</span>电子源 + 束流中和器</h2>
+<p>出口外侧那根<b>向外喷发光电子流的小圆柱</b>就是<b>空心阴极</b>（这是全机唯一的阴极，和通道底部的阳极一一对应）。它内置 LaB₆（六硼化镧）或 BaO-W 发射体，加热后热发射电子，再由放电自持维持等离子体桥。旁边那根<b>细杆是它的支撑/馈线杆</b>（把阴极固定在航天器上并接电源），不是探针，也不属于磁路。</p>
+<ul>
+<li><b>职能①</b> 为放电通道提供电离用电子（青色电子，被磁场捕获 → 霍尔电流）；</li>
+<li><b>职能②</b> 向羽流注入电子，中和正离子束，保持准中性；</li>
+<li>发射电流 ≈ 放电电流量级（数安培），功耗约 100~300 W；</li>
+<li>需要先加热触发，航天器任务中常用点火器（ignitor）引燃。</li>
+</ul>
+<div class="callout">💡 电路：<b>阳极(+) → 放电电源 → 空心阴极(−)</b>。打开左侧「供电回路」图层可以看到这条线。阴极发出的电子一部分飞进通道参与电离，另一部分弯入羽流给离子"补电"。</div>`,
+hall: `
+<h2><span class="tag">霍尔电流</span>周向闭合的电子漂移流</h2>
+<p>被约束的电子在正交场中做 <b>E×B 漂移</b>，绕通道周向打转——这股环绕的电子流就是<b>霍尔电流</b>（这正是"霍尔推进器"得名的由来）。</p>
+<div class="formula block">v<sub>E×B</sub> = E×B/B² ≈ 10⁶ m/s　（远大于热运动）</div>
+<ul>
+<li>霍尔电流密度 j = n<sub>e</sub>·e·v<sub>E×B</sub>，总电流可达数十安培；</li>
+<li>量级约为放电电流的 <b>5~20 倍</b>——放电电流只统计轴向分量；</li>
+<li>漂移方向由 E×B 决定，与电荷正负无关，但只有电子贡献显著（离子不磁化）；</li>
+<li>漂移使电子"绕圈"，驻留时间显著延长 → 电离概率大增。</li>
+</ul>
+<div class="callout">💡 观察 3D 中的青绿高亮轨迹：那是"典型电子"绕磁力线的回旋螺旋 + 沿周向的漂移，并叠加一个可见的回旋圆（拉莫尔圆，半径随磁场滑块实时变化）。磁场变弱时，这个环流的"束缚力"随之消失。</div>`,
+ionzone: `
+<h2><span class="tag">电离区</span>通道内上游的"熔炉"</h2>
+<p>位于加速区上游（出口内约 1 cm），电子在这里完成最重要的使命——<b>碰撞电离</b>：</p>
+<div class="formula block">e⁻ + Xe → Xe⁺ + 2e⁻　（阈值 12.13 eV）</div>
+<ul>
+<li>电离区电子温度由能量平衡自洽决定（从电场获能 vs 电离/激发/壁面损失），约 10~25 eV；</li>
+<li>电离速率 R = n<sub>e</sub>·n<sub>n</sub>·⟨σv⟩，其中 σ 为碰撞截面（峰 ~2.5×10⁻²⁰ m²）；</li>
+<li>多级电离（Xe²⁺，第二电离能 21 eV）约占 10%，是降低效率的次要因素；</li>
+<li>新生的离子被当地电场立刻加速，反冲电子继续参与电离——形成级联。</li>
+</ul>
+<div class="callout">💡 白色闪光即"电离事件"：灰色中性氙被青色电子撞中，瞬间变为橙色氙离子。离子化越充分，右侧"电离/逃逸"计数比值越高。</div>`,
+accel: `
+<h2><span class="tag">加速区</span>电位降落 · 静电加速</h2>
+<p>出口附近的<b>电位降落层</b>（等离子体预鞘 + 鞘层），宽度约 1 cm，承担大部分放电电压：</p>
+<div class="formula block">½m<sub>i</sub>v<sub>i</sub>² = eΔφ　→　v<sub>i</sub> = √(2eV<sub>d</sub>/m<sub>i</sub>) ≈ 21 km/s</div>
+<ul>
+<li>E ≈ 10⁴~10⁵ V/m，方向沿 +Y（从阳极指向出口）；</li>
+<li>离子不受磁场影响，直接穿越该层获得动能——<b>静电加速</b>；</li>
+<li>加速区位置由磁透镜决定（等位面与磁力线贴合）；</li>
+<li>无栅极，因此束流密度与推力密度高于离子推进器。</li>
+</ul>
+<div class="callout">💡 切换「静电加速」章节可看到等位面：红色（高电位）→蓝色（低电位）在出口附近急剧密集，即电压"陡降"处——那里就是加速区。</div>`,
+plume: `
+<h2><span class="tag">离子羽流</span>推力与中和</h2>
+<p>高速氙离子束喷出出口后形成羽流，其<b>动量流反作用</b>即推力；同时阴极电子汇入使束流近中性：</p>
+<div class="formula block">F = ṁ·η<sub>m</sub>·v<sub>e</sub>　　n<sub>e</sub> ≈ n<sub>i</sub></div>
+<ul>
+<li>羽流发散半角 20~45°（推力取 cos 修正）；</li>
+<li>电中性失效 → 空间电荷势把离子拽回 → 推力锐减 + 航天器充负电；</li>
+<li>束流中的快离子溅射、CEX 慢离子回流、对太阳帆板污染是主要工程考量；</li>
+<li>典型 SPT-100：约 80 mN / 1600 s / 1.35 kW。</li>
+</ul>
+<div class="callout">💡 拉高「放电电压」可看到羽流变亮变长、离子轨迹更快——能量越高，反作用越强。</div>`,
+};
+
+/* ================================================================
+   8. 主循环
+   ================================================================ */
+const clock = new THREE.Clock();
+let renderTime = 0;
+// 主循环复用向量（animate 里一律 set/copy，不再出现 new THREE.*）
+const _hallDir = new THREE.Vector3(), _camDir = new THREE.Vector3(), _u = new THREE.Vector3();
+// 视角变化检测：位置/朝向/目标点任一超过阈值才算"动了"，用于门控剖切面重算与 CSS2D 重排
+function cameraMoved(){
+  const s = labelCamState, p = camera.position, t = controls.target, q = camera.quaternion;
+  const moved = Math.abs(s.px - p.x) + Math.abs(s.py - p.y) + Math.abs(s.pz - p.z) > 1e-4 ||
+                Math.abs(s.tx - t.x) + Math.abs(s.ty - t.y) + Math.abs(s.tz - t.z) > 1e-4 ||
+                Math.abs(s.qw - q.w) + Math.abs(s.qx - q.x) + Math.abs(s.qy - q.y) + Math.abs(s.qz - q.z) > 1e-4;
+  if (moved){
+    s.px = p.x; s.py = p.y; s.pz = p.z;
+    s.tx = t.x; s.ty = t.y; s.tz = t.z;
+    s.qx = q.x; s.qy = q.y; s.qz = q.z; s.qw = q.w;
+    labelDirty = true;
+  }
+  return moved;
+}
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  renderTime += dt;
+
+  // 仿真
+  const simDt = dt * P.timeScale;
+  if (!P.paused){
+    // 子步长稳定
+    const steps = simDt > 0.04 ? 2 : 1;
+    for (let s = 0; s < steps; s++) simStep(simDt / steps);
+    flushNeutralPoints();
+  }
+
+  // 轨迹上传（trailFlush 内部已跳过"本帧无新采样"的粒子，暂停时整层跳过）
+  trailFlush(NE_TRAIL, activeE);
+  trailFlush(ION_TRAIL, activeI);
+  trailFlush(BEAM_TRAIL, activeB);
+  trailFlush(FEAT_TRAIL, activeF);
+  if (!P.paused){
+    NEG.geometry.attributes.position.needsUpdate = true;
+    ionsPts.geometry.attributes.position.needsUpdate = true;
+    beamPts.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // 霍尔电流环旋转（电子沿 -φ 方向漂移，与 E(+Y)×B(+r) 的 ExB 方向一致）
+  if (zoneHall.visible){
+    const hallA = zoneHall.rotation.y += 0.55 * dt * P.timeScale * (P.B > 8 ? 1 : 0);
+    hallArrow.position.set(RM * 1.14 * Math.cos(hallA), -0.55, -RM * 1.14 * Math.sin(hallA));
+    _hallDir.set(-Math.sin(hallA), 0, -Math.cos(hallA)).normalize();   // 复用向量，不再逐帧 new
+    hallArrow.quaternion.setFromUnitVectors(_axZ, _hallDir);
+  }
+
+  // 电路电子流动（图层关掉时不再算曲线采样）
+  if (circuitGroup.visible && circuitDots.length){
+    const spd = 0.10 + 0.05 * (P.Vd / 300);
+    for (const d of circuitDots){
+      const t = (simT * spd + d.off) % 1;
+      d.curve.getPoint(t, d.s.position);        // 直接写进 sprite.position，零分配
+    }
+  }
+
+  // 阴极闪烁 / 羽流呼吸（上限整体下调：0.7+0.25→0.42+0.15，0.30/0.40→0.20/0.26）
+  catGlow.material.opacity = 0.42 + 0.15 * Math.sin(renderTime * 11);
+  const vf = Math.sqrt(P.Vd / 300);
+  plumeGroup.scale.y = 0.75 + 0.5 * vf;
+  plumeOut.material.opacity = 0.20 * (0.6 + 0.4 * vf);
+  plumeIn.material.opacity = 0.26 * (0.6 + 0.4 * vf);
+
+  // 选中脉冲（缓存当前模块，避免每帧 find + 每帧新建闭包）
+  if (selectedMod){
+    const ei = 0.45 + 0.22 * Math.sin(renderTime * 5);
+    for (const mat of selectedMod.mats){ if (mat.emissive && mat.userData.base) mat.emissiveIntensity = ei; }
+  }
+
+  // 星点慢旋
+  stars.rotation.y += dt * 0.004;
+
+  controls.update();
+  updateCamTween(dt);
+
+  // 剖切视窗：剖掉"朝向观察者"的这一半（切口正对你），且只剖结构材质，粒子/场线/羽流照常显示
+  // 只有一帧里视角真的动了才重算剖切面与截面朝向；材质上的 clippingPlanes 数组全程复用不再换
+  if (cutApplied && cameraMoved()){
+    _camDir.subVectors(camera.position, controls.target);
+    _camDir.y = 0;
+    if (_camDir.lengthSq() < 1e-6) _camDir.set(0, 0, 1);
+    _camDir.normalize();
+    _clipN.copy(_camDir).negate();                 // 法线指向远离观察者一侧 → 保留远半、剖掉近半
+    _clipC = _clipN.dot(CUT_CENTER);
+    clipPlane.set(_clipN, -_clipC);                // 就地改同一个 Plane 对象
+    _u.set(-_camDir.z, 0, _camDir.x).normalize();
+    crossSectionGroup.quaternion.setFromUnitVectors(_axX, _u);
+    crossSectionGroup.position.copy(CUT_CENTER).addScaledVector(_camDir, 0.02);   // 截面填充朝向你
+    applyLabelVisibility();
+  }
+
+  // 磁力线亮度随磁场强度：通道段为主（上限 0.55，旧版可到 0.97），返回段/箭头压到 1/4
+  const kop = 0.2 + 0.8 * Math.min(1, Math.max(0, P.B / 170));
+  fieldMats[0].opacity = FIELD_OP[0] * kop;
+  fieldMats[1].opacity = FIELD_OP[1] * kop;
+  fieldMats[2].opacity = FIELD_OP[2] * kop;
+  fieldMats[3].opacity = FIELD_OP[3] * kop;
+
+  perfTick(dt);
+  // 始终走 composer（RenderPass → [bloom] → OutputPass）：只切换 bloom.enabled。
+  // 若改成直接 renderer.render()，加色混合会在 8bit sRGB 帧缓冲里被逐材质色调映射后提前削顶，
+  // 实测羽流核心近纯白占比从 0% 涨到 ~23%（同一视角），画面反而更容易糊白 —— 所以这里保留
+  // 线性 HDR 中间缓冲，省掉的是 bloom 的 5 级 mip 模糊链（那才是大头）。
+  composer.render();
+
+  // CSS2D 标签：十几个 DOM 逐帧重排很贵 → 只在视角/可见性变化时更新，另每 0.5s 兜底一次
+  perf.lbl += dt;
+  if (labelDirty || perf.lbl > 0.5){
+    perf.lbl = 0; labelDirty = false;
+    labelRenderer.render(scene, camera);
+  }
+}
+
+/* ================================================================
+   9. 启动
+   ================================================================ */
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  labelRenderer.setSize(innerWidth, innerHeight);
+  labelDirty = true;
+});
+
+// 离开页面时释放显存资源（原先全文没有任何 dispose）
+let disposed = false;
+function disposeAll(){
+  if (disposed) return;
+  disposed = true;
+  const geos = new Set(), mats = new Set(), texs = new Set();
+  scene.traverse(o => {
+    if (o.geometry) geos.add(o.geometry);
+    const ms = Array.isArray(o.material) ? o.material : (o.material ? [o.material] : []);
+    for (const m of ms){
+      if (mats.has(m)) continue;
+      mats.add(m);
+      for (const k in m){ const v = m[k]; if (v && v.isTexture) texs.add(v); }
+      m.dispose();
+    }
+  });
+  for (const g of geos) g.dispose();
+  for (const t of texs) t.dispose();
+  composer.dispose();
+  renderer.dispose();
+}
+window.addEventListener('pagehide', disposeAll);
+
+// 初始粒子布局（把一部分氙预先分布到整个通道内，让演示一开始就有电离活动）
+for (let i = 0; i < NEUT.length; i++){
+  if (i < 60){
+    spawnNeutral(NEUT[i]);
+    NEUT[i].y = ANODE_Y + 0.3 + Math.random() * 2.6;
+  }
+}
+
+// 初始化 UI
+setQuality(qKey, false);   // 落实默认「中」档：DPR 上限 + 星点数量
+syncBloomUI();             // 让复选框与"弱机默认关辉光"的初始状态一致
+readSliders();
+applyLayers();
+setInfo(SECTIONS_CONTENT.overview);
+applySection('overview');
+deselectModule();
+
+animate();
+</script>
+</body>
+</html>

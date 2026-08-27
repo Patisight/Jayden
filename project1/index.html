@@ -16,7 +16,7 @@
     </style>
     <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
 </head>
-<body data-hud="P-01 · MIMO 天线">
+<body data-root=".." data-hud="P-01 · MIMO 天线">
 
 <div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
 
@@ -318,7 +318,7 @@
                 </ul>
             </div>
 
-            <p class="fnote" style="font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:28px">
+            <p class="fnote" style="font-family:var(--mono);font-size: 0.8rem;color:var(--dim);margin-top:28px">
                 关联：<a href="../#publications" style="color:var(--cu)">论文与专利</a> ·
                 <a href="../#research" style="color:var(--cu)">研究方向 D-01 · 天线设计</a> ·
                 <a href="../#projects" style="color:var(--cu)">全部代表性项目</a>
@@ -395,32 +395,13 @@
         <div class="pal-in">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
             <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
-            <kbd style="font-family:var(--mono);font-size:.64rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+            <kbd style="font-family:var(--mono);font-size: 0.8rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
         </div>
         <ul class="pal-list" id="palList"></ul>
         <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
     </div>
 </div>
 
-<script type="application/json" id="site-map">
-[
-  {"href":"../",              "idx":"—", "t":"首页 · 程锦阳",                 "k":"HOME",     "ext":1},
-  {"href":"../#about",        "idx":"01","t":"关于我",                        "k":"ABOUT",    "ext":1},
-  {"href":"../#research",     "idx":"02","t":"研究方向",                      "k":"RESEARCH", "ext":1},
-  {"href":"../#experience",   "idx":"03","t":"工作经历",                      "k":"EXPERIENCE","ext":1},
-  {"href":"../#projects",     "idx":"04","t":"代表性项目",                    "k":"PROJECTS", "ext":1},
-  {"href":"../#publications", "idx":"05","t":"论文与专利",                    "k":"PAPERS",   "ext":1},
-  {"href":"../#honors",       "idx":"06","t":"成果与荣誉",                    "k":"HONORS",   "ext":1},
-  {"href":"../#skills",       "idx":"07","t":"能力矩阵",                      "k":"SKILLS",   "ext":1},
-  {"href":"../project1/",     "idx":"P-01","t":"紧凑型低剖面车载 5G MIMO 天线","k":"ANTENNA",  "ext":1},
-  {"href":"../project2/",     "idx":"P-02","t":"集成定位与通信多通道车载天线盒","k":"ANTENNA",  "ext":1},
-  {"href":"../project3/",     "idx":"P-03","t":"板端接口式车载天线盒",         "k":"ANTENNA",  "ext":1},
-  {"href":"../project4/",     "idx":"P-04","t":"算法辅助全波电磁仿真优化",     "k":"AI / EM",  "ext":1},
-  {"href":"../project5/",     "idx":"P-05","t":"高增益全向车载阵列天线",       "k":"ANTENNA",  "ext":1},
-  {"href":"../project6/",     "idx":"P-06","t":"GNSS 天线及有源射频模块",      "k":"RF",       "ext":1},
-  {"href":"../experience1/",  "idx":"E-01","t":"实习经历 · 江苏骅盛车用电子",   "k":"INTERN",   "ext":1}
-]
-</script>
 <script src="../assets/theme.js"></script>
 </body>
 </html>

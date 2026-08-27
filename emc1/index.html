@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>整星 EMC 试验科目与测量框图 · 程锦阳</title>
+    <meta name="description" content="依据 GJB 151B/C 的传导发射、传导敏感度、辐射发射、辐射敏感度四类测量拓扑框图，试验科目频率范围、试验流程与试验室建设要点。受试实物不可公开，此处仅呈现标准规定的测量方法与原理。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+    <style>
+        /* 本页专属：测量框图。SVG 内文字用 px，刻意不随 rem 缩放，保证框图密度稳定 */
+        /* .notice / .tag-l 已由 theme.css 统一提供 */
+        .figs { display: grid; gap: 18px; }
+        .fig { padding: 26px 26px 20px; }
+        .fig-h { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; flex-wrap: wrap; }
+        .fig-h h3 { font-size: 1.12rem; font-weight: 500; letter-spacing: -.015em; }
+        .fig-h .code { font-family: var(--mono); font-size: .84rem; color: var(--cu); letter-spacing: .06em; }
+        .fig-h .std { margin-left: auto; font-family: var(--mono); font-size: .8rem; color: var(--dim); }
+        .fig > p { color: var(--muted); font-size: .95rem; line-height: 1.85; margin-bottom: 18px; }
+        .fig svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+        .bx .n { fill: var(--ink-2); stroke: var(--line-2); stroke-width: 1; }
+        .bx .n.hot { stroke: var(--cu); fill: rgba(207, 138, 82, .07); }
+        .bx .n.sig { stroke: rgba(79, 209, 192, .5); fill: rgba(79, 209, 192, .05); }
+        .bx .lbl { font-family: var(--mono); font-size: 11.5px; fill: var(--text); }
+        .bx .sub { font-family: var(--mono); font-size: 9.5px; fill: var(--dim); letter-spacing: .02em; }
+        .bx .ln { stroke: var(--cu); stroke-width: 1.3; fill: none; marker-end: url(#arw); }
+        .bx .ln.rf { stroke: var(--sig); stroke-dasharray: 5 3; marker-end: url(#arwT); }
+        .bx .ln.ctl { stroke: var(--line-3); stroke-dasharray: 3 3; marker-end: url(#arwG); }
+        .bx .gnd { stroke: var(--line-2); stroke-width: 1.2; }
+        .bx .gndh { stroke: var(--line-2); stroke-width: 1; }
+        .bx .zone { fill: none; stroke: var(--line); stroke-dasharray: 6 4; }
+        .bx .zlbl { font-family: var(--mono); font-size: 9.5px; fill: var(--dim); letter-spacing: .1em; }
+        .fig-key { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: .84rem; color: var(--dim); }
+        .fig-key i { font-style: normal; display: inline-flex; align-items: center; gap: 7px; }
+        .fig-key i::before { content: ''; width: 16px; height: 0; border-top: 1.5px solid currentColor; }
+        .fig-key .k1 { color: var(--cu); } .fig-key .k2 { color: var(--sig); } .fig-key .k3 { color: var(--line-3); }
+
+        /* 科目表：可扫描的密排表 */
+        .items { border-top: 1px solid var(--line); }
+        .it { display: grid; grid-template-columns: 104px 1fr 148px 92px; gap: 20px; align-items: baseline;
+              padding: 15px 0; border-bottom: 1px solid var(--line); transition: background .3s var(--ease), padding-left .3s var(--ease); }
+        .it:hover { background: rgba(255,255,255,.014); padding-left: 12px; }
+        .it.hd { color: var(--dim); font-family: var(--mono); font-size: .84rem; letter-spacing: .1em;
+                 text-transform: uppercase; border-bottom-color: var(--line-2); padding: 12px 0; }
+        .it.hd:hover { background: none; padding-left: 0; }
+        .it .no { font-family: var(--mono); font-size: .98rem; color: var(--cu); letter-spacing: -.01em; }
+        .it .nm { font-size: .96rem; color: var(--text); }
+        .it .nm span { display: block; color: var(--muted); font-size: .88rem; font-weight: 400; margin-top: 3px; }
+        .it .hz { font-family: var(--mono); font-size: .9rem; color: var(--sig); }
+        .it .gr { font-family: var(--mono); font-size: .82rem; color: var(--dim); text-align: right; }
+        .grp-tag { display: inline-block; font-family: var(--mono); font-size: .8rem; padding: 1px 7px;
+                   border: 1px solid var(--line-2); color: var(--muted); }
+
+        /* 流程链 */
+        .flow { counter-reset: st; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+        .st { background: var(--ink-1); padding: 22px 24px; display: grid; grid-template-columns: 46px 1fr; gap: 18px;
+              transition: background .4s var(--ease); }
+        .st:hover { background: var(--ink-2); }
+        .st::before { counter-increment: st; content: counter(st, decimal-leading-zero);
+              font-family: var(--mono); font-size: 1rem; color: var(--cu); padding-top: 2px; }
+        .st h4 { font-size: 1rem; font-weight: 500; margin-bottom: 6px; }
+        .st p { color: var(--muted); font-size: .93rem; line-height: 1.8; font-weight: 400; }
+        .st p b { color: var(--text); font-weight: 500; }
+
+        .two { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; }
+        @media (max-width: 860px) {
+            .it { grid-template-columns: 88px 1fr; }
+            .it .hz, .it .gr { grid-column: 2; text-align: left; }
+            .it.hd { display: none; }
+            .two { grid-template-columns: 1fr; gap: 30px; }
+            .st { grid-template-columns: 38px 1fr; gap: 12px; }
+        }
+    </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
+</head>
+<body data-root=".." data-hud="T-01 · EMC 试验">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../" class="logo"><span>程锦阳</span><i>T-01</i></a>
+        <nav class="nav-links">
+            <a href="#streams" data-nav="streams"><sup>01</sup>职责</a>
+            <a href="#topology" data-nav="topology"><sup>02</sup>测量框图</a>
+            <a href="#items" data-nav="items"><sup>03</sup>试验科目</a>
+            <a href="#process" data-nav="process"><sup>04</sup>试验流程</a>
+            <a href="#facility" data-nav="facility"><sup>05</sup>试验室建设</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="pg-head">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../">程锦阳</a><i>/</i><a href="../#experience">工作经历</a><i>/</i><b>T-01</b>
+            </nav>
+            <h1>整星 EMC 试验与测量框图</h1>
+            <p class="pg-lede">
+                在上海利正卫星，我的工作分成两条线：<b>做试验</b>与<b>给别人建试验室</b>。
+                这一页记录前者 —— 依据 GJB 151B/C 的四类电磁兼容测量，把<b>测量拓扑、科目边界和试验流程</b>讲清楚。
+            </p>
+            <div class="pg-meta">
+                <div><span class="k">Site</span><span class="v">上海利正卫星</span></div>
+                <div><span class="k">Role</span><span class="v">EMC 试验工程师</span></div>
+                <div><span class="k">Standard</span><span class="v">GJB 151B / C</span></div>
+                <div><span class="k">Status</span><span class="v live">在职 · 至今</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 01 职责 -->
+    <section class="sec" id="streams">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">两条职责线<em>/ Scope</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">一条对受试件负责，一条对能力本身负责。</p>
+            </div>
+
+            <div class="notice rv">
+                <span class="tag-l">边界</span>
+                <div>
+                    <b>受试对象为在研星载设备，实物照片与试验数据不可公开。</b>
+                    因此本页只呈现<b>标准规定的测量拓扑、频率边界与试验方法</b> —— 这些是公开标准内容，
+                    不含任何受试型号、配置、限值或结果。
+                </div>
+            </div>
+
+            <div class="two">
+                <div class="prose rv">
+                    <h3>一 · 试验</h3>
+                    <p>
+                        承担<b>整星与单机级</b>的电磁兼容与环境可靠性试验执行：
+                        EMC（CE / CS / RE / RS 四大类科目）、磁试验、力学试验、真空热试验。
+                        工作覆盖试验任务书解读、受试件状态与配置确认、测量链路搭建、预扫描与正式测量、
+                        最差点位搜索、超标定位与整改建议、复测与数据整理归档。
+                    </p>
+                    <p>
+                        与天线设计相比，这里考的是另一套能力：<b>不是把指标做出来，而是判断测量本身可不可信</b> ——
+                        链路校准、接地参考、线缆布放、背景噪声，任何一处不干净，结论就作废。
+                    </p>
+                </div>
+                <div class="prose rv rv-d1">
+                    <h3>二 · 试验室建设</h3>
+                    <p>
+                        为外部建造试验条件：屏蔽与场地、供电与滤波、接地网与接地参考平面、
+                        测试系统配置与链路校准、工装与夹具、试验流程与作业文件。
+                    </p>
+                    <p>
+                        并参与实验室 <b>CNAS 认可</b>相关工作：能力范围界定、量值溯源、
+                        不确定度评定与体系文件。这条线的意义在于 ——
+                        <b>建一个能出可信数据的房间，比做一次试验更难，也更可复用地留下能力。</b>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02 测量框图 -->
+    <section class="sec" id="topology">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">四类测量拓扑<em>/ Topologies</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">EMC 的全部争论最后都归结为一件事：能量是从哪条路径进来的。</p>
+            </div>
+
+            <div class="figs">
+                <!-- CE 传导发射 -->
+                <article class="card fig rv">
+                    <span class="brk"></span>
+                    <div class="fig-h">
+                        <span class="code">CE</span>
+                        <h3>传导发射</h3>
+                        <span class="std">Conducted Emissions · 沿导线跑</span>
+                    </div>
+                    <p>受试件自身经电源线与信号线向外"吐"噪声。测量点在<b>人工电源网络（LISN/AMN）</b>的射频端口的 50Ω 上 —— 用标准阻抗把共模电流转成可比的电压读数，同时给电源支路提供射频隔离。换掉 LISN 阻抗，读数就不可比。</p>
+                    <svg class="bx" viewBox="0 0 640 210" role="img" aria-label="传导发射测量框图：受试件经人工电源网络接电源，网络射频端口接测量接收机，全部置于接地参考平面之上">
+                        <defs>
+                            <marker id="arw" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#cf8a52"/></marker>
+                            <marker id="arwT" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#4fd1c0"/></marker>
+                            <marker id="arwG" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#5e6d7e"/></marker>
+                        </defs>
+                        <rect class="zone" x="8" y="8" width="624" height="150" rx="2"/>
+                        <text class="zlbl" x="18" y="26">SHIELDED ROOM</text>
+                        <rect class="n hot" x="34" y="52" width="132" height="60"/>
+                        <text class="lbl" x="100" y="80" text-anchor="middle">EUT</text>
+                        <text class="sub" x="100" y="97" text-anchor="middle">整星 / 单机</text>
+                        <rect class="n" x="250" y="52" width="140" height="60"/>
+                        <text class="lbl" x="320" y="76" text-anchor="middle">LISN / AMN</text>
+                        <text class="sub" x="320" y="93" text-anchor="middle">50Ω / 50μH</text>
+                        <text class="sub" x="320" y="106" text-anchor="middle">射频隔离</text>
+                        <rect class="n" x="470" y="52" width="130" height="60"/>
+                        <text class="lbl" x="535" y="80" text-anchor="middle">直流 / 交流</text>
+                        <text class="sub" x="535" y="97" text-anchor="middle">电源</text>
+                        <rect class="n sig" x="250" y="160" width="140" height="44"/>
+                        <text class="lbl" x="320" y="182" text-anchor="middle">测量接收机</text>
+                        <text class="sub" x="320" y="196" text-anchor="middle">dBμV · 准峰值 / 平均值</text>
+                        <path class="ln" d="M166,82 H248"/>
+                        <path class="ln" d="M390,82 H468"/>
+                        <path class="ln rf" d="M320,112 V158"/>
+                        <text class="sub" x="330" y="140">RF</text>
+                        <line class="gnd" x1="34" y1="158" x2="600" y2="158"/>
+                        <path class="gndh" d="M96,158 V150 M90,158 V150 M104,158 V150"/>
+                        <text class="zlbl" x="440" y="152">接地参考平面 GRP</text>
+                    </svg>
+                    <div class="fig-key">
+                        <i class="k1">电源 / 信号导线</i><i class="k2">射频测量通路</i><i class="k3">参考与屏蔽</i>
+                    </div>
+                </article>
+
+                <!-- CS 传导敏感度 -->
+                <article class="card fig rv">
+                    <span class="brk"></span>
+                    <div class="fig-h">
+                        <span class="code">CS</span>
+                        <h3>传导敏感度</h3>
+                        <span class="std">Conducted Susceptibility · 从线束灌进去</span>
+                    </div>
+                    <p>主动把干扰能量耦合到受试件的电缆束或电源线上，看它会不会失效。核心部件是<b>电流注入探头（BCI）</b>与<b>耦合去耦网络（CDN）</b>：前者用互感把共模电流灌到整束线缆上，后者把激励直接注到单根线并同时隔离电源。判据是<b>注入电流</b>而非电压，所以要电流探头实时监视。</p>
+                    <svg class="bx" viewBox="0 0 640 210" role="img" aria-label="传导敏感度测量框图：信号源经功率放大器驱动电流注入探头，探头磁环套住线缆束向受试件注入共模电流，电流探头监视，受试件状态被监测">
+                        <rect class="n" x="20" y="40" width="112" height="52"/>
+                        <text class="lbl" x="76" y="62" text-anchor="middle">信号源</text>
+                        <text class="sub" x="76" y="78" text-anchor="middle">10 kHz–200 MHz</text>
+                        <rect class="n" x="176" y="40" width="118" height="52"/>
+                        <text class="lbl" x="235" y="62" text-anchor="middle">功率放大器</text>
+                        <text class="sub" x="235" y="78" text-anchor="middle">含 6 dB 衰减</text>
+                        <rect class="n hot" x="338" y="30" width="130" height="72"/>
+                        <text class="lbl" x="403" y="58" text-anchor="middle">电流注入探头</text>
+                        <text class="sub" x="403" y="74" text-anchor="middle">BCI 铁氧体磁环</text>
+                        <text class="sub" x="403" y="88" text-anchor="middle">孔径分级</text>
+                        <rect class="n" x="512" y="40" width="112" height="52"/>
+                        <text class="lbl" x="568" y="62" text-anchor="middle">EUT</text>
+                        <text class="sub" x="568" y="78" text-anchor="middle">工作状态下</text>
+                        <path class="ln" d="M132,66 H174"/>
+                        <path class="ln" d="M294,66 H336"/>
+                        <path class="ln" d="M468,66 H510"/>
+                        <path class="ln rf" d="M403,102 V128 H470"/>
+                        <rect class="n sig" x="470" y="112" width="130" height="34"/>
+                        <text class="lbl" x="535" y="133" text-anchor="middle">状态监测</text>
+                        <rect class="n sig" x="338" y="112" width="130" height="34"/>
+                        <text class="lbl" x="403" y="133" text-anchor="middle">电流探头监视</text>
+                        <text class="sub" x="403" y="163" text-anchor="middle">闭环控制注入电流幅值</text>
+                        <line class="gnd" x1="20" y1="180" x2="624" y2="180"/>
+                        <text class="zlbl" x="20" y="196">线束沿接地参考平面布放，离地高度按标准固定</text>
+                    </svg>
+                    <div class="fig-key">
+                        <i class="k1">干扰注入通路</i><i class="k2">监视与判据</i><i class="k3">参考布置</i>
+                    </div>
+                </article>
+
+                <!-- RE 辐射发射 -->
+                <article class="card fig rv">
+                    <span class="brk"></span>
+                    <div class="fig-h">
+                        <span class="code">RE</span>
+                        <h3>辐射发射</h3>
+                        <span class="std">Radiated Emissions · 从天线收进来</span>
+                    </div>
+                    <p>测受试件向空间辐射的场。在<b>半电波暗室</b>内，受试件置于转台上、离地 0.8 m、距测量天线 R 米；天线在水平/垂直极化与全高度扫描下寻峰，经前置放大器后进接收机，最终折算成 dBμV/m。这条链路上最难的不是接线，而是<b>排除暗室自身的驻波与背景噪声</b>。</p>
+                    <svg class="bx" viewBox="0 0 640 230" role="img" aria-label="辐射发射测量框图：半电波暗室内受试件置于转台，辐射场经测量天线与前置放大器进入测量接收机，另经 LISN 测量端口传导分量">
+                        <rect class="zone" x="8" y="8" width="624" height="180" rx="2"/>
+                        <text class="zlbl" x="18" y="26">SEMI-ANECHOIC CHAMBER · 吸波材料 + 金属反射地平面</text>
+                        <rect class="n hot" x="46" y="98" width="128" height="52"/>
+                        <text class="lbl" x="110" y="120" text-anchor="middle">EUT</text>
+                        <text class="sub" x="110" y="136" text-anchor="middle">转台 0–360°</text>
+                        <ellipse class="gndh" cx="110" cy="164" rx="74" ry="8"/>
+                        <path class="ln rf" d="M182,112 C240,86 300,86 356,110"/>
+                        <path class="ln rf" d="M182,128 C240,102 300,102 356,126" opacity=".55"/>
+                        <text class="sub" x="270" y="82" text-anchor="middle">辐射场 E 场 / H 场</text>
+                        <rect class="n" x="356" y="70" width="120" height="72"/>
+                        <text class="lbl" x="416" y="94" text-anchor="middle">测量天线</text>
+                        <text class="sub" x="416" y="110" text-anchor="middle">对数周期 / 喇叭</text>
+                        <text class="sub" x="416" y="124" text-anchor="middle">H · V 极化</text>
+                        <rect class="n sig" x="516" y="82" width="104" height="50"/>
+                        <text class="lbl" x="568" y="102" text-anchor="middle">接收机</text>
+                        <text class="sub" x="568" y="118" text-anchor="middle">dBμV/m</text>
+                        <path class="ln" d="M476,106 H514"/>
+                        <text class="sub" x="497" y="98" text-anchor="middle">+PA</text>
+                        <text class="zlbl" x="270" y="196">R = 1 m / 3 m / 10 m</text>
+                        <rect class="n" x="46" y="28" width="128" height="0" />
+                    </svg>
+                    <div class="fig-key">
+                        <i class="k2">空间辐射通路</i><i class="k1">仪器链路</i>
+                        <span style="color:var(--dim)">替代天线法完成天线系数与场强校准</span>
+                    </div>
+                </article>
+
+                <!-- RS 辐射敏感度 -->
+                <article class="card fig rv">
+                    <span class="brk"></span>
+                    <div class="fig-h">
+                        <span class="code">RS</span>
+                        <h3>辐射敏感度</h3>
+                        <span class="std">Radiated Susceptibility · 用场打它</span>
+                    </div>
+                    <p>在受试件位置建立规定场强（典型 200 V/m），看它功能是否降级。关键是<b>场强闭环</b>：先用各向同性场探头/标准天线把发射链路校准到目标场值，再放入受试件并持续监测其工作状态；功方与电缆在扫频中会漂移，所以校准与测量必须同配置。</p>
+                    <svg class="bx" viewBox="0 0 640 215" role="img" aria-label="辐射敏感度测量框图：信号源经功率放大器驱动发射天线在受试件位置建立场强，场探头闭环反馈控制，受试件状态被远程监测">
+                        <rect class="zone" x="250" y="8" width="382" height="184" rx="2"/>
+                        <text class="zlbl" x="262" y="26">ANECHOIC CHAMBER · 受试区</text>
+                        <rect class="n" x="20" y="34" width="108" height="48"/>
+                        <text class="lbl" x="74" y="54" text-anchor="middle">信号源</text>
+                        <text class="sub" x="74" y="70" text-anchor="middle">10 kHz–40 GHz</text>
+                        <rect class="n" x="20" y="100" width="108" height="48"/>
+                        <text class="lbl" x="74" y="120" text-anchor="middle">功率放大</text>
+                        <text class="sub" x="74" y="136" text-anchor="middle">增益随频率切换</text>
+                        <rect class="n" x="150" y="66" width="98" height="52"/>
+                        <text class="lbl" x="199" y="88" text-anchor="middle">发射天线</text>
+                        <text class="sub" x="199" y="104" text-anchor="middle">场标准天线</text>
+                        <path class="ln" d="M74,82 V98"/>
+                        <path class="ln" d="M128,58 C142,58 142,86 150,88"/>
+                        <path class="ln" d="M128,124 C142,124 142,98 150,96"/>
+                        <path class="ln rf" d="M248,92 H382"/>
+                        <path class="ln rf" d="M248,80 C300,74 330,74 382,84" opacity=".5"/>
+                        <path class="ln rf" d="M248,104 C300,110 330,110 382,100" opacity=".5"/>
+                        <rect class="n hot" x="382" y="60" width="120" height="64"/>
+                        <text class="lbl" x="442" y="88" text-anchor="middle">EUT</text>
+                        <text class="sub" x="442" y="106" text-anchor="middle">转台 · 受试场区</text>
+                        <rect class="n sig" x="534" y="60" width="90" height="40"/>
+                        <text class="lbl" x="579" y="80" text-anchor="middle">状态监测</text>
+                        <path class="ln ctl" d="M442,60 V40 H300 V170 H128"/>
+                        <text class="sub" x="300" y="182" text-anchor="middle">场探头 / 各向同性天线 → 场强闭环</text>
+                        <text class="zlbl" x="382" y="52">200 V/m 典型量级</text>
+                    </svg>
+                    <div class="fig-key">
+                        <i class="k1">激励链路</i><i class="k2">受试区</i><i class="k3">闭环反馈</i>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 科目 -->
+    <section class="sec" id="items">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">试验科目<em>/ Test Items</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">频率边界取自标准方法定义；具体限值随任务书而定。</p>
+            </div>
+            <div class="items rv">
+                <div class="it hd"><span>编号</span><span>科目</span><span>频率范围</span><span>类别</span></div>
+                <div class="it"><span class="no">CE101</span><span class="nm">电源输入线传导发射<span>低频段，测量导线上的电流幅值</span></span><span class="hz">25 Hz – 50 kHz</span><span class="gr"><span class="grp-tag">CE</span></span></div>
+                <div class="it"><span class="no">CE102</span><span class="nm">电源输入线传导发射<span>经 LISN 测 50Ω 上的电压</span></span><span class="hz">10 kHz – 10 MHz</span><span class="gr"><span class="grp-tag">CE</span></span></div>
+                <div class="it"><span class="no">CE106</span><span class="nm">交流与馈线回路的残余电流<span>双线回路电流幅值</span></span><span class="hz">200 kHz – 10 GHz</span><span class="gr"><span class="grp-tag">CE</span></span></div>
+                <div class="it"><span class="no">RE101</span><span class="nm">磁场辐射发射<span>环天线，关注低频磁场分量</span></span><span class="hz">10 Hz – 10 kHz</span><span class="gr"><span class="grp-tag">RE</span></span></div>
+                <div class="it"><span class="no">RE102</span><span class="nm">电场辐射发射<span>暗室远场，最常用的一类辐射科目</span></span><span class="hz">10 kHz – 18 GHz</span><span class="gr"><span class="grp-tag">RE</span></span></div>
+                <div class="it"><span class="no">RE103</span><span class="nm">天线端口传导发射<span>收发信平台天线端口</span></span><span class="hz">10 kHz – 20 GHz</span><span class="gr"><span class="grp-tag">RE</span></span></div>
+                <div class="it"><span class="no">CS101</span><span class="nm">瞬态传导敏感度<span>电源线与信号线的瞬变脉冲</span></span><span class="hz">1 Hz – 100 kHz</span><span class="gr"><span class="grp-tag">CS</span></span></div>
+                <div class="it"><span class="no">CS114</span><span class="nm">电缆束注入传导敏感度<span>BCI 探头扫频注入，考核线束共模</span></span><span class="hz">10 kHz – 200 MHz</span><span class="gr"><span class="grp-tag">CS</span></span></div>
+                <div class="it"><span class="no">CS115</span><span class="nm">电缆束注入脉冲激励<span>阻尼脉冲，考核数字电路复位类失效</span></span><span class="hz">脉冲（≈2.5 kHz 衰减）</span><span class="gr"><span class="grp-tag">CS</span></span></div>
+                <div class="it"><span class="no">CS116</span><span class="nm">电缆与电源线的阻尼正弦瞬态<span>单次瞬态，冲击激励</span></span><span class="hz">10 kHz – 100 MHz</span><span class="gr"><span class="grp-tag">CS</span></span></div>
+                <div class="it"><span class="no">RS101</span><span class="nm">磁场辐射敏感度<span>发射环产生低频磁场</span></span><span class="hz">50 Hz – 400 kHz</span><span class="gr"><span class="grp-tag">RS</span></span></div>
+                <div class="it"><span class="no">RS103</span><span class="nm">电场辐射敏感度<span>场强闭环扫频，最常用的一类敏感度科目</span></span><span class="hz">10 kHz – 40 GHz</span><span class="gr"><span class="grp-tag">RS</span></span></div>
+                <div class="it"><span class="no">RS105</span><span class="nm">瞬态电磁脉冲辐射敏感度<span>超宽谱瞬态场</span></span><span class="hz">瞬态（UWB）</span><span class="gr"><span class="grp-tag">RS</span></span></div>
+            </div>
+            <p class="fnote" style="font-family:var(--mono);font-size:.88rem;color:var(--dim);margin-top:20px">
+                上表为 GJB 151B/C 方法科目的<b style="color:var(--muted)">频率边界</b>；是否考核、限值等级与严酷度取决于具体任务书与设备类别，此处不予列示。
+            </p>
+        </div>
+    </section>
+
+    <!-- 04 流程 -->
+    <section class="sec" id="process">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">试验流程<em>/ Procedure</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">一次可信的测量，成本主要花在"证明它可信"上。</p>
+            </div>
+            <div class="flow rv">
+                <div class="st"><div><h4>任务书与配置确认</h4><p>明确受试件类别、适用科目与<b>限值等级</b>、工作模式与"最佳代表工作状态"，以及需在试验中保持的监测功能判据。</p></div></div>
+                <div class="st"><div><h4>测量链路搭建与校准</h4><p>线缆布放长度与离地高度、LISN 选型与端口端接、前置放大器增益与衰减、天线系数与<b>链路损耗校准</b>到测量频率。链路不确定度直接决定结论能不能用。</p></div></div>
+                <div class="st"><div><h4>背景噪声测量</h4><p>受试件不上电，扫全频段取<b>环境电平的峰值与平均值</b>。要求测量值至少高于背景 6 dB，否则该频点的数据无效 —— 这一步最常推翻前面的努力。</p></div></div>
+                <div class="st"><div><h4>预扫描与极化/转台扫描</h4><p>快速扫描定位可疑频段，再在对应方位角与高度上做<b>准峰值 / 平均值双检</b>，锁定最差点位。</p></div></div>
+                <div class="st"><div><h4>正式测量与数据记录</h4><p>按细扫分辨率取数，记录残余裕量、限值线、检波方式与带宽，保留原始迹线而不只是结论。</p></div></div>
+                <div class="st"><div><h4>超标定位与整改</h4><p>把泄漏拆开看：<b>缝隙、孔洞、线缆共模、接地搭接电阻、滤波器件频响</b>。手段依次是改善搭接与等电位、加滤波与磁环、缩短或重布线缆、局部屏蔽。改一处必须复测全带，防止按下葫芦浮起瓢。</p></div></div>
+                <div class="st"><div><h4>复测、归零与报告</h4><p>整改后复测确认裕量，形成试验报告与问题归零记录，纳入实验室体系文件与能力范围。</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 05 试验室建设 -->
+    <section class="sec" id="facility">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">05</span>
+                <h2 class="sec-t">试验室与产线建设<em>/ Facility</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">建造的是"能力"，而不是房间。</p>
+            </div>
+            <div class="two">
+                <dl class="spec-tbl rv">
+                    <div><dt>屏蔽体</dt><dd>屏蔽效能 SE 分段验收<u>孔隙 / 观察窗 / 门缝为薄弱环节</u></dd></div>
+                    <div><dt>滤波与馈通</dt><dd>电源滤波器、信号馈通板、光纤窗</dd></div>
+                    <div><dt>接地</dt><dd>接地网、单点接地、GRP 与吸波转台</dd></div>
+                    <div><dt>供配电</dt><dd>试验专用回路、隔离变压器、容量与谐波</dd></div>
+                    <div><dt>测试系统</dt><dd>接收机 / 频谱仪、功方、天线、探头与工装夹具</dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>量值溯源</dt><dd>校准周期、证书与溯源链</dd></div>
+                    <div><dt>不确定度</dt><dd>测量不确定度评定<u>CNAS 能力范围支撑</u></dd></div>
+                    <div><dt>体系文件</dt><dd>作业指导书、原始记录表、设备操作规程</dd></div>
+                    <div><dt>人员与授权</dt><dd>试验操作资格与关键岗位授权</dd></div>
+                    <div><dt>产线交付</dt><dd>流程节拍、工装复用与产能验证</dd></div>
+                </dl>
+            </div>
+
+            <div class="chips rv" style="margin-top:34px">
+                <span class="chip">半电波暗室</span><span class="chip">全电波暗室</span><span class="chip">GJB 151B/C</span>
+                <span class="chip">LISN / AMN</span><span class="chip">CDN</span><span class="chip">BCI 电流注入探头</span>
+                <span class="chip">替代天线法</span><span class="chip">准峰值 / 平均值检波</span><span class="chip">背景噪声 6 dB 准则</span>
+                <span class="chip">CNAS 认可</span><span class="chip">测量不确定度</span><span class="chip">量值溯源</span>
+            </div>
+
+            <div class="outs rv" style="margin-top:44px">
+                <div class="out"><div class="h">科目类别</div><div class="v">4<small> 大类</small></div><p>CE / CS / RE / RS，覆盖传导与辐射、发射与敏感度四个象限。</p></div>
+                <div class="out"><div class="h">已执行科目</div><div class="v">13<small> 项</small></div><p>本页列出的方法科目，均在实际任务中接触过。</p></div>
+                <div class="out"><div class="h">受试层级</div><div class="v">单机 → 整星</div><p>两个层级的配置、布线和判据并不通用。</p></div>
+                <div class="out"><div class="h">附加环境科目</div><div class="v">3<small> 类</small></div><p>磁试验、力学试验、真空热试验。</p></div>
+            </div>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.88rem;color:var(--dim);margin-top:34px">
+                相关：<a href="../#experience" style="color:var(--cu)">工作经历</a> ·
+                <a href="../#research" style="color:var(--cu)">研究方向</a> ·
+                <a href="../experience1/" style="color:var(--cu)">射频工程师实习经历</a>
+            </p>
+        </div>
+    </section>
+
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="页面导航">
+            <a href="../experience1/">
+                <span class="n">← Previous · E-01</span>
+                <span class="t">实习经历 · 江苏骅盛车用电子</span>
+            </a>
+            <a href="../" class="rt">
+                <span class="n">Next →</span>
+                <span class="t">返回全部项目</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>想聊 EMC 整改？</h2>
+                <p>超标定位思路、缝隙与共模的判断、试验室建设与 CNAS 能力范围，都可以直接找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
+            </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This page</h5>
+                    <ul>
+                        <li><a href="#streams">01 · 两条职责线</a></li>
+                        <li><a href="#topology">02 · 四类测量拓扑</a></li>
+                        <li><a href="#items">03 · 试验科目</a></li>
+                        <li><a href="#process">04 · 试验流程</a></li>
+                        <li><a href="#facility">05 · 试验室建设</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../">首页</a></li>
+                        <li><a href="../#experience">工作经历</a></li>
+                        <li><a href="../#projects">全部项目</a></li>
+                        <li><a href="../#publications">论文与专利</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>T-01 · 本页不含受试型号、配置、限值与结果</span>
+        </div>
+    </div>
+</footer>
+
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">T-01</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
+
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.84rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
+    </div>
+</div>
+
+<script src="../assets/theme.js"></script>
+</body>
+</html>

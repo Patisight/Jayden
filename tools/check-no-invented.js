@@ -8,7 +8,8 @@ const root = path.resolve(__dirname, '..');
 
 const DIRS = {
   'P-01': 'project1', 'P-02': 'project2', 'P-03': 'project3',
-  'P-04': 'project4', 'P-05': 'project5', 'P-06': 'project6', 'E-01': 'experience1'
+  'P-04': 'project4', 'P-05': 'project5', 'P-06': 'project6',
+  'T-01': 'emc1', 'E-01': 'experience1'
 };
 
 const ENT = { '&gt;': '>', '&lt;': '<', '&amp;': '&', '&nbsp;': ' ', '&times;': '×', '&minus;': '-', '&plusmn;': '±' };

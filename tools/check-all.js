@@ -14,6 +14,8 @@ const steps = [
   ['静态校验 · 编码 / 死链 / 语法 / 主题一致性', 'check-site.js', []],
   ['模板契约校验', 'check-template.js', []],
   ['图片完整性与格式一致性', 'check-images.js', []],
+  ['敏感信息 · 文本与代码（发布门禁）', 'check-secrets.js', []],
+  ['敏感信息 · 下载区 PDF 文本层（发布门禁）', 'check-pdf-secrets.js', []],
   ['内容回归 · 旧版指标数字是否丢失（advisory）', 'check-facts-kept.js', []],
   ['内容一致性 · 简历 / 首页 / 子页 三方时段', 'check-periods.js', []],
 ];

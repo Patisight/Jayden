@@ -131,6 +131,34 @@
     /* ---------- 命令面板 ---------- */
     var pal = $('#palette'), palInput = $('#palInput'), palList = $('#palList');
     if (pal) {
+        // 跨页条目单一来源：站点根前缀由 <body data-root> 决定（首页 "."，子页 ".."）。
+        // 新增页面只改这一处，不必再动 9 个文件里的副本。
+        var ROOT = document.body.dataset.root || '.';
+        var isHome = ROOT === '.';
+        var SITE_MAP = [
+            { u: 'index.html#about', idx: '01', t: '关于我', k: 'ABOUT' },
+            { u: 'index.html#research', idx: '02', t: '研究方向', k: 'RESEARCH' },
+            { u: 'index.html#experience', idx: '03', t: '工作经历', k: 'EXPERIENCE' },
+            { u: 'index.html#projects', idx: '04', t: '代表性项目', k: 'PROJECTS' },
+            { u: 'index.html#tools', idx: '05', t: '软件与工具', k: 'TOOLS' },
+            { u: 'index.html#publications', idx: '06', t: '论文与专利', k: 'PAPERS' },
+            { u: 'index.html#honors', idx: '07', t: '成果与荣誉', k: 'HONORS' },
+            { u: 'index.html#skills', idx: '08', t: '能力矩阵', k: 'SKILLS' },
+            { u: 'project1/', idx: 'P-01', t: '紧凑型低剖面车载 5G MIMO 天线', k: 'ANTENNA' },
+            { u: 'project2/', idx: 'P-02', t: '集成定位与通信多通道车载天线盒', k: 'ANTENNA' },
+            { u: 'project3/', idx: 'P-03', t: '板端接口式车载天线盒', k: 'ANTENNA' },
+            { u: 'project4/', idx: 'P-04', t: '算法辅助全波电磁仿真优化', k: 'AI / EM' },
+            { u: 'project5/', idx: 'P-05', t: '高增益全向车载阵列天线', k: 'ANTENNA' },
+            { u: 'project6/', idx: 'P-06', t: 'GNSS 天线及有源射频模块', k: 'RF' },
+            { u: 'emc1/', idx: 'T-01', t: '整星 EMC 试验科目与测量框图', k: 'EMC' },
+            { u: 'experience1/', idx: 'E-01', t: '实习经历 · 江苏骅盛车用电子', k: 'INTERN' }
+        ].map(function (i) {
+            var local = isHome && i.u.indexOf('index.html#') === 0;
+            return {
+                href: local ? i.u.slice('index.html'.length) : ROOT + '/' + i.u,
+                idx: i.idx, t: i.t, k: i.k, ext: !local
+            };
+        });
         var items = secs.map(function (el) {
             return {
                 href: '#' + el.id,
@@ -139,9 +167,12 @@
                 k: el.id.toUpperCase()
             };
         });
-        // 页面可声明跨页跳转项：<script type="application/json" id="site-map">[{href,idx,t,k}]</script>
+        // 页面仍可用 <script type="application/json" id="site-map"> 追加本页专属条目
         var smap = $('#site-map');
         if (smap) { try { items = items.concat(JSON.parse(smap.textContent)); } catch (err) { } }
+        items = items.concat(SITE_MAP.filter(function (m) {
+            return !items.some(function (x) { return x.href === m.href || x.href === '#' + m.href.slice(1); });
+        }));
 
         var sel = 0, shown = items.slice();
         function render() {
