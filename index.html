@@ -6,10 +6,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>程锦阳 · 射频 / 天线 / 电磁场</title>
-    <meta name="description" content="程锦阳 · 通信与信息系统硕士。微波天线与射频系统设计，AI 辅助电磁仿真优化，整星 EMC 与可靠性试验。IEEE AWPL 第一作者，3 项发明专利。">
+    <meta name="description" content="程锦阳 · 射频 / 天线工程师，上海大学通信与信息系统硕士。车载 5G MIMO 天线与多频段集成，Python 驱动 HFSS 的仿真自动优化，整星 EMC 与可靠性试验。IEEE AWPL 第一作者，3 项发明专利，简历 / 论文 / 学位论文可下载。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/theme.css">
     <style>
         /* ===== 首页专属：hero 方向图、指标账本、领域矩阵、频段带、时间轴、项目、论文、能力矩阵 ===== */
@@ -29,7 +29,7 @@
         .role-line .caret { display: inline-block; width: 7px; height: 1.05em; background: var(--cu); animation: blink 1.05s step-end infinite; }
         @keyframes blink { 50% { opacity: 0; } }
         .role-fixed { color: var(--text); font-weight: 500; letter-spacing: -.01em; }
-        .hero-lede { color: var(--muted); font-size: .95rem; max-width: 52ch; font-weight: 300; }
+        .hero-lede { color: var(--muted); font-size: .95rem; max-width: 52ch; font-weight: 400; }
         .hero-lede b { color: var(--text); font-weight: 500; }
         .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
         .contact-strip { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 40px; font-family: var(--mono); font-size: .76rem; color: var(--dim); }
@@ -69,15 +69,14 @@
         .ledger .v em { font-style: normal; color: var(--cu); }
         .ledger .v small { font-size: .42em; color: var(--dim); letter-spacing: .02em; }
         .ledger .k { margin-top: 12px; font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
-        .ledger .s { margin-top: 4px; font-size: .78rem; color: var(--muted); font-weight: 300; }
+        .ledger .s { margin-top: 4px; font-size: .78rem; color: var(--muted); font-weight: 400; }
 
         /* 关于 */
-        .about { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 68px; align-items: start; }
+        .about { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: 64px; align-items: start; }
         .portrait { position: sticky; top: 108px; }
         .portrait .pf { position: relative; border: 1px solid var(--line-2); padding: 7px; background: var(--ink-1); }
-        .portrait img { width: 100%; aspect-ratio: 1/1; object-fit: cover; filter: grayscale(1) contrast(1.06) brightness(.92); transition: filter .7s var(--ease); }
-        .portrait:hover img { filter: grayscale(0) contrast(1) brightness(1); }
-        .portrait .pf::after { content: ''; position: absolute; inset: 7px; pointer-events: none; background: linear-gradient(180deg, transparent 60%, rgba(7, 8, 9, .55)); }
+        /* 人像一律保持原始色彩：不加灰度、不加压暗遮罩 */
+        .portrait img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
         .portrait .tag-row { margin-top: 10px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: .66rem; color: var(--dim); letter-spacing: .06em; }
         .facts { display: grid; margin-top: 18px; border-top: 1px solid var(--line); }
         .facts div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: .7rem; }
@@ -87,9 +86,9 @@
         .edu-row { display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; padding: 18px 0; border-bottom: 1px solid var(--line); transition: background .35s var(--ease); }
         .edu-row:hover { background: rgba(255, 255, 255, .014); }
         .edu-row h3 { font-size: .98rem; font-weight: 500; }
-        .edu-row h3 i { font-style: normal; color: var(--dim); font-weight: 300; margin-left: 10px; font-size: .84rem; }
+        .edu-row h3 i { font-style: normal; color: var(--dim); font-weight: 400; margin-left: 10px; font-size: .84rem; }
         .edu-row .when { font-family: var(--mono); font-size: .72rem; color: var(--dim); align-self: center; white-space: nowrap; }
-        .edu-row .courses { grid-column: 1 / -1; font-size: .82rem; color: var(--muted); font-weight: 300; }
+        .edu-row .courses { grid-column: 1 / -1; font-size: .82rem; color: var(--muted); font-weight: 400; }
         .edu-row .courses u { text-decoration: none; color: var(--dim); font-family: var(--mono); font-size: .7rem; letter-spacing: .06em; margin-right: 8px; }
 
         /* 研究方向 */
@@ -101,7 +100,7 @@
         .domain:hover .no { color: var(--cu); }
         .domain h3 { font-size: 1.06rem; font-weight: 500; letter-spacing: -.012em; margin-bottom: 10px; }
         .domain h3 em { font-style: normal; display: block; font-family: var(--mono); font-size: .64rem; color: var(--dim); letter-spacing: .14em; text-transform: uppercase; margin-top: 5px; }
-        .domain p { color: var(--muted); font-size: .87rem; font-weight: 300; }
+        .domain p { color: var(--muted); font-size: .87rem; font-weight: 400; }
         .domain .dl { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 7px; }
         .domain .dl div { display: flex; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: .7rem; }
         .domain .dl span:first-child { color: var(--dim); }
@@ -149,11 +148,11 @@
         .tl-when { font-family: var(--mono); font-size: .74rem; color: var(--dim); padding-top: 4px; }
         .tl-when b { display: block; color: var(--cu); font-weight: 400; margin-top: 6px; }
         .tl-body h3 { font-size: 1.08rem; font-weight: 500; letter-spacing: -.012em; }
-        .tl-body h3 span { color: var(--dim); font-weight: 300; }
-        .tl-org { font-size: .84rem; color: var(--muted); margin: 5px 0 14px; font-weight: 300; }
+        .tl-body h3 span { color: var(--dim); font-weight: 400; }
+        .tl-org { font-size: .84rem; color: var(--muted); margin: 5px 0 14px; font-weight: 400; }
         .tl-org i { font-style: normal; color: var(--cu); }
         .tl-list { display: grid; gap: 8px; }
-        .tl-list li { position: relative; padding-left: 18px; color: var(--muted); font-size: .88rem; font-weight: 300; }
+        .tl-list li { position: relative; padding-left: 18px; color: var(--muted); font-size: .88rem; font-weight: 400; }
         .tl-list li::before { content: ''; position: absolute; left: 0; top: .68em; width: 7px; height: 1px; background: var(--cu); }
         .tl-list li b { color: var(--text); font-weight: 500; }
         .tl-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
@@ -176,7 +175,7 @@
         .prj-time { font-family: var(--mono); font-size: .66rem; color: var(--dim); white-space: nowrap; }
         .prj-card h3 { font-size: .99rem; font-weight: 500; line-height: 1.45; letter-spacing: -.012em; margin-bottom: 10px; transition: color .3s; }
         .prj-card:hover h3 { color: var(--cu); }
-        .prj-card p { color: var(--muted); font-size: .84rem; font-weight: 300; flex: 1; }
+        .prj-card p { color: var(--muted); font-size: .84rem; font-weight: 400; flex: 1; }
         .specs { display: grid; gap: 5px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
         .specs div { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: .69rem; }
         .specs span:first-child { color: var(--dim); }
@@ -195,6 +194,7 @@
         .paper { padding: 22px 24px; margin-bottom: 12px; }
         .paper .venue { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono); font-size: .68rem; margin-bottom: 13px; }
         .paper .venue .rank { color: var(--ink-0); background: var(--cu); padding: 2px 7px; letter-spacing: .05em; }
+        .paper .venue .rank.thesis { background: var(--sig); }
         .paper .venue .jr { color: var(--muted); }
         .paper .venue .yr { color: var(--dim); margin-left: auto; }
         .paper h4 { font-size: 1rem; font-weight: 500; line-height: 1.5; letter-spacing: -.012em; margin-bottom: 10px; }
@@ -225,6 +225,71 @@
         .ft-cta { max-width: 640px; }
         .ft-cta h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); }
 
+        /* 资料下载按钮（简历 / 论文 / 学位论文） */
+        .dl-row, .cv-dl {
+            display: flex; justify-content: space-between; align-items: center; gap: 12px;
+            margin-top: 16px; padding: 9px 13px; border: 1px solid var(--cu-dim); border-radius: 1px;
+            font-family: var(--mono); font-size: .78rem; color: var(--cu);
+            transition: background .3s, border-color .3s;
+        }
+        .dl-row:hover, .cv-dl:hover { background: rgba(207, 138, 82, .07); border-color: var(--cu); }
+        .dl-row .sz, .cv-dl .sz { color: var(--dim); font-size: .7rem; transition: color .3s; }
+        .dl-row:hover .sz, .cv-dl:hover .sz { color: var(--cu); }
+        .cv-dl { margin-top: 12px; }
+
+        /* ===== 阅读舒适度覆写：正文放大一档，小标签保底 11px ===== */
+        .eyebrow { font-size: .76rem; }
+        .role-line { font-size: clamp(.92rem, 1.5vw, 1.06rem); }
+        .hero-lede { font-size: 1.06rem; max-width: 56ch; line-height: 1.9; }
+        .contact-strip { font-size: .82rem; }
+        .scope-cap { font-size: .72rem; }
+        .readout { font-size: .74rem; }
+        .ledger .k { font-size: .72rem; }
+        .ledger .s { font-size: .86rem; line-height: 1.7; }
+        .portrait .tag-row { font-size: .7rem; }
+        .facts div { font-size: .74rem; }
+        .edu-row h3 { font-size: 1.05rem; }
+        .edu-row h3 i { font-size: .88rem; }
+        .edu-row .when { font-size: .76rem; }
+        .edu-row .courses { font-size: .92rem; line-height: 1.8; }
+        .domain .no { font-size: .7rem; }
+        .domain h3 { font-size: 1.12rem; }
+        .domain h3 em { font-size: .68rem; }
+        .domain p { font-size: .96rem; line-height: 1.85; }
+        .domain .dl div { font-size: .74rem; }
+        .band-h h4 { font-size: .74rem; }
+        .band-h span { font-size: .7rem; }
+        .axis .maj { font-size: .68rem; }
+        .row .lab { font-size: .72rem; }
+        .band-key { font-size: .68rem; }
+        .tl-when { font-size: .78rem; }
+        .tl-body h3 { font-size: 1.12rem; }
+        .tl-org { font-size: .92rem; line-height: 1.75; }
+        .tl-list li { font-size: .96rem; line-height: 1.85; }
+        .tl-link { font-size: .8rem; }
+        .filters button { font-size: .78rem; padding: 8px 15px; }
+        .filters .count { font-size: .74rem; }
+        .prj-no, .prj-time { font-size: .7rem; }
+        .prj-card h3 { font-size: 1.06rem; line-height: 1.5; }
+        .prj-card p { font-size: .91rem; line-height: 1.8; }
+        .specs div { font-size: .74rem; }
+        .prj-foot .go { font-size: .75rem; }
+        .prj-out { font-size: .68rem; }
+        .blk-h h3 { font-size: .76rem; }
+        .blk-h .n { font-size: .72rem; }
+        .paper .venue { font-size: .72rem; }
+        .paper h4 { font-size: 1.07rem; line-height: 1.55; }
+        .paper .auth { font-size: .8rem; }
+        .paper .note { font-size: .76rem; line-height: 1.75; }
+        .fnote { font-size: .78rem; }
+        .pat .no { font-size: .74rem; }
+        .pat h4 { font-size: .98rem; line-height: 1.6; }
+        .pat .meta { font-size: .74rem; }
+        .skl-grp h3 { font-size: 1.02rem; }
+        .skl-grp .sub { font-size: .7rem; }
+        .meter .lab { font-size: .88rem; }
+        .meter .lab span:last-child { font-size: .72rem; }
+
         @media (max-width: 1080px) {
             .hero-grid { grid-template-columns: 1fr; gap: 48px; }
             .scope { max-width: 400px; justify-self: start; }
@@ -235,7 +300,7 @@
             .ledger div:nth-child(2) { border-right: 0; }
             .ledger div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
             .about { grid-template-columns: 1fr; gap: 40px; }
-            .portrait { position: static; max-width: 200px; }
+            .portrait { position: static; max-width: 232px; }
             .domains, .prj, .skl, .pubs { grid-template-columns: 1fr; }
             .pubs { gap: 44px; }
             .tl-item { grid-template-columns: 1fr; gap: 14px; }
@@ -293,13 +358,13 @@
                         <span id="scramble" class="cu" aria-live="off">&nbsp;</span><span class="caret" aria-hidden="true"></span>
                     </p>
                     <p class="hero-lede rv rv-d2">
-                        把电磁场变成可量产的结构。硕士期间专注<b>车载天线与 MIMO 解耦</b>，
-                        用 <b>Python 驱动 HFSS</b> 做全波仿真自动优化；现在做<b>整星 EMC 与可靠性试验</b>。
+                        硕士三年做的其实是一件事：把<b>车载天线</b>从 HFSS 里的模型，变成车上能装、能量产的零件。
+                        顺手用 <b>Python 驱动 HFSS</b> 把仿真优化自动化了一遍；现在在上海做<b>整星 EMC 与环境可靠性试验</b>。
                     </p>
                     <div class="hero-actions rv rv-d3">
                         <a href="#projects" class="btn solid"><span class="t">代表项目</span><span class="arw" aria-hidden="true">→</span></a>
                         <a href="#publications" class="btn"><span class="t">论文与专利</span></a>
-                        <a href="#about" class="btn"><span class="t">完整履历</span></a>
+                        <a href="downloads/chengjinyang-resume.pdf" class="btn" download="程锦阳-个人简历.pdf"><span class="t">个人简历 PDF</span><span class="arw" aria-hidden="true">↓</span></a>
                     </div>
                     <div class="contact-strip rv rv-d4">
                         <a href="mailto:aeayang@163.com">
@@ -381,12 +446,12 @@
                 <span class="sec-idx">01</span>
                 <h2 class="sec-t">关于我<em>/ About</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">从场路协同的电磁问题，到整星级可靠性试验闭环。</p>
+                <p class="sec-note">读研那三年在搞车载天线，现在给卫星做"体检"。</p>
             </div>
 
             <div class="about">
                 <aside class="portrait rv">
-                    <div class="pf"><img src="myself.webp" alt="程锦阳" loading="lazy" width="232" height="232"></div>
+                    <div class="pf"><img src="myself.webp" alt="程锦阳" loading="lazy" width="252" height="252"></div>
                     <div class="tag-row"><span>ID</span><span>2023–2026 · MSc</span></div>
                     <div class="facts">
                         <div><span>GPA</span><span>3.7 / 87.21</span></div>
@@ -395,27 +460,33 @@
                         <div><span>EN</span><span>CET-6 · 474</span></div>
                         <div><span>LANG</span><span>Python · MATLAB</span></div>
                     </div>
+                    <a class="cv-dl" href="downloads/chengjinyang-resume.pdf" download="程锦阳-个人简历.pdf">
+                        <span>个人简历 · PDF</span><span class="sz">278 KB ↓</span>
+                    </a>
                 </aside>
 
                 <div class="about-main prose">
                     <p class="lead rv">
-                        <b>把天线当成系统问题而不是形状问题。</b>
-                        上海大学通信与信息系统硕士，安徽工业大学通信工程本科。硕士期间专注微波天线设计与研发，
-                        在<b>车载 5G MIMO 天线</b>、多频段天线集成、GNSS 有源天线方向上完成了从需求拆解到量产验证的完整闭环。
+                        <b>做天线这件事，难的不是仿真，是取舍。</b>
+                        车上给不了理想环境：安装空间、结构件、整车造型，都在跟指标抢地盘。
+                        我习惯先把问题拆开——场景、指标、公差、产线，想清楚了再动手仿真。
                     </p>
                     <p class="rv rv-d1">
-                        熟悉天线设计全流程 —— 从需求分析、指标分解、仿真设计到原型加工与微波暗室实测，
-                        每个环节都有独立交付能力；熟悉<b>射频链路设计与链路预算</b>的需求拆解，熟悉各类射频器件选型。
-                        累计设计天线产品十余种，其中多项方案转化为发明专利与 SCI/EI 论文。
+                        硕士三年主要在做车载天线：紧凑型低剖面 5G MIMO 天线、集成定位与通信的多通道天线盒、
+                        板端接口款天线盒、GNSS 有源天线。从跟企业对接需求、拆指标，到结构布局、板材选型、
+                        陪加工厂抠公差、进暗室对着网络分析仪一版一版调——这条链上的每一步我都亲手做过。
+                        对应的论文、专利和实测数据，在站内各项目页里都能查到。
                     </p>
                     <p class="rv rv-d2">
-                        本科从事嵌入式软件开发并以此获得多个竞赛奖项，因此在<b>算法与工具链</b>上不缺手感 ——
-                        目前用 Python 脚本驱动 HFSS 做全波电磁仿真自动优化，集成 PSO、Bayesian 与 BNN 代理模型，
-                        并探索物理先验嵌入的强化学习架构。<b>把 AI 落进自己所在的行业</b>，而不只是使用 AI。
+                        我本科是搞嵌入式的，写过智能车和电赛的代码、拿过几个省奖，所以仿真等不起的时候，
+                        第一反应是自己写工具：用 Python 驱动 HFSS 自动改参数、跑优化（PSO、贝叶斯），
+                        再拿贝叶斯神经网络做代理模型、配主动学习，把全波仿真的次数往下压。
+                        最近在试把物理先验塞进强化学习，这个方向还在研，进展放在 P-04。
                     </p>
                     <p class="rv rv-d3">
-                        现在上海利正卫星从事<b>整星与单机 EMC、磁、力学、真空热试验</b>，
-                        同时参与实验室 CNAS 认证与试验产线建设 —— 从"设计一个天线"走到"验证一整颗星在真实环境里能不能工作"。
+                        现在在上海利正卫星做整星与单机的 EMC、磁、力学、真空热试验，也参与实验室 CNAS 认可
+                        和试验产线建设。听起来换了赛道，其实是同一件事的另一端：以前我关心"这根天线会不会
+                        干扰别人"，现在我关心"这颗星在振动、真空、高低温里，还能不能正常工作"。
                     </p>
 
                     <div class="edu">
@@ -699,12 +770,12 @@
                 <span class="sec-idx">05</span>
                 <h2 class="sec-t">论文与专利<em>/ Publications &amp; Patents</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">技术方案与知识产权一一对应，均为校企横向课题产出。</p>
+                <p class="sec-note">技术方案与知识产权一一对应，论文与学位论文均可下载 PDF。</p>
             </div>
 
             <div class="pubs">
                 <div class="rv">
-                    <div class="blk-h"><h3>期刊论文</h3><span class="r"></span><span class="n">01</span></div>
+                    <div class="blk-h"><h3>学术论文</h3><span class="r"></span><span class="n">02</span></div>
                     <article class="card paper">
                         <span class="brk"></span>
                         <div class="venue">
@@ -715,8 +786,25 @@
                         <h4><i>A Compact Low-Profile Vehicular 5G MIMO Antenna System</i></h4>
                         <p class="auth"><u>程锦阳 (Jinyang Cheng)</u> · 第一作者 · 紧凑型低剖面车载 5G MIMO 天线系统</p>
                         <p class="note">vol. 24, no. 8, pp. 2422–2426, Aug. 2025 · 关联项目 P-01 · 同技术方案转化为发明专利 CN202411549247.9</p>
+                        <a class="dl-row" href="downloads/A_Compact_Low-Profile_Vehicular_5G_MIMO_Antenna_System.pdf" download="Cheng-2025-IEEE-AWPL-A_Compact_Low-Profile_Vehicular_5G_MIMO_Antenna_System.pdf">
+                            <span>下载论文 PDF</span><span class="sz">2.1 MB ↓</span>
+                        </a>
                     </article>
-                    <p class="fnote">IEEE AWPL 为天线与传播领域快报类期刊，以短文与工程新颖性见长。</p>
+                    <article class="card paper">
+                        <span class="brk"></span>
+                        <div class="venue">
+                            <span class="rank thesis">硕士学位论文</span>
+                            <span class="jr">上海大学 · 通信与信息工程学院</span>
+                            <span class="yr">2026</span>
+                        </div>
+                        <h4>紧凑型车载天线系统研究</h4>
+                        <p class="auth"><u>程锦阳</u> · 通信与信息系统 · 指导教师：扆梓轩</p>
+                        <p class="note">密级：公开 · 全文 97 页 · 完整收录 P-01 / P-02 / P-05 等车载天线工作的设计、仿真与实测过程</p>
+                        <a class="dl-row" href="downloads/chengjinyang-master-thesis.pdf" download="程锦阳-硕士学位论文-紧凑型车载天线系统研究.pdf">
+                            <span>下载学位论文 PDF</span><span class="sz">7.2 MB ↓</span>
+                        </a>
+                    </article>
+                    <p class="fnote">IEEE AWPL 为天线与传播领域快报类期刊，以短文与工程新颖性见长；学位论文为最终归档版本。</p>
                 </div>
 
                 <div class="rv rv-d1">
@@ -886,12 +974,14 @@
                     </ul>
                 </div>
                 <div>
-                    <h5>Output</h5>
+                    <h5>Output &amp; 下载</h5>
                     <ul>
                         <li><a href="#publications">05 · 论文与专利</a></li>
                         <li><a href="#honors">06 · 成果与荣誉</a></li>
                         <li><a href="#skills">07 · 能力矩阵</a></li>
-                        <li><a href="mailto:aeayang@163.com">简历与联系方式</a></li>
+                        <li><a href="downloads/chengjinyang-resume.pdf" download="程锦阳-个人简历.pdf">个人简历 PDF ↓</a></li>
+                        <li><a href="downloads/chengjinyang-master-thesis.pdf" download="程锦阳-硕士学位论文-紧凑型车载天线系统研究.pdf">学位论文 PDF ↓</a></li>
+                        <li><a href="mailto:aeayang@163.com">aeayang@163.com</a></li>
                     </ul>
                 </div>
             </div>
@@ -924,6 +1014,11 @@
     </div>
 </div>
 
+<script type="application/json" id="site-map">[
+    {"href":"downloads/chengjinyang-resume.pdf","idx":"DL","t":"个人简历（PDF）","k":"RESUME","ext":1},
+    {"href":"downloads/chengjinyang-master-thesis.pdf","idx":"DL","t":"硕士学位论文 · 紧凑型车载天线系统研究（PDF）","k":"THESIS","ext":1},
+    {"href":"downloads/A_Compact_Low-Profile_Vehicular_5G_MIMO_Antenna_System.pdf","idx":"DL","t":"IEEE AWPL 论文（PDF）","k":"PAPER","ext":1}
+]</script>
 <script src="assets/theme.js"></script>
 <script>
 /* ===== 首页专属：方向图、扫描针、频段带、解码、项目筛选 ===== */
