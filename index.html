@@ -3,9 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>程锦阳 - 个人网站</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>程锦阳 · 射频 / 天线 / 电磁场</title>
+    <meta name="description" content="程锦阳个人网站：射频、天线、微波、AI辅助电磁仿真，通信与信息系统硕士。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0d1117;
+            --bg-2: #10161f;
+            --panel: #151b24;
+            --panel-2: #1a222e;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.14);
+            --text: #e6edf3;
+            --muted: #8b98a5;
+            --muted-2: #6b7785;
+            --accent: #5b9cf6;
+            --accent-soft: rgba(91, 156, 246, 0.12);
+            --accent-strong: rgba(91, 156, 246, 0.22);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --max: 1120px;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,1580 +36,940 @@
 
         html {
             scroll-behavior: smooth;
-            scroll-snap-type: y proximity;
-            -webkit-scroll-behavior: smooth;
-            -moz-scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            line-height: 1.6;
-            color: #ecf0f1;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            scroll-snap-type: y proximity;
+            font-family: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(1200px 600px at 15% -10%, rgba(91, 156, 246, 0.10), transparent 60%),
+                radial-gradient(900px 500px at 90% 10%, rgba(94, 120, 255, 0.07), transparent 55%),
+                radial-gradient(700px 700px at 50% 120%, rgba(0, 180, 216, 0.05), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: var(--max);
             margin: 0 auto;
-            padding: 0 40px;
-        }
-
-        /* Hero Cover Section */
-        .hero-cover {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 0 28px;
             position: relative;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
-            overflow: hidden;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-        }
-
-        .hero-cover-content {
-            text-align: center;
-            z-index: 2;
-            position: relative;
-            max-width: 800px;
-            padding: 0 20px;
-        }
-
-        .hero-title h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            margin: 0 0 20px;
-            color: #ecf0f1;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .hero-subtitle {
-            font-size: 1.3rem;
-            font-weight: 400;
-            margin-bottom: 30px;
-            opacity: 0.9;
-            color: #bdc3c7;
-            animation: fadeInUp 1s ease-out 0.2s both;
-        }
-
-        .separator {
-            margin: 0 15px;
-            opacity: 0.6;
-            color: #3498db;
-        }
-
-        .hero-description {
-            font-size: 1.1rem;
-            margin-bottom: 40px;
-            opacity: 0.8;
-            line-height: 1.6;
-            color: #bdc3c7;
-            animation: fadeInUp 1s ease-out 0.4s both;
-        }
-
-        .hero-actions {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 60px;
-            animation: fadeInUp 1s ease-out 0.6s both;
-        }
-
-        .hero-btn {
-            padding: 15px 30px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-btn.primary {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
-            color: #ecf0f1;
-            border: none;
-            box-shadow: 0 4px 15px rgba(52, 73, 94, 0.3);
-        }
-
-        .hero-btn.secondary {
-            background: transparent;
-            color: #ecf0f1;
-            border: 2px solid rgba(236, 240, 241, 0.3);
-        }
-
-        .hero-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .hero-btn.primary:hover {
-            box-shadow: 0 10px 25px rgba(52, 73, 94, 0.5);
-            background: linear-gradient(135deg, #3c5a78, #34495e);
-        }
-
-        .hero-btn.secondary:hover {
-            background: rgba(236, 240, 241, 0.1);
-            border-color: rgba(236, 240, 241, 0.6);
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-        }
-
-        .scroll-arrow {
-            width: 20px;
-            height: 20px;
-            border-right: 2px solid rgba(255, 255, 255, 0.6);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.6);
-            transform: rotate(45deg);
-        }
-
-        .hero-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             z-index: 1;
         }
 
-        .bg-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .bg-particle:nth-child(1) {
-            top: 20%;
-            left: 20%;
-            animation-delay: 0s;
-        }
-
-        .bg-particle:nth-child(2) {
-            top: 60%;
-            left: 80%;
-            animation-delay: 2s;
-        }
-
-        .bg-particle:nth-child(3) {
-            top: 80%;
-            left: 40%;
-            animation-delay: 4s;
-        }
-
-        .bg-particle:nth-child(4) {
-            top: 30%;
-            left: 70%;
-            animation-delay: 1s;
-        }
-
-        .bg-particle:nth-child(5) {
-            top: 70%;
-            left: 10%;
-            animation-delay: 3s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translateY(-20px);
-                opacity: 0.8;
-            }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-        }
-
-        /* Header */
-        header {
-            background: rgba(44, 62, 80, 0.95);
-            backdrop-filter: blur(10px);
-            position: fixed;
+        /* ---------- Header ---------- */
+        .site-header {
+            position: sticky;
             top: 0;
-            width: 100%;
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            background: rgba(13, 17, 23, 0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
         }
 
-        nav {
+        .nav {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
+            justify-content: space-between;
+            height: 68px;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ecf0f1;
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .logo span {
+            color: var(--accent);
         }
 
         .nav-links {
             display: flex;
+            align-items: center;
+            gap: 34px;
             list-style: none;
-            gap: 2rem;
         }
 
         .nav-links a {
-            text-decoration: none;
-            color: #ecf0f1;
-            font-weight: 500;
-            transition: color 0.3s ease;
+            font-size: 0.9rem;
+            color: var(--muted);
+            transition: color .25s ease;
         }
 
         .nav-links a:hover {
-            color: #3498db;
+            color: var(--text);
         }
 
-        /* Sections */
-        .section {
-            padding: 60px 0;
-            background: #34495e;
-            min-height: 90vh;
+        .nav-cta {
+            padding: 8px 16px;
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            color: var(--text) !important;
+            transition: all .25s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent) !important;
+        }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            min-height: 92vh;
             display: flex;
             align-items: center;
-            justify-content: center;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            padding: 5vh 0;
+            padding: 120px 0 80px;
+            position: relative;
         }
 
-        .section:nth-child(even) {
-            background: #2c3e50;
+        .hero-inner {
+            max-width: 780px;
         }
 
-        .section .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 3rem;
-            color: #ecf0f1;
-        }
-
-        /* About Section */
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 3rem;
+        .eyebrow {
+            display: inline-flex;
             align-items: center;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 1s ease 0.5s forwards;
+            gap: 8px;
+            font-size: 0.82rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 24px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-strong);
+            padding: 6px 14px;
+            border-radius: 999px;
         }
 
-        .about-image {
-            text-align: center;
-        }
-
-        .about-image img {
-            width: 250px;
-            height: 250px;
+        .eyebrow::before {
+            content: '';
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            object-fit: cover;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--accent);
         }
 
-        .about-image img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 40px rgba(52, 152, 219, 0.3);
-        }
-
-        .about-text {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 1rem;
-        }
-
-        .about-text::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .about-text::-webkit-scrollbar-track {
-            background: #34495e;
-            border-radius: 3px;
-        }
-
-        .about-text::-webkit-scrollbar-thumb {
-            background: #3498db;
-            border-radius: 3px;
-        }
-
-        .about-text::-webkit-scrollbar-thumb:hover {
-            background: #2980b9;
-        }
-
-        .about-text h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #3498db;
-            position: relative;
-            padding-bottom: 0.5rem;
-        }
-
-        .about-text h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 2px;
-            background: linear-gradient(90deg, #3498db, #2980b9);
-            border-radius: 1px;
-        }
-
-        .about-text p {
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            color: #bdc3c7;
-            line-height: 1.8;
-            opacity: 0;
-            transform: translateX(-20px);
-            animation: slideInLeft 0.8s ease forwards;
-        }
-
-        .about-text p:nth-child(2) { animation-delay: 0.2s; }
-        .about-text p:nth-child(3) { animation-delay: 0.4s; }
-        .about-text p:nth-child(4) { animation-delay: 0.6s; }
-        .about-text p:nth-child(5) { animation-delay: 0.8s; }
-        .about-text p:nth-child(6) { animation-delay: 1.0s; }
-        .about-text p:nth-child(7) { animation-delay: 1.2s; }
-        .about-text p:nth-child(8) { animation-delay: 1.4s; }
-        .about-text p:nth-child(9) { animation-delay: 1.6s; }
-
-        /* Research Directions */
-        .research-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            max-height: 85vh;
-            overflow: hidden;
-        }
-
-        .research-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .research-grid.expanded {
-            display: flex;
-            gap: 30px;
-            align-items: flex-start;
-            max-height: 80vh;
-            overflow: hidden;
-        }
-
-        .research-direction {
-            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-            border-radius: 15px;
-            padding: 30px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .research-direction::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.6s;
-        }
-
-        .research-direction:hover::before {
-            left: 100%;
-        }
-
-        .research-direction:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: #3498db;
-            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.3);
-        }
-
-        .research-direction.selected {
-            border-color: #3498db;
-            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
-            transform: scale(1.05);
-        }
-
-        .research-directions-sidebar {
-            flex: 0 0 280px;
-            display: none;
-            flex-direction: column;
-            gap: 15px;
-            max-height: 75vh;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .research-directions-sidebar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .research-directions-sidebar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-        }
-
-        .research-directions-sidebar::-webkit-scrollbar-thumb {
-            background: #3498db;
-            border-radius: 2px;
-        }
-
-        .research-grid.expanded .research-directions-sidebar {
-            display: flex;
-        }
-
-        .research-grid.expanded .research-direction {
-            display: none;
-        }
-
-        .research-directions-sidebar .research-direction {
-            padding: 15px 20px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .research-directions-sidebar .research-direction:hover {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .research-directions-sidebar .research-direction.selected {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            border-color: #3498db;
-            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
-        }
-
-        .research-directions-sidebar .research-direction h3 {
-            font-size: 1.1rem;
-            margin: 0;
-            color: #ecf0f1;
-        }
-
-        .research-directions-sidebar .research-direction.selected h3 {
-            color: white;
-        }
-
-        .research-grid.expanded .research-directions-sidebar {
-            display: flex;
-        }
-
-        .research-grid.expanded .research-directions-sidebar .research-direction {
-            display: block;
-            padding: 20px;
-            margin: 0;
-        }
-
-        .research-grid.expanded .research-directions-sidebar .research-direction.selected {
-            transform: none;
-        }
-
-        .research-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .research-header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .toggle-icon {
-            display: none;
-        }
-
-        .project-items {
-            display: none;
-        }
-
-        .direction-icon {
-            font-size: 2.5rem;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-        }
-
-        .research-direction:hover .direction-icon {
-            transform: rotate(10deg) scale(1.1);
-        }
-
-        .direction-header h3 {
-            color: #ecf0f1;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .research-grid.expanded .direction-header h3 {
-            font-size: 1.2rem;
-        }
-
-        .direction-desc {
-            color: #bdc3c7;
-            font-size: 1rem;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .research-grid.expanded .direction-desc {
-            font-size: 0.9rem;
-        }
-
-        /* Project Display Area */
-        .project-display {
-            flex: 1;
-            max-height: 75vh;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            opacity: 0;
-            transform: translateX(50px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            display: none;
-            overflow: hidden;
-        }
-
-        .research-grid.expanded .project-display {
-            display: block;
-        }
-
-        .project-display.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .project-display h3 {
-            color: #ecf0f1;
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            text-align: center;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 15px;
-        }
-
-        .project-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-height: calc(75vh - 120px);
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .project-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .project-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-        }
-
-        .project-list::-webkit-scrollbar-thumb {
-            background: #3498db;
-            border-radius: 3px;
-        }
-
-        .project-list::-webkit-scrollbar-thumb:hover {
-            background: #2980b9;
-        }
-
-        .project-card {
-            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-            border-radius: 12px;
-            padding: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            width: 100%;
-            opacity: 0;
-            transform: translateX(30px);
-        }
-
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(52, 152, 219, 0.2);
-            border-color: #3498db;
-        }
-
-        .project-card h3 {
-            color: #ecf0f1;
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .project-card .project-time {
-            color: #bdc3c7;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .project-card .project-description {
-            color: #bdc3c7;
-            line-height: 1.6;
+        .hero h1 {
+            font-size: clamp(3rem, 7vw, 5.2rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
             margin-bottom: 20px;
         }
 
-        .project-card .project-link {
-            display: inline-block;
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 25px;
+        .hero h1 .gradient {
+            background: linear-gradient(120deg, #ffffff 0%, #b8c8dd 55%, #5b9cf6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-role {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .hero-desc {
+            font-size: 1.02rem;
+            color: var(--muted);
+            max-width: 620px;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 999px;
+            font-size: 0.92rem;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all .25s ease;
         }
 
-        .project-card .project-link:hover {
-            background: linear-gradient(45deg, #2980b9, #3498db);
+        .btn-primary {
+            background: var(--accent);
+            color: #0d1117;
+            box-shadow: 0 8px 24px rgba(91, 156, 246, 0.25);
+        }
+
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            box-shadow: 0 12px 32px rgba(91, 156, 246, 0.35);
         }
 
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .btn-ghost {
+            border: 1px solid var(--border-strong);
+            color: var(--text);
         }
 
-        .slideInRight {
-            animation: slideInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        .btn-ghost:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .research-grid.expanded {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .research-directions-sidebar {
-                flex: none;
-                width: 100%;
-            }
-            
-            .research-directions-sidebar .research-direction {
-                padding: 12px 16px;
-                font-size: 0.9rem;
-            }
-            
-            .project-display {
-                min-height: 400px;
-                padding: 20px;
-            }
-
-            .project-card {
-                min-width: 280px;
-            }
+        .hero-meta {
+            margin-top: 64px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            font-size: 0.88rem;
+            color: var(--muted-2);
         }
 
-        /* Work Experience */
+        .hero-meta a {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted-2);
+            transition: color .25s ease;
+        }
+
+        .hero-meta a:hover {
+            color: var(--accent);
+        }
+
+        /* ---------- Section ---------- */
+        .section {
+            padding: 110px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-head {
+            margin-bottom: 52px;
+        }
+
+        .section-kicker {
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .section-sub {
+            color: var(--muted);
+            margin-top: 10px;
+            max-width: 640px;
+        }
+
+        /* ---------- About ---------- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .about-photo {
+            position: sticky;
+            top: 110px;
+        }
+
+        .about-photo img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 24px;
+            border: 1px solid var(--border-strong);
+            background: var(--panel);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .about-main p {
+            color: var(--muted);
+            margin-bottom: 22px;
+            font-size: 0.98rem;
+        }
+
+        .about-main strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .education-list {
+            display: grid;
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .education-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            transition: border-color .25s ease;
+        }
+
+        .education-card:hover {
+            border-color: var(--border-strong);
+        }
+
+        .edu-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+
+        .edu-school {
+            font-weight: 600;
+        }
+
+        .edu-time {
+            color: var(--muted);
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .edu-major {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .skill-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 34px;
+        }
+
+        .skill {
+            padding: 7px 14px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            background: var(--panel);
+            transition: all .25s ease;
+        }
+
+        .skill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        /* ---------- Research ---------- */
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .research-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            transition: all .3s ease;
+        }
+
+        .research-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-strong);
+            background: var(--panel-2);
+        }
+
+        .research-icon {
+            font-size: 1.6rem;
+            margin-bottom: 18px;
+            color: var(--accent);
+        }
+
+        .research-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .research-card p {
+            color: var(--muted);
+            font-size: 0.93rem;
+        }
+
+        /* ---------- Experience ---------- */
         .timeline {
-            max-width: 800px;
-            margin: 0 auto;
+            display: grid;
+            gap: 18px;
         }
 
         .timeline-item {
-            background: #2c3e50;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 26px 28px;
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 30px;
+            transition: border-color .25s ease;
         }
 
         .timeline-item:hover {
-            transform: translateY(-8px) scale(1.02);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--border-strong);
         }
 
         .timeline-date {
-            background: #3498db;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            color: var(--accent);
+            font-size: 0.88rem;
             font-weight: 500;
-            display: inline-block;
-            margin-bottom: 1rem;
+            line-height: 1.5;
         }
 
         .timeline-content h3 {
-            font-size: 1.5rem;
-            color: #ecf0f1;
-            margin-bottom: 0.5rem;
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 3px;
         }
 
-        .timeline-content h4 {
-            color: #3498db;
-            margin-bottom: 1rem;
-            font-weight: 500;
+        .timeline-content .company {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 14px;
         }
 
         .timeline-content p {
-            color: #bdc3c7;
-            line-height: 1.6;
-            margin-bottom: 1rem;
+            color: var(--muted);
+            font-size: 0.94rem;
+            line-height: 1.75;
         }
 
-        .experience-link {
-            display: inline-block;
-            color: #3498db;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border: 1px solid #3498db;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .experience-link:hover {
-            background: #3498db;
-            color: #2c3e50;
-            transform: translateY(-2px);
-        }
-
-        /* Achievements */
-        .achievements-grid {
+        /* ---------- Projects ---------- */
+        .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
         }
 
-        .achievement-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 2rem;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .achievement-item:hover {
-            transform: translateY(-10px) scale(1.03);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .achievement-item:hover .achievement-icon {
-            transform: scale(1.1);
-            color: #4ecdc4;
-        }
-
-        .achievement-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #3498db;
-            transition: all 0.3s ease;
-        }
-
-        .achievement-item h3 {
-            font-size: 1.3rem;
-            color: #ecf0f1;
-            margin-bottom: 1rem;
-        }
-
-        .achievement-item p {
-            color: #bdc3c7;
-            line-height: 1.6;
-        }
-
-        .achievement-details {
-            text-align: left;
-        }
-
-        .achievement-details p {
-            margin-bottom: 0.8rem;
-            line-height: 1.6;
-            color: #bdc3c7;
-        }
-
-        .achievement-details strong {
-            color: #3498db;
-        }
-
-        /* Footer */
-        footer {
-            background: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 3rem 0 1rem 0;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            text-align: left;
-        }
-
-        .footer-section h3 {
-            color: #3498db;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .contact-info {
+        .project-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 26px 26px 22px;
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            transition: all .3s ease;
         }
 
-        .contact-item {
+        .project-card:hover {
+            border-color: var(--accent);
+            background: var(--panel-2);
+            transform: translateY(-3px);
+        }
+
+        .project-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .project-card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .project-time {
+            color: var(--muted-2);
+            font-size: 0.78rem;
+            white-space: nowrap;
+            padding-top: 3px;
+        }
+
+        .project-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+            flex: 1;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 18px;
+            color: var(--accent);
+            font-size: 0.86rem;
+            font-weight: 500;
+        }
+
+        .project-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ---------- Honors ---------- */
+        .honors-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 36px;
+        }
+
+        .honor-block {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+        }
+
+        .honor-block h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 10px;
         }
 
-        .contact-icon {
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
+        .honor-block ul {
+            list-style: none;
+            display: grid;
+            gap: 14px;
         }
 
-        .footer-section p {
-            line-height: 1.6;
-            color: #bdc3c7;
+        .honor-block li {
+            color: var(--muted);
+            font-size: 0.92rem;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .honor-block li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .honor-block li strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* ---------- Footer ---------- */
+        .site-footer {
+            border-top: 1px solid var(--border);
+            padding: 70px 0 50px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 44px;
+        }
+
+        .footer-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .contact-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .contact-list a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 0.92rem;
+            transition: color .25s ease;
+        }
+
+        .contact-list a:hover {
+            color: var(--accent);
         }
 
         .footer-bottom {
-            border-top: 1px solid #34495e;
-            padding-top: 1rem;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            color: var(--muted-2);
+            font-size: 0.82rem;
+            border-top: 1px solid var(--border);
+            padding-top: 26px;
         }
 
-        @media (max-width: 768px) {
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                text-align: center;
-            }
-        }
-
-        /* Mobile Menu */
-        .mobile-menu-toggle {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-        }
-
-        .mobile-menu-toggle span {
-            width: 25px;
-            height: 3px;
-            background: #ecf0f1;
-            margin: 3px 0;
-            transition: 0.3s;
-        }
-
-        /* Back to Top */
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #2c3e50;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
-        }
-
-        .back-to-top.show {
-            opacity: 1;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .fade-in {
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        /* ---------- Responsive ---------- */
+        @media (max-width: 860px) {
             .nav-links {
+                gap: 18px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 36px;
+            }
+
+            .about-photo {
+                position: static;
+                max-width: 240px;
+            }
+
+            .research-grid,
+            .honors-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-links li:not(.nav-cta-item) {
                 display: none;
             }
 
-            .mobile-menu-toggle {
-                display: flex;
+            .hero {
+                min-height: 80vh;
+                padding: 100px 0 60px;
             }
 
-            .hero-content h1 {
-                font-size: 2.5rem;
+            .section {
+                padding: 80px 0;
             }
-
-            .about-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .research-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-snap-type: y proximity;
-        }
-
-        body {
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            line-height: 1.6;
-            color: #ecf0f1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            scroll-snap-type: y proximity;
         }
     </style>
 </head>
 <body>
-    <!-- Hero Cover Section -->
-    <section id="cover" class="hero-cover">
-        <div class="hero-cover-content">
-            <div class="hero-title">
-                <h1>程锦阳</h1>
-                <div class="hero-subtitle">
-                    <span>射频、天线、微波、AI等领域</span>
-                    <span class="separator">|</span>
-                    <span>通信与信息系统硕士研究生</span>
-                </div>
-            </div>
-            <div class="hero-description">
-                <p>专注于微波天线设计与研发，探索AI技术在电磁仿真优化中的应用</p>
-            </div>
-            <div class="hero-actions">
-                <a href="#about" class="hero-btn secondary">了解更多</a>
-            </div>
-            <div class="scroll-indicator">
-                <div class="scroll-arrow"></div>
-            </div>
-        </div>
-        <div class="hero-background">
-            <div class="bg-particle"></div>
-            <div class="bg-particle"></div>
-            <div class="bg-particle"></div>
-            <div class="bg-particle"></div>
-            <div class="bg-particle"></div>
-        </div>
-    </section>
 
-    <!-- Header -->
-    <header>
-        <nav class="container">
-            <div class="logo">程锦阳</div>
+    <header class="site-header">
+        <nav class="container nav">
+            <a href="#home" class="logo">程锦阳<span>.</span></a>
             <ul class="nav-links">
-                <li><a href="#cover">首页</a></li>
-                <li><a href="#about">关于我</a></li>
-                <li><a href="#research">研究方向</a></li>
-                <li><a href="#experience">工作经历</a></li>
-                <li><a href="#achievements">成果荣誉</a></li>
+                <li><a href="#about">关于</a></li>
+                <li><a href="#research">研究</a></li>
+                <li><a href="#experience">经历</a></li>
+                <li><a href="#projects">项目</a></li>
+                <li><a href="#honors">荣誉</a></li>
+                <li class="nav-cta-item"><a href="#contact" class="nav-cta">联系我</a></li>
             </ul>
-            <div class="mobile-menu-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
         </nav>
     </header>
 
-    <!-- About Section -->
-    <section id="about" class="section">
-        <div class="container">
-            <h2 class="section-title">关于我</h2>
-            <div class="about-content">
-                <div class="about-image">
-                    <img src="myself.webp" alt="程锦阳">
-                </div>
-                <div class="about-text">
-                    <h3>个人简介</h3>
-                    <p>上海大学通信与信息系统专业硕士，安徽工业大学通信工程专业本科。硕士期间专注于微波天线设计与研发，尤其在车载5G MIMO天线、多频段天线集成、GNSS天线等各种天线技术有丰富经验。此外探索优化算法和AI技术在电磁仿真优化的应用，致力于将AI技术应用到所处行业与工作中。</p>
-                    
-                    <p>本科期间从事嵌入式软件学习和工作，并以此获得多个竞赛奖项，此外还在软件开发、网页设计方面有所涉猎，在各大热门编程语言上具备一定基础。</p>
-                    
-                    <h3>专业能力</h3>
-                    <p>熟悉天线设计全流程，从需求分析、仿真设计到原型制作和性能测试均有扎实经验。熟悉射频链路设计与链路预算的需求拆解，熟悉各种射频器件。发表IEEE期刊论文1篇，成果转化了多项发明专利。具备良好的团队协作能力和问题解决能力，致力于微波领域技术的创新与应用。</p>
-                    
-                    <h3>教育背景</h3>
-                    <p><strong>上海大学</strong> - 通信与信息系统 硕士研究生 (2023.9 – 2026.7)</p>
-                    <p>平均成绩 87.21/100，GPA 3.7</p>
-                    <p><strong>安徽工业大学</strong> - 通信工程 学士 (2019.9 – 2023.7)</p>
-                    <p>平均成绩 84/100，GPA 3.6</p>
-                    
-                    <h3>专业技能</h3>
-                    <p><strong>专业软件/工程：</strong>HFSS、CST、ADS、AD、CAD，熟练掌握各种类型天线设计，熟悉射频电路设计与调试，参与多个企业横向项目</p>
-                    <p><strong>数据分析/编程：</strong>Python、Java、C、MATLAB，熟练使用Origin处理数据分析与绘图</p>
-                    <p><strong>语言能力：</strong>英语六级，可熟练阅读专业外文文献，独立完成专业英文文章投稿</p>
+    <main>
+        <!-- Hero -->
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-inner">
+                    <p class="eyebrow">射频 · 天线 · 电磁场</p>
+                    <h1>程锦阳<span class="gradient">.</span></h1>
+                    <p class="hero-role">通信与信息系统硕士 · 射频 / 天线工程师</p>
+                    <p class="hero-desc">
+                        专注微波天线、射频链路与 AI 辅助电磁仿真，把工程问题变成可靠的产品。
+                        从 5G MIMO、GNSS 到车载多通道天线，持续探索电磁场与智能算法的交叉可能。
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#about" class="btn btn-primary">关于我</a>
+                        <a href="#projects" class="btn btn-ghost">代表项目</a>
+                    </div>
+                    <div class="hero-meta">
+                        <a href="mailto:aeayang@163.com">aeayang@163.com</a>
+                        <a href="tel:+8618860467402">+86 188 6046 7402</a>
+                        <span>上海 · 射频 / EMC</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Research Directions Section -->
-    <section id="research" class="section">
-        <div class="container">
-            <h2 class="section-title">研究方向</h2>
-            <div class="research-container">
-                <div class="research-grid" id="research-grid">
-                    <!-- Research Directions Sidebar (shown when expanded) -->
-                    <div class="research-directions-sidebar" id="research-sidebar">
-                        <!-- Antenna Design Direction -->
-                        <div class="research-direction" id="antenna-direction" onclick="selectResearchDirection('antenna')">
-                            <div class="research-header">
-                                <div class="research-header-left">
-                                    <div class="direction-icon">📡</div>
-                                    <div class="direction-header">
-                                        <h3>天线设计</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="direction-desc">天线系统设计与优化</p>
-                        </div>
-
-                        <!-- RF Engineering Direction -->
-                        <div class="research-direction" id="rf-direction" onclick="selectResearchDirection('rf')">
-                            <div class="research-header">
-                                <div class="research-header-left">
-                                    <div class="direction-icon">⚡</div>
-                                    <div class="direction-header">
-                                        <h3>射频工程</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="direction-desc">射频器件/电路设计与优化</p>
-                        </div>
-
-                        <!-- Algorithm AI Direction -->
-                        <div class="research-direction" id="ai-direction" onclick="selectResearchDirection('ai')">
-                            <div class="research-header">
-                                <div class="research-header-left">
-                                    <div class="direction-icon">🤖</div>
-                                    <div class="direction-header">
-                                        <h3>算法AI</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="direction-desc">电磁优化算法与AI代理模型优化技术</p>
-                        </div>
+        <!-- About -->
+        <section id="about" class="section">
+            <div class="container">
+                <div class="section-head">
+                    <p class="section-kicker">About</p>
+                    <h2 class="section-title">关于我</h2>
+                </div>
+                <div class="about-grid">
+                    <div class="about-photo">
+                        <img src="myself.webp" alt="程锦阳">
                     </div>
+                    <div class="about-main">
+                        <p>
+                            上海大学通信与信息系统硕士，安徽工业大学通信工程本科。硕士期间专注微波天线与射频研发，
+                            在<strong>车载 5G MIMO 天线、多频段天线集成、GNSS 天线</strong>等方向积累了完整的工程经验；
+                            同时探索优化算法与 AI 在电磁仿真优化中的应用，致力于把智能方法带入实际射频工程。
+                        </p>
+                        <p>
+                            目前在上海航天体系从事<strong>整星与单机 EMC、磁、力学、真空热试验</strong>相关工作，
+                            参与实验室 CNAS 认证与试验产线建设。熟悉天线全流程、射频链路设计与调试，具备扎实的工程落地能力。
+                        </p>
 
-                    <!-- Antenna Design Direction -->
-                    <div class="research-direction" id="antenna-direction-main" onclick="selectResearchDirection('antenna')">
-                        <div class="research-header">
-                            <div class="research-header-left">
-                                <div class="direction-icon">📡</div>
-                                <div class="direction-header">
-                                    <h3>天线设计</h3>
+                        <div class="education-list">
+                            <div class="education-card">
+                                <div class="edu-row">
+                                    <span class="edu-school">上海大学</span>
+                                    <span class="edu-time">2023.9 – 2026.7</span>
                                 </div>
+                                <div class="edu-major">通信与信息系统 · 硕士（平均成绩 87.21/100，GPA 3.7）</div>
+                            </div>
+                            <div class="education-card">
+                                <div class="edu-row">
+                                    <span class="edu-school">安徽工业大学</span>
+                                    <span class="edu-time">2019.9 – 2023.7</span>
+                                </div>
+                                <div class="edu-major">通信工程 · 本科（平均成绩 84/100，GPA 3.6）</div>
                             </div>
                         </div>
-                        <p class="direction-desc">天线系统设计与优化</p>
-                    </div>
 
-                    <!-- RF Engineering Direction -->
-                    <div class="research-direction" id="rf-direction-main" onclick="selectResearchDirection('rf')">
-                        <div class="research-header">
-                            <div class="research-header-left">
-                                <div class="direction-icon">⚡</div>
-                                <div class="direction-header">
-                                    <h3>射频工程</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="direction-desc">射频器件/电路设计与优化</p>
-                    </div>
-
-                    <!-- Algorithm AI Direction -->
-                    <div class="research-direction" id="ai-direction-main" onclick="selectResearchDirection('ai')">
-                        <div class="research-header">
-                            <div class="research-header-left">
-                                <div class="direction-icon">🤖</div>
-                                <div class="direction-header">
-                                    <h3>算法AI</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="direction-desc">电磁优化算法与AI代理模型优化技术</p>
-                    </div>
-
-                    <!-- Project Display Area -->
-                    <div class="project-display" id="project-display">
-                        <h3 id="project-display-title">项目展示</h3>
-                        <div class="project-list" id="project-list">
-                            <!-- Projects will be dynamically inserted here -->
+                        <div class="skill-cloud">
+                            <span class="skill">HFSS / CST / ADS</span>
+                            <span class="skill">天线设计</span>
+                            <span class="skill">射频链路</span>
+                            <span class="skill">EMC 试验</span>
+                            <span class="skill">Python / MATLAB</span>
+                            <span class="skill">AI 辅助仿真</span>
+                            <span class="skill">Origin 数据绘图</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Work Experience Section -->
-    <section id="experience" class="section">
-        <div class="container">
-            <h2 class="section-title">工作经历</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-date">2025.3 - 2025.9</div>
-                    <div class="timeline-content">
-                        <h3>江苏骅盛车用电子股份有限公司</h3>
-                        <h4>射频工程师（实习）</h4>
-                        <p>设计板端接口款式的集成定位与通信多通道车载天线盒；设计5.9-7.2GHz频段全向性高增益车载阵列天线；完成天线性能测试与数据分析，协同结构团队解决工程集成问题，撰写设计文档、测试报告及专利申请文件。</p>
-                        <a href="experience1/index.html" class="experience-link">查看详细经历 →</a>
+        <!-- Research -->
+        <section id="research" class="section">
+            <div class="container">
+                <div class="section-head">
+                    <p class="section-kicker">Research</p>
+                    <h2 class="section-title">研究方向</h2>
+                    <p class="section-sub">以电磁场与微波技术为核心，向智能算法与系统级可靠性延伸。</p>
+                </div>
+                <div class="research-grid">
+                    <div class="research-card">
+                        <div class="research-icon">📡</div>
+                        <h3>天线设计</h3>
+                        <p>小型化、多频段、宽频带天线；MIMO 解耦；GNSS 圆极化；车载阵列与多通道天线集成。</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="research-icon">⚡</div>
+                        <h3>射频工程</h3>
+                        <p>射频链路设计、LNA 调试、匹配网络、功分移相网络、滤波器；熟悉微波暗室与仪器测试。</p>
+                    </div>
+                    <div class="research-card">
+                        <div class="research-icon">🤖</div>
+                        <h3>AI + 电磁场</h3>
+                        <p>Python 驱动 HFSS 自动化优化；PSO / Bayesian / BNN 代理模型；探索强化学习与物理先验嵌入。</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Achievements Section -->
-    <section id="achievements" class="section">
-        <div class="container">
-            <h2 class="section-title">成果荣誉</h2>
-            <div class="achievements-grid">
-                <div class="achievement-item">
-                    <div class="achievement-icon">📚</div>
-                    <h3>学术成果</h3>
-                    <div class="achievement-details">
-                        <p><strong>SCI期刊论文：</strong>以第一作者在IEEE AWPL（SCI/EI Q2）发表文章</p>
-                        <p><strong>研究领域：</strong>紧凑型低剖面5G MIMO天线设计与优化</p>
-                        <p><strong>学术能力：</strong>可熟练阅读专业外文文献，独立完成专业英文文章投稿</p>
-                    </div>
+        <!-- Experience -->
+        <section id="experience" class="section">
+            <div class="container">
+                <div class="section-head">
+                    <p class="section-kicker">Experience</p>
+                    <h2 class="section-title">工作与实习经历</h2>
                 </div>
-                <div class="achievement-item">
-                    <div class="achievement-icon">🏆</div>
-                    <h3>奖项成果</h3>
-                    <div class="achievement-details">
-                        <p><strong>奖学金：</strong>研究生国家奖学金（2025）、学业一等奖学金（2025）</p>
-                        <p><strong>学业奖励：</strong>学业二等/三等奖学金（本硕共五次）</p>
-                        <p><strong>竞赛获奖：</strong>全国大学生智能汽车竞赛安徽省二等奖、电子设计竞赛安徽省三等奖、数学竞赛安徽省二等奖</p>
-                        <p><strong>项目资助：</strong>国家级大学生创新创业训练计划项目负责人（经费10000元）</p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2026.7 – 至今<br><span style="color: var(--muted-2); font-weight: 400;">正式</span></div>
+                        <div class="timeline-content">
+                            <h3>EMC 试验工程师</h3>
+                            <div class="company">812 所 · 利正公司</div>
+                            <p>负责整星及单机 EMC 试验、磁试验、力学试验、真空热试验；参与实验室 CNAS 认证与试验产线建设。</p>
+                        </div>
                     </div>
-                </div>
-                <div class="achievement-item">
-                    <div class="achievement-icon">💡</div>
-                    <h3>技术创新</h3>
-                    <div class="achievement-details">
-                        <p><strong>发明专利：</strong>"一种集成式低剖面5G天线"（CN202411549247.9）</p>
-                        <p><strong>发明专利：</strong>"一种车载集成式天线盒"（CN202510483710.2）</p>
-                        <p><strong>专利申请中：</strong>板端接口式车载天线盒、高增益全向阵列天线等多项专利</p>
-                        <p><strong>技术转化：</strong>多项研究成果成功转化为企业横向课题和实际产品</p>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2025.11 – 2026.6<br><span style="color: var(--muted-2); font-weight: 400;">实习</span></div>
+                        <div class="timeline-content">
+                            <h3>EMC 试验工程师（实习）</h3>
+                            <div class="company">812 所 · 利正公司</div>
+                            <p>进入航天 EMC 与可靠性试验体系，参与整星、单机级电磁兼容试验与实验室能力建设。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2025.3 – 2025.9<br><span style="color: var(--muted-2); font-weight: 400;">实习</span></div>
+                        <div class="timeline-content">
+                            <h3>射频工程师（实习）</h3>
+                            <div class="company">江苏骅盛车用电子股份有限公司</div>
+                            <p>设计板端接口式集成定位与通信多通道车载天线盒；设计 5.9–7.2GHz 全向高增益车载阵列天线；完成测试、数据分析与工程集成，撰写设计文档与专利文件。</p>
+                            <p><a href="experience1/index.html" style="color: var(--accent); font-size: 0.88rem;">查看详细经历 →</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Projects -->
+        <section id="projects" class="section">
+            <div class="container">
+                <div class="section-head">
+                    <p class="section-kicker">Projects</p>
+                    <h2 class="section-title">代表性项目</h2>
+                    <p class="section-sub">从学术研究到企业横向课题，覆盖天线、射频链路与智能优化。</p>
+                </div>
+                <div class="projects-grid">
+                    <a class="project-card" href="project1/index.html">
+                        <div class="project-card-top">
+                            <h3>紧凑型低剖面车载 5G MIMO 天线</h3>
+                            <span class="project-time">2023.10 – 2024.8</span>
+                        </div>
+                        <p class="project-desc">低互耦、小型化 5G MIMO 天线，IEEE AWPL 第一作者论文；转化为发明专利。</p>
+                        <span class="project-link">查看详情 →</span>
+                    </a>
+                    <a class="project-card" href="project2/index.html">
+                        <div class="project-card-top">
+                            <h3>集成定位与通信多通道车载天线盒</h3>
+                            <span class="project-time">2024.7 – 2025.4</span>
+                        </div>
+                        <p class="project-desc">集成 5G / Wi-Fi 6E / BT / V2X / GNSS 多类型天线，融合圆极化、宽带多频段与高隔离。</p>
+                        <span class="project-link">查看详情 →</span>
+                    </a>
+                    <a class="project-card" href="project3/index.html">
+                        <div class="project-card-top">
+                            <h3>板端接口式车载天线盒</h3>
+                            <span class="project-time">2025.3 – 2025.9</span>
+                        </div>
+                        <p class="project-desc">面向工程安装便利性优化板端接口设计，提升信号性能与集成度。</p>
+                        <span class="project-link">查看详情 →</span>
+                    </a>
+                    <a class="project-card" href="project4/index.html">
+                        <div class="project-card-top">
+                            <h3>算法辅助全波电磁仿真优化</h3>
+                            <span class="project-time">2025.7 – 至今</span>
+                        </div>
+                        <p class="project-desc">Python + HFSS 自动化优化，集成 PSO / Bayesian / BNN 代理模型与主动学习策略。</p>
+                        <span class="project-link">查看详情 →</span>
+                    </a>
+                    <a class="project-card" href="project5/index.html">
+                        <div class="project-card-top">
+                            <h3>高增益全向车载阵列天线</h3>
+                            <span class="project-time">2025.3 – 2025.9</span>
+                        </div>
+                        <p class="project-desc">5.9–7.2GHz 频段全向高增益阵列天线设计，满足车载通信覆盖需求。</p>
+                        <span class="project-link">查看详情 →</span>
+                    </a>
+                    <a class="project-card" href="project6/index.html">
+                        <div class="project-card-top">
+                            <h3>GNSS 天线及有源射频电路</h3>
+                            <span class="project-time">2025.2 – 2025.5</span>
+                        </div>
+                        <p class="project-desc">BDS / GPS 双频右旋圆极化天线；双频低噪声放大器链路设计与调试。</p>
+                        <span class="project-link">查看详情 →</span>
+                    </a>
+                    <a class="project-card" href="project7/index.html">
+                        <div class="project-card-top">
+                            <h3>智能物联网天线系统</h3>
+                            <span class="project-time">项目</span>
+                        </div>
+                        <p class="project-desc">面向物联网场景的天线系统设计与性能测试，覆盖多通信协议与智能功能。</p>
+                        <span class="project-link">查看详情 →</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Honors -->
+        <section id="honors" class="section">
+            <div class="container">
+                <div class="section-head">
+                    <p class="section-kicker">Honors</p>
+                    <h2 class="section-title">成果与荣誉</h2>
+                </div>
+                <div class="honors-layout">
+                    <div class="honor-block">
+                        <h3>🏆 奖项与荣誉</h3>
+                        <ul>
+                            <li><strong>上海大学优秀毕业生</strong>（2026）</li>
+                            <li><strong>研究生国家奖学金</strong>（2025）</li>
+                            <li><strong>学业一等奖学金</strong>（2025）</li>
+                            <li>全国大学生智能汽车竞赛 · 安徽省二等奖（2021）</li>
+                            <li>电子设计竞赛 · 安徽省三等奖（2021）</li>
+                            <li>数学竞赛 · 安徽省二等奖（2022）</li>
+                            <li>国家级大学生创新创业训练计划项目负责人（2022）</li>
+                        </ul>
+                    </div>
+                    <div class="honor-block">
+                        <h3>📄 论文与专利</h3>
+                        <ul>
+                            <li><strong>SCI / EI 2 区论文：</strong>IEEE AWPL 第一作者，A Compact Low-Profile Vehicular 5G MIMO Antenna System</li>
+                            <li><strong>发明专利：</strong>一种集成式低剖面 5G 天线（CN202411549247.9）</li>
+                            <li><strong>发明专利：</strong>一种车载集成式天线盒（CN202510483710.2）</li>
+                            <li><strong>发明专利：</strong>一种多通道车载天线盒（CN202511158479.6）</li>
+                            <li>板端接口式车载天线盒、高增益全向阵列天线等多项专利申请中</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer>
+    <footer id="contact" class="site-footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>联系我</h3>
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <i class="contact-icon">📧</i>
-                            <span>aeayang@163.com</span>
-                            <i class="contact-icon">📱</i>
-                            <span>(+86) 18860467402</span>
-                        </div>
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-title">保持联系</div>
+                    <div class="contact-list">
+                        <a href="mailto:aeayang@163.com">✉️ aeayang@163.com</a>
+                        <a href="tel:+8618860467402">📱 +86 188 6046 7402</a>
+                        <a href="https://patisight.github.io/Jayden/" target="_blank" rel="noopener">🔗 个人技术网站</a>
                     </div>
+                </div>
+                <div>
+                    <div class="footer-title">关于</div>
+                    <p style="color: var(--muted); font-size: 0.92rem; line-height: 1.8;">
+                        程锦阳 · 通信与信息系统硕士<br>
+                        研究方向：天线 / 射频 / AI 辅助电磁仿真 / 电磁兼容
+                    </p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 程锦阳. All rights reserved.</p>
+                <span>© 2026 程锦阳. All rights reserved.</span>
+                <span>Designed with a clean, minimal approach.</span>
             </div>
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
-    <button class="back-to-top" onclick="scrollToTop()">↑</button>
-
-    <script>
-        // Enhanced cross-browser scroll behavior
-        document.addEventListener('DOMContentLoaded', function() {
-            // Smooth scroll polyfill for older browsers
-            if (!('scrollBehavior' in document.documentElement.style)) {
-                const smoothScrollPolyfill = function(element) {
-                    element.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                };
-                
-                // Apply to all navigation links
-                document.querySelectorAll('a[href^="#"]').forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const target = document.querySelector(this.getAttribute('href'));
-                        if (target) {
-                            smoothScrollPolyfill(target);
-                        }
-                    });
-                });
-            }
-
-            // Firefox scroll snap enhancement
-            let isScrolling = false;
-            let scrollTimer = null;
-            
-            window.addEventListener('scroll', function() {
-                if (!isScrolling) {
-                    isScrolling = true;
-                }
-                
-                clearTimeout(scrollTimer);
-                scrollTimer = setTimeout(function() {
-                    isScrolling = false;
-                    
-                    // Enhanced scroll snap for Firefox
-                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                        const sections = document.querySelectorAll('.section, .hero-cover');
-                        const scrollTop = window.pageYOffset;
-                        const windowHeight = window.innerHeight;
-                        
-                        let closestSection = null;
-                        let closestDistance = Infinity;
-                        
-                        sections.forEach(section => {
-                            const rect = section.getBoundingClientRect();
-                            const sectionTop = scrollTop + rect.top;
-                            const distance = Math.abs(sectionTop - scrollTop);
-                            
-                            if (distance < closestDistance) {
-                                closestDistance = distance;
-                                closestSection = section;
-                            }
-                        });
-                        
-                        if (closestSection && closestDistance > windowHeight * 0.1) {
-                            closestSection.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
-                            });
-                        }
-                    }
-                }, 150);
-            });
-
-            // Enhanced button click handlers
-            document.querySelector('.hero-btn.primary')?.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector('#about').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            });
-
-            document.querySelector('.hero-btn.secondary')?.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector('#about').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            });
-        });
-
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        // Research Direction Interaction
-        let currentSelectedDirection = null;
-
-        const projectData = {
-            antenna: [
-                {
-                    title: "紧凑型车载5G MIMO天线",
-                    time: "2023.10 - 2024.8",
-                    description: "设计紧凑型低剖面低互耦5G MIMO天线，满足VSWR<3、效率>40%、隔离度>10dB，最终尺寸仅74mm×74mm×11mm",
-                    link: "project1/index.html"
-                },
-                {
-                    title: "集成定位与通信多通道的车载天线盒",
-                    time: "2024.7 - 2025.4",
-                    description: "设计集成5G、Wi-Fi 6E、BT、V2X、GNSS多类型天线的车载天线盒，融合圆极化、宽带多频段、高隔离等技术",
-                    link: "project2/index.html"
-                },
-                {
-                    title: "板端接口式定位与通信多通道的车载天线盒",
-                    time: "2025.3 - 2025.9",
-                    description: "设计板端接口款式的集成定位与通信多通道车载天线盒，优化了安装便利性和信号性能",
-                    link: "project3/index.html"
-                }
-            ],
-            rf: [
-                {
-                    title: "GNSS天线及射频链路",
-                    time: "2025.2 - 2025.5",
-                    description: "设计覆盖BDS与GPS频段的GNSS右旋圆极化天线，参与GNSS有源射频模块调试",
-                    link: "project6/index.html"
-                }
-            ],
-            ai: [
-                {
-                    title: "算法辅助全波电磁仿真优化",
-                    time: "持续进行",
-                    description: "设计Python脚本辅助HFSS进行全波电磁仿真优化，集成PSO、Bayesian等算法，采用BNN作为代理模型",
-                    link: "project4/index.html"
-                },
-                {
-                    title: "高增益全向阵列天线",
-                    time: "2025.3 - 2025.9",
-                    description: "设计5.9-7.2GHz频段全向性高增益车载阵列天线",
-                    link: "project5/index.html"
-                }
-            ]
-        };
-
-        function selectResearchDirection(direction) {
-            const grid = document.getElementById('research-grid');
-            const projectDisplay = document.getElementById('project-display');
-            const projectList = document.getElementById('project-list');
-            const projectTitle = document.getElementById('project-display-title');
-            
-            // If same direction is clicked, reset
-            if (currentSelectedDirection === direction) {
-                resetResearchView();
-                return;
-            }
-
-            currentSelectedDirection = direction;
-
-            // Update grid layout
-            grid.classList.add('expanded');
-            
-            // Update selected state in sidebar
-            document.querySelectorAll('.research-directions-sidebar .research-direction').forEach(dir => {
-                dir.classList.remove('selected');
-            });
-            document.getElementById(direction + '-direction').classList.add('selected');
-
-            // Show project display
-            projectDisplay.classList.add('active');
-            
-            // Update project title
-            const directionNames = {
-                antenna: '天线设计',
-                rf: '射频工程',
-                ai: '算法AI'
-            };
-            projectTitle.textContent = directionNames[direction] + ' - 项目展示';
-
-            // Load projects
-            loadProjects(direction);
-        }
-
-        function loadProjects(direction) {
-            const projects = projectData[direction];
-            const projectList = document.getElementById('project-list');
-            
-            if (!projects || projects.length === 0) {
-                projectList.innerHTML = '<p style="text-align: center; color: #7f8c8d;">暂无项目</p>';
-                return;
-            }
-
-            projectList.innerHTML = '';
-            
-            projects.forEach((project, index) => {
-                const projectCard = document.createElement('div');
-                projectCard.className = 'project-card';
-                projectCard.innerHTML = `
-                    <h3>${project.title}</h3>
-                    <p class="project-time">${project.time}</p>
-                    <p class="project-description">${project.description}</p>
-                    <a href="${project.link}" class="project-link">查看详情</a>
-                `;
-                
-                // 添加延迟动画效果
-                setTimeout(() => {
-                    projectCard.classList.add('slideInRight');
-                }, index * 100);
-                
-                projectList.appendChild(projectCard);
-            });
-        }
-
-        function resetResearchView() {
-            const grid = document.getElementById('research-grid');
-            const projectDisplay = document.getElementById('project-display');
-            
-            grid.classList.remove('expanded');
-            projectDisplay.classList.remove('active');
-            
-            document.querySelectorAll('.research-directions-sidebar .research-direction').forEach(dir => {
-                dir.classList.remove('selected');
-            });
-            
-            currentSelectedDirection = null;
-        }
-
-        // Loading animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in');
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.research-direction, .timeline-item, .achievement-item').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Toggle projects function
-        function toggleProjects(direction) {
-            const projects = document.getElementById(direction + '-projects');
-            const toggle = document.getElementById(direction + '-toggle');
-            
-            if (projects.classList.contains('expanded')) {
-                projects.classList.remove('expanded');
-                toggle.textContent = '▼';
-            } else {
-                projects.classList.add('expanded');
-                toggle.textContent = '▲';
-            }
-        }
-
-        // Handle URL parameters and hash on page load
-        window.addEventListener('load', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const direction = urlParams.get('direction');
-            const hash = window.location.hash;
-            
-            // Handle old URL parameter format
-            if (direction && ['antenna', 'rf', 'ai'].includes(direction)) {
-                if (hash === '#research') {
-                    // Scroll to research section first
-                    document.getElementById('research').scrollIntoView({ behavior: 'smooth' });
-                    
-                    // Wait a bit for scroll to complete, then expand the direction
-                    setTimeout(() => {
-                        selectResearchDirection(direction);
-                    }, 500);
-                }
-            }
-            
-            // Handle new hash format (#research-antenna, #research-rf, #research-ai)
-            if (hash && hash.startsWith('#research-')) {
-                const hashDirection = hash.replace('#research-', '');
-                if (['antenna', 'rf', 'ai'].includes(hashDirection)) {
-                    // Scroll to research section first
-                    document.getElementById('research').scrollIntoView({ behavior: 'smooth' });
-                    
-                    // Wait a bit for scroll to complete, then expand the direction
-                    setTimeout(() => {
-                        selectResearchDirection(hashDirection);
-                    }, 500);
-                }
-            }
-        });
-    </script>
 </body>
 </html>
