@@ -120,9 +120,19 @@ for (const rel of PAGES_SEL) {
     // 首页专属
     const pE = (d.match(/id="patE" d="([^"]*)"/) || [])[1] || '';
     chk(rel, 'E 面方向图由 JS 采样', (pE.match(/L/g) || []).length, 240);
-    chk(rel, '频段带由 JS 生成', (d.match(/<div class="row[ "]/g) || []).length, 12);
+    // 频段带（2026-08 改版）：11 个频段贪心装箱进 ≤4 条泳道，标签可悬停 / 锁定
+    const chipsHtml = (d.match(/<div class="sp-chips"[\s\S]*?<\/div>/) || [''])[0];
+    chk(rel, '频谱条由 JS 装箱生成 (11 项 → 12 段，L1·B1 合并)', (d.match(/<button[^>]*class="sp-bar/g) || []).length, 12);
+    chk(rel, '点频标记合并后共 3 枚（L5/B2 两枚 + L1/B1 一枚）', (d.match(/class="sp-bar mine dot"/g) || []).length, 3);
+    chk(rel, '频谱泳道已压缩 (≤4 行)', (d.match(/<div class="sp-row"/g) || []).length <= 4, true);
+    chk(rel, '频谱标签可交互', (chipsHtml.match(/<button/g) || []).length, 11);
     chk(rel, '论文全名', dom.includes('A Compact Low-Profile Vehicular 5G MIMO Antenna System'), true);
-    chk(rel, '能力条已填充', (d.match(/<i class="fl"[^>]*style="width:/g) || []).length, 20);
+    // 能力矩阵（2026-08 改版）：20 条指标按 4 个选项卡分组，默认只呈现一组
+    chk(rel, '能力条齐备 (20 项)', (d.match(/<i class="fl" data-w=/g) || []).length, 20);
+    chk(rel, '当前面板能力条已填充', (d.match(/<i class="fl"[^>]*style="width:/g) || []).length >= 5, true);
+    chk(rel, '能力分组选项卡 ×4', ((d.match(/<div class="cap-tabs"[\s\S]*?<\/div>/) || [''])[0].match(/<button/g) || []).length, 4);
+    chk(rel, '简介中 / 英切换就绪', /id="tab-zh"/.test(d) && /id="bio-en"[^>]*hidden/.test(d), true);
+    chk(rel, '荣誉为卡片网格 + 可展开明细', (d.match(/<article class="hon-card/g) || []).length, 6);
   }
 
   const errs = log.split(/\r?\n/).filter(l => /Uncaught|ReferenceError|TypeError|SyntaxError/i.test(l));

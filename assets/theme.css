@@ -508,6 +508,9 @@ button { font: inherit; }
     .ft-links { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 520px) {
+    /* 窄屏下长英文副标题会撑破 .wrap（.sec-t 默认 nowrap），这里允许折行 */
+    .sec-t { white-space: normal; }
+    .sec-t em { margin-left: 0; display: block; }
     .hon-row { grid-template-columns: 60px 1fr; }
     .hon-row .lv { grid-column: 2; justify-self: start; }
     .pg-nav { grid-template-columns: 1fr; }
