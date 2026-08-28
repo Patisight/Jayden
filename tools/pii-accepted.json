@@ -1,0 +1,28 @@
+{
+  "_说明": [
+    "已接受风险清单：按「文件 + 命中类型」豁免，不按号码值豁免。",
+    "刻意不在此存任何号码或其哈希 —— 11 位大陆手机号搜索空间仅 10^8，",
+    "哈希可被穷举还原，写进公开仓库等于继续泄露。",
+    "此清单只覆盖登记过的具体文件；同一号码若出现在其他任何新位置，扫描仍会报红。"
+  ],
+  "accepted": [
+    {
+      "file": "resume.md",
+      "kind": "手机号",
+      "note": "简历源文件，用户 2026-08-28 明确决定保留（对外联系方式之一）。仓库为 public，已知悉。",
+      "decidedBy": "用户"
+    },
+    {
+      "file": "downloads/chengjinyang-resume.pdf",
+      "kind": "手机号",
+      "note": "公开投递用简历 PDF，含电话属简历常态；与上条同源，用户决定保留。",
+      "decidedBy": "用户"
+    },
+    {
+      "file": "downloads/A_Compact_Low-Profile_Vehicular_5G_MIMO_Antenna_System.pdf",
+      "kind": "邮箱",
+      "note": "IEEE 已发表论文原文中的通讯作者邮箱，本随论文公开，非本站新增披露。",
+      "decidedBy": "用户"
+    }
+  ]
+}

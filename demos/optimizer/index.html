@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>HFSS 天线自动化优化系统 · 界面演示 · 程锦阳</title>
+    <meta name="description" content="HFSS-Python-Optimizer 的 Web 控制台复刻演示：Vue3 + Element Plus 界面原样搬入，接口由页面内置 mock 垫片应答。剖析参数写入—求解—取值—评估的优化闭环、六个面板各自对应的后端接口、多目标算法的选型依据与代理模型的加速原理。所有数值为合成模拟。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/theme.css">
+    <style>
+        /* 本页专属：仅补一条脚注样式（与 experience1 同一写法），其余全部使用共享设计系统 */
+        .fnote { font-family: var(--mono); font-size: 0.84rem; color: var(--dim); margin-top: 16px; line-height: 1.8; }
+    </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
+</head>
+<body data-root="../.." data-hud="S-01 · HFSS 优化系统">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../../" class="logo"><span>程锦阳</span><i>S-01</i></a>
+        <nav class="nav-links">
+            <a href="#loop" data-nav="loop"><sup>01</sup>闭环</a>
+            <a href="#panels" data-nav="panels"><sup>02</sup>面板</a>
+            <a href="#algorithms" data-nav="algorithms"><sup>03</sup>选型</a>
+            <a href="#boundary" data-nav="boundary"><sup>04</sup>边界</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="demo-full" id="demo">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../../">程锦阳</a><i>/</i><a href="../../#tools">软件与工具</a><i>/</i><b>S-01</b>
+            </nav>
+            <h1>HFSS 天线自动化优化系统 · 界面演示</h1>
+            <p class="pg-lede">
+                下面是 <b>HFSS-Python-Optimizer</b> 的 Web 控制台：界面、面板、字段与交互都是原样搬过来的，
+                只是后端换成了页面内置的 mock 垫片——所以它<b>不需要本机 HFSS、也不需要 FastAPI 服务</b>，
+                在浏览器里就能看到这套工具真实的结构与操作方式。
+            </p>
+
+            <div class="demo-bar">
+                <span class="dot"></span>
+                <span>
+                    <b>数据为合成模拟</b> 配置、日志、Pareto 解全部由垫片生成，不对应任何真实仿真。
+                    可点：加载预设模板 → 保存配置 → 运行控制 → 开始优化（约 34 秒走完一次合成任务，会看到早停）→ 结果分析 → 查看详情。
+                </span>
+                <span class="ext">
+                    <a href="https://github.com/Patisight/HFSS-Optimizer" target="_blank" rel="noopener">GitHub 仓库 <span aria-hidden="true">→</span></a>
+                </span>
+            </div>
+
+            <div class="demo-frame f-dark" id="frame">
+                <div class="load-hint">载入界面…</div>
+                <iframe src="app/index.html" title="HFSS-Python-Optimizer Web 控制台演示界面"></iframe>
+            </div>
+
+            <p class="fnote">
+                界面为深色主题（Element Plus dark css-vars），与源项目 web/index.html 一致。
+                垫片只拦截路径中含 /api/ 的请求，CDN 上的 Vue 与 Element Plus 原样加载。
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ 01 优化闭环 ============ -->
+    <section class="sec" id="loop">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">01</span>
+                <h2 class="sec-t">它解决什么问题<em>/ The Loop</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">人工调天线的时间，一半花在「改一个数、等一次求解、看一眼曲线」这件事上。</p>
+            </div>
+
+            <div class="prose" style="max-width:78ch">
+                <p class="lead rv">
+                    贴片天线的<b>回波损耗、增益、辐射效率、端口隔离</b>由几何尺寸决定，而这些指标互相掣肘：
+                    把馈电点挪到 S11 最低的位置，往往正是增益最差的位置。手工调参是在这条权衡面上凭经验打转，
+                    而每打转一次都要付出一整次全波仿真的时间。
+                </p>
+                <p class="rv rv-d1">
+                    这套工具做的事，是把 HFSS 从「人操作的软件」变成「程序调用的求解器」。
+                    闭环的四个环节都能在源码里逐一对上：
+                    <b>参数写入</b>是 <code>HFSSController.set_variable(name, value, unit)</code>，
+                    <b>求解</b>是 <code>analyze()</code> 后接 <code>_verify_analysis_ran()</code> 确认这一轮真的算完了，
+                    <b>取值</b>是 <code>get_s_parameters()</code> / <code>get_gain_3d()</code> / <code>get_antenna_efficiency()</code>
+                    （取远场量时若工程里没有远场球面，由 <code>_ensure_far_field_sphere()</code> 现场建一个），
+                    <b>评估</b>则由 evaluator 把公式解析成目标向量并判定是否达标。
+                </p>
+                <p class="rv rv-d2">
+                    一条公式 <code>f(x) = dB(S(1,1))</code> 在界面上只是一行文本，落到执行层是一次正则匹配 +
+                    一次报表取数 + 一次频段内极值归约：目标配置里的 <code>constraint</code> 决定这一步取 max 还是 min，
+                    默认取 max——回波损耗要压的是「频段内最差的那一点」。
+                    <b>Peak(Gain)</b> 这类写法走的则不是报表曲线，而是远场三维数据里搜全局最大增益。
+                </p>
+                <p class="rv">
+                    优化循环本身不碰 HFSS，它只跟 evaluator 要一批解的目标值。
+                    <b>evaluator 才是真正干活的地方</b>：多进程评估器为每个 <code>.aedt</code> 副本起一个独立 HFSS 进程，
+                    把一代种群切成子任务分发下去，从结果队列收解；某个 worker 挂了会被重启并把剩余任务重新入队。
+                    这就是界面上「并行 HFSS 进程」那一栏的意义——它不是可选项的装饰，
+                    而是把 500 次求解的墙钟时间按比例砍下来的主要手段。
+                </p>
+                <p class="rv">
+                    还有一处不起眼的实现细节值得说：HFSS 会把每次求解的结果缓存在工程文件里，
+                    几百次求解之后内存与磁盘都能把它撑爆。所以控制器专门留了
+                    <code>clear_solution_cache()</code> 与 <code>cleanup_solutions()</code>，
+                    评估器按「每 N 次仿真清理一次」的节奏定期回收——长任务能不能跑完，很多时候就取决于这一步。
+                </p>
+                <p class="rv">
+                    每一次评估都以 JSON Lines 追加写入 <code>evaluations.jsonl</code>：参数向量、逐目标的
+                    <code>value</code>（优化空间值）、<code>actual_value</code>（物理值）与 <code>goal_met</code>（是否达标）。
+                    全部种群跑完后，非支配解写进 <code>results.json</code>，连同这一轮的配置快照落在
+                    <code>optim_results/算法名_时间戳/</code> 目录下。界面上「结果分析」看到的每一条，就是这里的一个目录。
+                </p>
+            </div>
+
+            <div class="outs rv" style="margin-top:44px">
+                <div class="out">
+                    <div class="h">总求解次数</div>
+                    <div class="v">504<small> 次</small></div>
+                    <p>种群 24 × 迭代 20 + 初始 24，即 run.py 里的 pop + pop × n_generations。这是默认参数下一轮任务的真实代价。</p>
+                </div>
+                <div class="out">
+                    <div class="h">并行 HFSS</div>
+                    <div class="v">1 + N<small> 实例</small></div>
+                    <p>主项目加若干副本路径，每个路径一个独立进程；worker 崩溃可重启，任务重新入队。</p>
+                </div>
+                <div class="out">
+                    <div class="h">日志回收</div>
+                    <div class="v">50<small> 行滑窗</small></div>
+                    <p>状态接口每次只回最近 50 条，前端 1 秒轮询一次；日志文本级别由消息里的标记词推断。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ 02 面板与接口 ============ -->
+    <section class="sec" id="panels">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">六个面板分别对应什么<em>/ Panels &amp; Endpoints</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">左侧导航不是一般意义上的「页面切换」，它按的就是优化任务的配置顺序。</p>
+            </div>
+
+            <div class="prose rv" style="max-width:78ch">
+                <p>
+                    整个界面是一份配置的六个切面，共用同一个 <code>/api/config</code> 文档；
+                    「保存配置」把整份对象 POST 回去，后端落盘为 <code>user_config.json</code>。
+                    命令行 <code>run.py</code> 读的就是这同一份文件——
+                    <b>Web 界面只是编辑器，跑任务的从来不是它</b>。这也是为什么界面上没有「实时预览仿真」这类按钮。
+                </p>
+            </div>
+
+            <dl class="spec-tbl rv" style="margin-top:8px">
+                <div>
+                    <dt>01 项目配置</dt>
+                    <dd>GET /api/templates · GET /api/browse · GET|POST /api/config<u>模板卡 + .aedt 路径 + 设计/设置/扫频名 + 并行路径表</u></dd>
+                </div>
+                <div>
+                    <dt>02 优化变量</dt>
+                    <dd>POST /api/config → variables[]{name, bounds[2], unit}<u>边界可填公式引用其它变量，由约束求解器按依赖序展开</u></dd>
+                </div>
+                <div>
+                    <dt>03 优化目标</dt>
+                    <dd>POST /api/config → objectives[]{name, formula, freq|freq_range, goal, target, weight}<u>方向只有最小化 / 最大化两种，权重用于标量化路径</u></dd>
+                </div>
+                <div>
+                    <dt>04 算法配置</dt>
+                    <dd>GET /api/algorithms<u>单选算法 + 详情描述（全称 / 适用目标数 / 优势 / 局限 / 最佳场景）+ 专有参数面板</u></dd>
+                </div>
+                <div>
+                    <dt>05 运行控制</dt>
+                    <dd>POST /api/start · POST /api/stop · GET /api/status（1 s 轮询）<u>进度条 = progress / total，日志滑窗 50 行，错误可展开 traceback</u></dd>
+                </div>
+                <div>
+                    <dt>06 结果分析</dt>
+                    <dd>GET /api/results · GET /api/results/{name}<u>历史运行目录列表 → 非支配解卡片：参数 + 各目标 actual_value</u></dd>
+                </div>
+            </dl>
+
+            <div class="prose rv" style="max-width:78ch;margin-top:44px">
+                <h3>面板之间是有耦合的</h3>
+                <p>
+                    「算法配置」那一栏里<b>随算法而变的专有参数</b>最容易被忽略：选 MOPSO 出现惯性权重上下限与两个学习因子，
+                    选 MOEA/D 出现权重向量分区数与邻域大小 θ，选 NSGA-III 出现参考点分区数，选 CMA-ES 只剩一个初始步长 σ₀。
+                    这不是界面花活——这些参数只有对应算法才消费。
+                </p>
+                <p>
+                    「优化变量」的边界支持公式（例如 <code>(Wc-Wm2)/2+0.01</code>），
+                    于是变量不再是彼此独立的矩形搜索空间：<b>结构对称、避免干涉、相邻尺寸必须小于某个比例</b>
+                    这类几何约束能直接写进边界，由约束模块解析依赖顺序后展开成实际取值范围。
+                    不做这件事，优化器会花掉大量求解次数去评估物理上根本不成立的几何。
+                </p>
+                <p>
+                    「运行控制」的错误处理也照实反映后端：启动前会校验项目路径必须是绝对路径且文件存在、
+                    变量与目标都不能为空，否则直接拒绝启动；手动停止时设置停止事件，该信号一路传到
+                    pymoo 回调、进度回调和 worker 进程，界面随即显示「用户手动停止」。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ 03 算法与代理模型 ============ -->
+    <section class="sec" id="algorithms">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">为什么要多目标算法与代理模型<em>/ Algorithms &amp; Surrogates</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">一次求解要几分钟，一次任务要几百次——这两句话决定了整套算法选型。</p>
+            </div>
+
+            <div class="prose" style="max-width:78ch">
+                <p class="lead rv">
+                    <b>加权求和不能替代多目标算法。</b>把 S11 与增益按权重压成一个标量，确实能让单目标优化器正常工作，
+                    但一次只能得到一个折中点，换权重就要从头再跑几百次仿真；而且权重与最终解的对应关系是非线性的，
+                    前沿有非凸段时某些解无论怎么调权重都取不到。多目标算法反过来：一次运行直接交付一整条
+                    <b>Pareto 前沿</b>，工程师拿到的不是「一个答案」，而是「这套尺寸换那 0.3 dB 增益值不值」的完整菜单。
+                </p>
+                <p class="rv rv-d1">
+                    实现上所有目标都被统一到「越小越好」：最大化目标在优化空间里<b>取负</b>，
+                    于是支配判断只需逐维比较。界面上看到的 <code>actual_value</code> 再翻回物理值，
+                    所以「PeakGain 6.42 dB」和「优化器内部的 −6.42」是同一个数的两面——
+                    结果卡片同时保留这两个字段，画图时用的是前者。
+                </p>
+                <p class="rv rv-d2">
+                    七个算法不是给选择困难症准备的，它们各自对应不同的目标维度与前沿形状：
+                    超体积驱动的几何自适应、参考点引导、分解成标量子问题、角度惩罚距离——
+                    目标一多，「非支配排序 + 拥挤距离」这条老路会因为几乎人人互不支配而失效，
+                    这正是 NSGA-III、RVEA 存在的理由。
+                </p>
+                <div class="notice rv" style="margin-top:34px">
+                    <span class="tag-l">早停</span>
+                    <div>
+                        另一个只在真实代价下才成立的设置是<b>达标即停</b>：档案里已经有足够多个非支配解
+                        同时满足所有目标值时，剩下的仿真预算就没有意义了。界面上的「达标解数量」就是这个阈值，
+                        算法每代检查一次，达到即 break——所以演示里那次合成任务的进度条<b>不会走满</b>，
+                        它通常在预设迭代数的五到八成之间就停住，日志里会打出
+                        <b>Early stop: n solutions meet goals</b>。
+                    </div>
+                </div>
+                <h3 class="rv">代理模型：把仿真次数从预算里买回来</h3>
+                <p class="rv">
+                    多目标算法把「一次调参」变成「几百次求解」，代价立刻从方便变成跑不完。
+                    代理模型是这条链路上唯一的减速带反向操作：
+                    用已经仿真过的点训练一个廉价预测器（配置里 <code>use_surrogate</code> 打开，
+                    <code>surrogate_type</code> 指定模型族），让优化器先在预测面上大面积搜索，
+                    只把最有希望的少数候选送进 HFSS 做真仿真，新得到的真值再回填训练集。
+                </p>
+                <p class="rv">
+                    这套双线结构必须让结果可信度可区分，所以每个解都带
+                    <code>is_predicted</code> 标记，统计里 <code>n_evaluations</code> 与
+                    <code>real_evaluations</code> 分开记账，画图时预测点与实测点分色。
+                    <b>一份报告里同时存在两种置信度的点，如果不标注，就是错的。</b>
+                </p>
+                <p class="rv">
+                    代理模型本身会错，尤其在训练点稀疏的角落。所以「预测值」不能直接当成结论用——
+                    前沿上真要用那个尺寸做样机，得把它送回 HFSS 复算一次。界面上把这一点交给结果分析与实测流程，
+                    而不是在优化过程中偷偷替工程师做主。
+                </p>
+            </div>
+
+            <h3 class="rv" style="font-size:1.08rem;font-weight:500;margin:44px 0 12px">可选算法（与源码注册表一致）</h3>
+            <div class="spec-cols rv">
+                <dl class="spec-tbl">
+                    <div><dt>MOPSO</dt><dd>2–3 目标<u>自实现 · 收敛最快</u></dd></div>
+                    <div><dt>NSGA-II</dt><dd>2–3 目标<u>自实现 · 稳健基线</u></dd></div>
+                    <div><dt>CMA-ES</dt><dd>1 目标<u>自实现 · 加权和 · 变量耦合</u></dd></div>
+                </dl>
+                <dl class="spec-tbl">
+                    <div><dt>AGE-MOEA2</dt><dd>2–6 目标<u>pymoo · 默认推荐</u></dd></div>
+                    <div><dt>NSGA-III</dt><dd>3–10 目标<u>pymoo · 参考点引导</u></dd></div>
+                    <div><dt>MOEA/D-PBI</dt><dd>2–4 目标<u>pymoo · 前沿均匀</u></dd></div>
+                    <div><dt>RVEA</dt><dd>3–10 目标<u>pymoo · 量纲差异大</u></dd></div>
+                </dl>
+            </div>
+            <p class="fnote rv">
+                前三个是仓库里的自实现算法，后四个经 pymoo 适配器接入——未安装 pymoo 时不会出现在列表里。
+                前端「算法配置」的专有参数面板按算法 id 切换，只有 MOPSO 会问你要惯性权重上下限和学习因子。
+            </p>
+        </div>
+    </section>
+
+    <!-- ============ 04 演示边界 ============ -->
+    <section class="sec" id="boundary">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">这份演示的边界<em>/ What Is Real</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">界面是真的，数字是编的。分不清这句话，就会被演示骗到。</p>
+            </div>
+
+            <div class="outs rv">
+                <div class="out">
+                    <div class="h">真实</div>
+                    <div class="v">界面<small> 与结构</small></div>
+                    <p>Vue3 + Element Plus 的控制台照搬源项目 web/index.html，面板、字段、校验、轮询节奏、日志措辞都未改动。</p>
+                </div>
+                <div class="out">
+                    <div class="h">真实</div>
+                    <div class="v">契约<small> 与字段</small></div>
+                    <p>14 个接口的响应结构按 server.py 的路由与 Pydantic 模型对齐：变量用 bounds，目标用 actual_value，列表限 20 条。</p>
+                </div>
+                <div class="out">
+                    <div class="h">合成</div>
+                    <div class="v">全部数值</div>
+                    <p>项目路径、变量边界、目标值、迭代进度、Pareto 解、历史运行记录都是垫片现编的，没有任何一次真实求解。</p>
+                </div>
+            </div>
+
+            <div class="prose rv" style="max-width:78ch;margin-top:44px">
+                <p>
+                    垫片做的是<b>同源请求拦截</b>：源前端里 <code>const API = ''</code>，所有请求写成相对路径，
+                    本来就指向「同一个站点下的后端」。演示页把这个地址换成了本地生成的 JSON，
+                    因此这份 app 文件放回源项目的 <code>web/</code> 目录、或在
+                    <code>window.__DEMO_MOCK__</code> 关掉之后，就能直接对着真的 FastAPI 服务跑——
+                    不需要改一行界面代码。
+                </p>
+                <p>
+                    有两处刻意与真实后端不一致：其一是文件浏览，真接口会弹一个<b>操作系统原生对话框</b>，
+                    网页里不可能有，垫片改为轮流返回几个占位路径；其二是模板列表，
+                    真实接口只回名称与变量/目标个数，前端却指望列表里带着完整变量与目标才能套用模板，
+                    演示里补上了这两个字段，否则「加载模板」点了没反应。两处都写在 app 文件顶部的注释里。
+                </p>
+                <h3>要跑真的需要什么</h3>
+                <ul class="ink-list">
+                    <li><b>本机 Ansys HFSS 与许可证</b>，以及 PyAEDT 能连上的版本<em>hardware</em></li>
+                    <li><b>一个参数化好的 .aedt 工程</b>：待优化的尺寸必须是 HFSS 里的命名变量，否则 <code>set_variable</code> 无处可写</li>
+                    <li><b>已配置的目标报表</b>：S 参数、远场球、增益与效率都得在工程里能取到数</li>
+                    <li><b>pymoo</b>（可选）：AGE-MOEA2 / NSGA-III / MOEA/D / RVEA 走的是它<em>optional</em></li>
+                    <li><b>python server.py</b>，然后浏览器打开本机服务端口<em>localhost</em></li>
+                </ul>
+                <p style="margin-top:34px">
+                    相关：<a href="../../#tools" style="color:var(--cu)">软件与工具全览</a> ·
+                    <a href="../../#projects" style="color:var(--cu)">代表性项目</a> ·
+                    <a href="../../project4/" style="color:var(--cu)">P-04 算法辅助全波电磁仿真优化</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="工具导航">
+            <a href="../../#tools">
+                <span class="n">← Back · Tools</span>
+                <span class="t">返回软件与工具</span>
+            </a>
+            <a href="https://github.com/Patisight/HFSS-Optimizer" target="_blank" rel="noopener" class="rt">
+                <span class="n">GitHub · S-01 →</span>
+                <span class="t">HFSS-Optimizer 开源仓库</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>聊聊 HFSS 自动化优化。</h2>
+                <p>参数化建模怎么整理、多目标怎么定、代理模型什么时候值得上、优化器给出的尺寸怎么回到实测，都可以直接找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
+            </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This demo</h5>
+                    <ul>
+                        <li><a href="#loop">01 · 优化闭环</a></li>
+                        <li><a href="#panels">02 · 面板与接口</a></li>
+                        <li><a href="#algorithms">03 · 算法与代理模型</a></li>
+                        <li><a href="#boundary">04 · 演示边界</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../../">首页</a></li>
+                        <li><a href="../../#tools">全部工具</a></li>
+                        <li><a href="../../#projects">全部项目</a></li>
+                        <li><a href="../../#publications">论文与专利</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>S-01 · HFSS 天线自动化优化系统</span>
+        </div>
+    </div>
+</footer>
+
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">S-01</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
+
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size: 0.8rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
+    </div>
+</div>
+
+<script>
+    /* 本页专属：iframe 载入后隐藏占位提示（theme.css 的 .demo-frame.ready .load-hint） */
+    (function () {
+        'use strict';
+        var frame = document.getElementById('frame');
+        var ifr = frame ? frame.querySelector('iframe') : null;
+        if (!ifr) return;
+        var done = function () { frame.classList.add('ready'); };
+        ifr.addEventListener('load', done);
+        window.setTimeout(done, 8000);
+    })();
+</script>
+<script src="../../assets/theme.js"></script>
+</body>
+</html>

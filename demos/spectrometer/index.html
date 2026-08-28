@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>KSW-VSA01 频谱仪上位机 · 界面复刻演示 · 程锦阳</title>
+    <meta name="description" content="PySide6 频谱仪上位机的 HTML 界面复刻演示：按真实源码复刻面板、控件与深色配色，以太网 TCP + ASCII SCPI 通信，迹线由页内模拟器生成。无实机、无后端。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/theme.css">
+    <style>
+        /* 本页专属：无（全部使用共享设计系统） */
+    </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
+</head>
+<body data-root="../.." data-hud="S-02 · 频谱仪上位机">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../../" class="logo"><span>程锦阳</span><i>S-02</i></a>
+        <nav class="nav-links">
+            <a href="#demo" data-nav="demo"><sup>01</sup>界面演示</a>
+            <a href="#map" data-nav="map"><sup>02</sup>复刻对照</a>
+            <a href="#limit" data-nav="limit"><sup>03</sup>能力边界</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="demo-full" id="demo">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../../">程锦阳</a><i>/</i><a href="../../#tools">软件与工具</a><i>/</i><b>S-02</b>
+            </nav>
+            <h1>KSW-VSA01 频谱仪上位机 · 界面复刻演示</h1>
+            <p class="pg-lede">
+                一台 PySide6 桌面程序的界面被完整搬进浏览器：<b>面板划分、控件文字、默认值、深色配色逐项照抄源码</b>，
+                迹线与 SCPI 报文由页内模拟器按真实格式收发——<b>改 SPAN / RBW / VBW / 衰减，画面上真的会变</b>。
+            </p>
+
+            <div class="demo-bar">
+                <span class="dot"></span>
+                <span><b>界面按真实程序复刻 · 数据为模拟</b>
+                    无实机、无后端：iframe 复刻的是 KSW-VSA01 频谱仪上位机 v1.2.1 的主窗口，分组、控件、
+                    取值范围与配色取自 <code>src/main_window.py</code>；迹线由页内 SCPI 模拟器按
+                    <code>src/simulator.py</code> 的信号模型生成，指令串按 <code>src/scpi_client.py</code>
+                    的报文格式（ASCII 行 / IEEE488.2 二进制块）真实发出后再解析——不是写死的台词。</span>
+                <span class="ext"><a href="app/index.html" target="_blank" rel="noopener">单独全屏打开 <span aria-hidden="true">→</span></a></span>
+            </div>
+
+            <div class="demo-frame f-dark" id="frame">
+                <div class="load-hint">载入界面…</div>
+                <iframe id="app" src="app/index.html?autostart=1" title="KSW-VSA01 频谱仪上位机界面复刻演示（数据为模拟）"></iframe>
+            </div>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.84rem;color:var(--dim);margin-top:16px">
+                操作提示：点【应用参数】改中心频率 / SPAN / RBW / VBW / 衰减，迹线形状与底噪立即响应；
+                参考电平在源程序里只下发给仪器（Y 轴由 pyqtgraph 自动定标），故勾选「Y 轴自动缩放」时画面不变，
+                取消勾选后顶格栅线才锚到参考电平。点【峰值标记】在迹线真实最高点落标记；
+                切「时域模式 (零扫宽)」面板会自动收起 SPAN 与起止频率、禁用峰值与通道功率；
+                点【诊断】跑四步体检；【保存问题报告】把界面参数与通信日志打包成 txt 下载。
+                端口填 15025 即连上页内模拟器（等价于源程序的 <code>python main.py --demo</code>），
+                填其他端口会走真实的连接失败分支并给出排查建议。
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ 02 复刻对照 ============ -->
+    <section class="sec" id="map">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">复刻对照<em>/ Source Mapping</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">演示里的每一个面板都有源码出处，没有源码依据的控件一个也没放。</p>
+            </div>
+            <div class="spec-cols">
+                <dl class="spec-tbl rv">
+                    <div><dt>顶部连接栏</dt><dd>仪器 IP / 端口 / 连接 / 诊断 / 设备信息 / 帮助 / 状态灯<u>对应 _build_ui()</u></dd></div>
+                    <div><dt>连接流程</dt><dd>TCP 连接 → <code>*IDN?</code> 识别 → <code>FORM:DATA REAL,32</code> → <code>INIT:CONT ON</code> → 参数回填<u>对应 _on_connect()</u></dd></div>
+                    <div><dt>显示模式</dt><dd>频谱模式 / 时域模式 (零扫宽)；模式感知面板<u>对应 _switch_mode() / _apply_mode_ui()</u></dd></div>
+                    <div><dt>频率组</dt><dd>中心频率 1 GHz、频宽 SPAN 100 MHz、起止频率（自动）双向联动<u>对应 _build_control_panel()</u></dd></div>
+                    <div><dt>带宽组</dt><dd>RBW / VBW 各带「自动」，默认 1 MHz<u>同上</u></dd></div>
+                    <div><dt>幅度组</dt><dd>参考电平 (dBm) = 0、衰减 (dB) = 10 带「自动」<u>同上</u></dd></div>
+                    <div><dt>扫描组</dt><dd>扫描时间（含橙色提示行）、扫描点数 101~100001 步进 500 默认 1001、连续扫描、Y 轴自动缩放<u>同上</u></dd></div>
+                    <div><dt>操作组</dt><dd>应用参数 / 自动调整 / 单次扫描 / 峰值标记 / 导出 CSV / 读取错误 / 通道功率 / 仪器复位 + 刷新率三档<u>同上</u></dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>绘图区</dt><dd>pyqtgraph 外观复刻：底 <code>#10101a</code>、网格、Trace1 图例 <code>#00e5ff</code>、峰值散点 <code>#ff5252</code> 与文字<u>对应 _build_plot_panel()</u></dd></div>
+                    <div><dt>配色与字体</dt><dd>深色样式表与 Microsoft YaHei UI 9pt<u>对应 _apply_dark_theme() / main.py</u></dd></div>
+                    <div><dt>底部通信日志</dt><dd>时间戳 + 指令行 <code>→ SWE:POIN 1001</code>，含【保存问题报告】【打开日志】<u>对应 log() / _save_report()</u></dd></div>
+                    <div><dt>状态栏</dt><dd>频谱 | 1001 点 | 范围 9.5e+08 ~ 1.05e+09Hz | 峰值 -12.4 dBm<u>对应 _on_data()</u></dd></div>
+                    <div><dt>输入校验</dt><dd>中心频率非负、SPAN&gt;0、起始频率不为负时 SPAN 自动钳位到 2×中心频率并弹窗<u>对应 _on_apply()</u></dd></div>
+                    <div><dt>四步诊断</dt><dd>TCP 连通性 → <code>*IDN?</code> → 六项参数查询 → 迹线读取，逐行留痕并出结论<u>对应 _on_diag()</u></dd></div>
+                    <div><dt>报文层</dt><dd>指令以 <code>\n</code> 结尾；迹线按 <code>#&lt;N&gt;&lt;len&gt;&lt;data&gt;</code> 小端 float32 解析，非 <code>#</code> 开头自动按 ASCII 逗号解析<u>对应 scpi_client.py</u></dd></div>
+                    <div><dt>信号模型</dt><dd>中心主峰 + ±0.28/0.32 SPAN 处的两个谱线 + 半中频杂散 + 底噪 <code>-95+ATT*0.5</code><u>对应 simulator.py</u></dd></div>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ 03 能力边界 ============ -->
+    <section class="sec" id="limit">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">能力边界<em>/ What This Demo Is Not</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">浏览器打不开 TCP 套接字，所以连上的不是仪器，是页面里的一个模拟器。</p>
+            </div>
+            <div class="notice rv">
+                <span class="tag-l">诚实声明</span>
+                <div>
+                    <b>这是界面演示，不是测量结果。</b>数值全部由页内 JavaScript 按 <code>src/simulator.py</code>
+                    的模型生成，SCPI 指令串按源码格式合成后再由页面自己的解析器读回；
+                    识别串里的序列号是模拟器占位符，不涉及任何真实设备。<br/>
+                    为了让 RBW / VBW / 参考电平在画面上「看得见反应」，演示按真实频谱仪的规律补了几条
+                    <code>simulator.py</code> 并未实现的模型（底噪随 RBW 平移、VBW 对相邻扫描做视频平滑、
+                    关闭 Y 轴自动缩放后顶格栅线锚定参考电平）；逐条列在 <code>app/index.html</code>
+                    顶部的注释块里，未列出的界面行为一律照源码实现。源程序自带的 78 项闭环测试
+                    （<code>test_closure.py</code>）是 Python 测试套件，与界面无关，本演示不复刻。
+                </div>
+            </div>
+            <div class="spec-cols">
+                <dl class="spec-tbl rv">
+                    <div><dt>真实程序</dt><dd>Python 3 · PySide6 · pyqtgraph · 单 exe 零依赖</dd></div>
+                    <div><dt>通信</dt><dd>以太网 TCP，端口 5025（演示模拟器 15025），ASCII SCPI</dd></div>
+                    <div><dt>本演示</dt><dd>单文件 HTML + canvas，无构建、无网络请求、无第三方库</dd></div>
+                </dl>
+                <dl class="spec-tbl rv rv-d1">
+                    <div><dt>版本</dt><dd>v1.2.1（窗口标题、日志与报告均沿用该版本号）</dd></div>
+                    <div><dt>不复刻</dt><dd>日志落盘、崩溃钩子、os.startfile、系统信息采集</dd></div>
+                    <div><dt>隐私</dt><dd>不含真实 IP、内网主机名、用户名、设备序列号与日志原文</dd></div>
+                </dl>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>聊聊仪器上位机。</h2>
+                <p>SCPI 报文适配、pyqtgraph 大数据量迹线、现场对接的问题回收闭环，都可以直接找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
+            </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This page</h5>
+                    <ul>
+                        <li><a href="#demo">01 · 界面演示</a></li>
+                        <li><a href="#map">02 · 复刻对照</a></li>
+                        <li><a href="#limit">03 · 能力边界</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../../">首页</a></li>
+                        <li><a href="../../#tools">软件与工具</a></li>
+                        <li><a href="../../#projects">代表性项目</a></li>
+                        <li><a href="../../#experience">工作经历</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>S-02 · KSW-VSA01 频谱仪上位机 · 界面复刻演示</span>
+        </div>
+    </div>
+</footer>
+
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">S-02</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
+
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换项目…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size: 0.8rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
+    </div>
+</div>
+
+<script src="../../assets/theme.js"></script>
+<script>
+    /* 演示容器专属：iframe 载入后隐藏占位提示（theme.css 的 .demo-frame.ready .load-hint）。
+       三条路径都兜一次，避免缓存/跨文档时序让提示一直盖在演示上。 */
+    (function () {
+        var frame = document.getElementById('frame');
+        var app = document.getElementById('app');
+        if (!frame || !app) return;
+        var done = false;
+        function ready() { if (done) return; done = true; frame.classList.add('ready'); }
+        app.addEventListener('load', ready);
+        try {
+            if (app.contentDocument && app.contentDocument.readyState === 'complete') ready();
+        } catch (e) { /* 跨文档读不到，等 load 事件 */ }
+        window.addEventListener('load', function () { setTimeout(ready, 800); });
+    })();
+</script>
+</body>
+</html>

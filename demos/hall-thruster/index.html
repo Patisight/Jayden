@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>霍尔推力器 3D 交互教学 · 演示 · 程锦阳</title>
+    <meta name="description" content="单文件 Three.js 网页：按 SPT-100 量级拆解霍尔推力器结构，仿真电子霍尔漂移、氙电离级联、离子加速与束流中和，电压/磁场/流量滑杆实时改变粒子行为。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/theme.css">
+    <style>
+        /* 本页专属：无 */
+    </style>
+    <noscript><style>.rv { opacity: 1; transform: none; }</style></noscript>
+</head>
+<body data-root="../.." data-hud="S-03 · 3D 演示">
+
+<div class="ruler"><div class="ruler-fill" id="rulerFill"></div></div>
+
+<header class="hd" id="hd">
+    <div class="wrap nav">
+        <a href="../../" class="logo"><span>程锦阳</span><i>S-03</i></a>
+        <nav class="nav-links">
+            <a href="#demo" data-nav="demo"><sup>01</sup>界面演示</a>
+            <a href="#intent" data-nav="intent"><sup>02</sup>教学意图</a>
+            <a href="#parts" data-nav="parts"><sup>03</sup>组件拆解</a>
+            <a href="#impl" data-nav="impl"><sup>04</sup>实现取舍</a>
+        </nav>
+        <button class="kbd-btn" id="palOpen" type="button" aria-label="打开导航面板">
+            导航 <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="demo-full" id="demo">
+        <div class="wrap">
+            <nav class="crumb" aria-label="面包屑">
+                <a href="../../">程锦阳</a><i>/</i><a href="../../#tools">软件与工具</a><i>/</i><b>S-03</b>
+            </nav>
+            <h1>霍尔推力器 3D 交互教学 · 演示</h1>
+            <p class="pg-lede">
+                把一台 SPT-100 量级的霍尔推力器拆开放进浏览器：结构件可点击逐件讲解，
+                带电粒子的运动按真实机理仿真，<b>电压、磁场、流量三个滑杆会真的改变图像</b>而不是只改数字。
+            </p>
+
+            <div class="demo-bar">
+                <span class="dot"></span>
+                <span>
+                    <b>完整可交互</b> 这是原始页面本身，非截图、非复刻。它是单文件静态页，
+                    但依赖 CDN 加载 Three.js，<b>需要联网</b>；无任何后端，也不产生数据。
+                </span>
+                <span class="ext"><a href="app/index.html" target="_blank" rel="noopener">单独全屏打开 <span aria-hidden="true">→</span></a></span>
+            </div>
+
+            <div class="demo-frame f-dark" id="frame">
+                <div class="load-hint">载入 3D 场景…（需联网加载 Three.js）</div>
+                <iframe src="app/index.html" title="霍尔推力器 3D 交互教学演示"></iframe>
+            </div>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.88rem;color:var(--dim);margin-top:16px">
+                若下方空白，多为网络无法访问 CDN 或浏览器禁用了 WebGL —— 可用右上角链接单独打开排查。
+            </p>
+        </div>
+    </div>
+
+    <!-- 01 想讲清什么 -->
+    <section class="sec" id="intent">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">02</span>
+                <h2 class="sec-t">它想讲清什么<em>/ Intent</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">市面上多数霍尔推力器科普，错在两个地方。</p>
+            </div>
+            <div class="prose rv" style="max-width:78ch">
+                <p class="lead">
+                    第一处是把<b>磁场画成轴向或偶极</b>。真实器件里磁路经内极面 — 放电通道 — 外极面 — 磁轭返回，
+                    <b>通道内的磁场近似径向</b>，因为正是这个径向 B 与轴向 E 交叉，才产生方位向的霍尔漂移电子云。
+                    磁场方向画错，后面所有关于"为什么电子被拦住而离子跑得出去"的解释就都站不住。
+                </p>
+                <p class="rv rv-d1">
+                    第二处是把电子运动讲成"被电场拉着走"，忽略<b>霍尔漂移与回旋</b>。电子的平均自由程远小于离子，
+                    在径向磁场下被约束成绕轴漂移的电子云，这才是它能在通道内停留并高效电离氙气的原因；
+                    而离子质量大、回旋半径大，几乎不受这个约束，直接被电场加速喷出。
+                    <b>同一个电场，两种粒子的命运完全不同 —— 这是霍尔推力器的全部机关所在。</b>
+                </p>
+                <p class="rv rv-d2">
+                    所以这个页面把"能读出错"当作第一目标：磁力线在通道段按径向直线呈现，
+                    只在出口侧极面间隙留一个<b>小幅磁透镜上拱</b>；电子画成长轨迹的回旋 + 漂移，
+                    离子画成穿出通道后的加速羽流，中和阴极单独给出束流中和。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02 组件拆解 -->
+    <section class="sec" id="parts">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">03</span>
+                <h2 class="sec-t">组件拆解<em>/ Components</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">每个部件可点选高亮，并弹出对应章节讲解。</p>
+            </div>
+            <dl class="spec-tbl rv">
+                <div><dt>陶瓷放电通道</dt><dd>环状通道，内 / 外壁为介质<u>承受壁面擦蚀，是寿命瓶颈</u></dd></div>
+                <div><dt>阳极</dt><dd>通道内上游端供电极，同时是放电气体的注入位置</dd></div>
+                <div><dt>内 / 外磁极 + 励磁线圈 + 磁轭</dt><dd>构成闭合磁路，决定通道内径向场强度与磁透镜形状</dd></div>
+                <div><dt>空心阴极</dt><dd>提供放电电子源，并向羽流注入电子完成<b>束流中和</b></dd></div>
+                <div><dt>航天器底座 / 安装界面</dt><dd>建立整机尺度参照，避免把器件画成无本体的零件图</dd></div>
+            </dl>
+            <h3 style="font-size:1.02rem;font-weight:500;margin:38px 0 12px">粒子与物理层</h3>
+            <dl class="spec-tbl rv">
+                <div><dt>电子运动</dt><dd>E×B 漂移（方位向）+ 回旋 + 与中性原子的碰撞输运</dd></div>
+                <div><dt>电离级联</dt><dd>电子碰撞电离氙原子，在通道内维持自持放电</dd></div>
+                <div><dt>离子加速与羽流</dt><dd>静电场加速穿出出口面，随后羽流膨胀</dd></div>
+                <div><dt>束流中和</dt><dd>中和阴极电子注入，使整体束流保持电中性</dd></div>
+                <div><dt>辅助曲线</dt><dd>电位 · 磁场强度 · 电子能量 · 离子速度分布<u>与三维视图共用同一组滑杆</u></dd></div>
+            </dl>
+            <div class="chips rv" style="margin-top:30px">
+                <span class="tag">SPT-100 量级</span><span class="tag">Goebel &amp; Katz</span>
+                <span class="tag">Morozov 磁透镜</span><span class="tag">数值取自公开文献</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 实现说明 -->
+    <section class="sec" id="impl">
+        <div class="wrap">
+            <div class="sec-head rv">
+                <span class="sec-idx">04</span>
+                <h2 class="sec-t">实现与取舍<em>/ Implementation</em></h2>
+                <span class="sec-rule"></span>
+                <p class="sec-note">单文件是有意的约束：能双击打开的教学页才有传播力。</p>
+            </div>
+            <div class="prose rv" style="max-width:78ch">
+                <p>
+                    技术栈刻意压到最低：<b>一个 HTML 文件 + Three.js r160（CDN）+ OrbitControls +
+                    UnrealBloom 后期 + CSS2D 标签</b>，没有构建步骤、没有依赖安装。
+                    代价是全部状态都在一个作用域里，好处是任何人在任何机器上双击就能看。
+                </p>
+                <p>
+                    第一版为了"好看"付出了流畅度：辉光全程开启、加性混合层亮度压得很高、
+                    半透明件之间靠渲染顺序互相叠。结果是初看惊艳，但<b>细节被光晕糊掉，且中低端机器明显掉帧</b>。
+                    现在这版做了三件事：
+                </p>
+                <ul class="ink-list rv" style="max-width:78ch;margin-top:14px">
+                    <li><b>磁场按物理重画</b> —— 通道段控制点约束为沿半径方向单调、轴向起伏压到通道长的 1.33% 以内，磁透镜上拱移到出口侧极面间隙，只留小幅。</li>
+                    <li><b>每帧零分配</b> —— 裁剪面数组、方向向量、轨迹缓冲全部改为复用；轨迹写入改成 <em>Float32Array 环形缓冲</em>；CSS2D 标签只在视角变化时重排；主循环内不再出现对象构造。</li>
+                    <li><b>画质自适应</b> —— 识别到软件渲染或核数过少时默认关闭辉光；运行中按平滑帧率自动降/升档（<em>&lt;45fps 关辉光，&gt;58fps 才恢复</em>），三档画质对应不同 DPR 与星点数量。</li>
+                </ul>
+                <p style="margin-top:22px">
+                    亮度侧做了同参数 A/B 对比：整体曝光与灯光下调后，<b>画面平均亮度降约一半，
+                    近纯白像素占比从 5% 量级压到 0.1% 量级</b>，而中间调占比几乎不变 ——
+                    也就是<b>去掉的是过曝，留下的是结构</b>。
+                </p>
+            </div>
+
+            <div class="outs rv" style="margin-top:44px">
+                <div class="out"><div class="h">交付形态</div><div class="v">单文件<small> HTML</small></div><p>无构建、无安装，双击即开；Three.js 走 CDN。</p></div>
+                <div class="out"><div class="h">可交互部件</div><div class="v">5<small> 组</small></div><p>通道、阳极、磁路、空心阴极、整机底座，均可点选讲解。</p></div>
+                <div class="out"><div class="h">物理层</div><div class="v">4<small> 类</small></div><p>电子漂移回旋、电离级联、离子加速羽流、束流中和。</p></div>
+                <div class="out"><div class="h">实时参数</div><div class="v">3<small> 滑杆</small></div><p>电压 / 磁场 / 流量联动三维与四条二维曲线。</p></div>
+            </div>
+
+            <p class="fnote" style="font-family:var(--mono);font-size:.88rem;color:var(--dim);margin-top:30px">
+                相关：<a href="../../#tools" style="color:var(--cu)">软件与工具总览</a> ·
+                <a href="../../#skills" style="color:var(--cu)">能力矩阵</a>
+            </p>
+        </div>
+    </section>
+
+    <div class="wrap">
+        <nav class="pg-nav rv" aria-label="演示导航">
+            <a href="../spectrometer/">
+                <span class="n">← Previous · S-02</span>
+                <span class="t">KSW-VSA01 频谱仪上位机</span>
+            </a>
+            <a href="../../#tools" class="rt">
+                <span class="n">Next →</span>
+                <span class="t">返回软件与工具</span>
+            </a>
+        </nav>
+    </div>
+</main>
+
+<footer class="ft" id="contact" data-hud="联系">
+    <div class="wrap">
+        <div class="ft-top">
+            <div class="ft-cta rv">
+                <h2>想聊这个页面怎么做的？</h2>
+                <p>Three.js 教学可视化、粒子层怎么写才不糊、WebGL 在中低端机上的降级策略，都可以找我。</p>
+                <a class="ft-mail" href="mailto:aeayang@163.com">
+                    aeayang@163.com
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
+            </div>
+            <div class="ft-links rv rv-d1">
+                <div>
+                    <h5>This demo</h5>
+                    <ul>
+                        <li><a href="#demo">01 · 界面演示</a></li>
+                        <li><a href="#intent">02 · 它想讲清什么</a></li>
+                        <li><a href="#parts">03 · 组件拆解</a></li>
+                        <li><a href="#impl">04 · 实现与取舍</a></li>
+                        <li><a href="app/index.html" target="_blank" rel="noopener">全屏打开演示 ↗</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Site</h5>
+                    <ul>
+                        <li><a href="../../">首页</a></li>
+                        <li><a href="../../#tools">软件与工具</a></li>
+                        <li><a href="../optimizer/">S-01 优化系统</a></li>
+                        <li><a href="../spectrometer/">S-02 频谱仪上位机</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ft-bot">
+            <span>© 2026 程锦阳 · CHENG JINYANG</span>
+            <span>S-03 · 可交互静态演示 · 无后端</span>
+        </div>
+    </div>
+</footer>
+
+<div class="hud" aria-hidden="true">
+    <div><b id="hudSec">§ 00</b> <span id="hudName">S-03</span></div>
+    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
+</div>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+</button>
+
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="站点导航">
+    <div class="pal-box">
+        <div class="pal-in">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+            <input id="palInput" type="text" placeholder="跳转章节 / 切换页面…" autocomplete="off" spellcheck="false" aria-label="搜索">
+            <kbd style="font-family:var(--mono);font-size:.84rem;color:var(--dim);border:1px solid var(--line);padding:2px 6px">ESC</kbd>
+        </div>
+        <ul class="pal-list" id="palList"></ul>
+        <div class="pal-foot"><span>↑↓ 选择</span><span>↵ 跳转</span><span>Ctrl+K 开关</span></div>
+    </div>
+</div>
+
+<script src="../../assets/theme.js"></script>
+<script>
+    // iframe 就绪后移除载入提示；跨域读不到内容，用 load 事件即可
+    (function () {
+        var f = document.querySelector('.demo-frame');
+        var ifr = f && f.querySelector('iframe');
+        if (ifr) ifr.addEventListener('load', function () { f.classList.add('ready'); });
+    })();
+</script>
+</body>
+</html>

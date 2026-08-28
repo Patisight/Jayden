@@ -751,33 +751,35 @@
             </div>
 
             <div class="notice rv">
-                <span class="tag-l">运行条件</span>
+                <span class="tag-l">演示说明</span>
                 <div>
-                    下列工具的可运行性并不相同，已按实际情况标注：<b>S-03 是纯静态网页，可直接在线打开</b>；
-                    <b>S-01 依赖本机 HFSS 与后端服务、S-02 依赖真实频谱仪或内置模拟器</b>，
-                    二者无法在浏览器里执行，站内只呈现界面与能力，不提供在线运行。
+                    三个工具都提供<b>内嵌的前端界面演示</b>，但"能跑到什么程度"并不相同，已如实标注：
+                    <b>S-03 是完整可交互的真页面</b>（纯静态，只是依赖 CDN，需联网）；
+                    <b>S-01 是真实 Web 前端 + 模拟数据</b>（原程序需本机 HFSS 与后端服务，站内以 mock 垫片喂接口）；
+                    <b>S-02 是按桌面程序源码复刻的界面 + 模拟迹线</b>（原程序是 PySide6 桌面应用，需实机或自带模拟器）。
+                    三者均<b>无后端、不可执行真实优化或仪器控制</b>，只用于展示界面与交互形态。
                 </div>
             </div>
 
             <div class="prj">
-                <a class="card prj-card rv" href="https://github.com/Patisight/HFSS-Optimizer" target="_blank" rel="noopener">
+                <a class="card prj-card rv" href="demos/optimizer/">
                     <span class="brk"></span>
                     <div class="prj-top"><span class="prj-no">S-01</span><span class="prj-time">2025.07 – 至今</span></div>
                     <h3>HFSS 天线自动化优化系统</h3>
                     <p>用 PyAEDT 驱动 HFSS 完成"参数写入 — 求解 — 取值 — 评估"闭环，把多目标寻优从人工扫描中解放出来；支持多 HFSS 实例并行评估，结果输出 Pareto 前沿与收敛曲线。</p>
                     <div class="specs">
-                        <div><span>算法</span><span>MOPSO · NSGA-II/III · CMA-ES · MOEA/D · RVEA</span></div>
-                        <div><span>代理模型</span><span>Bayesian MOBO · GPFlow SVG-P</span></div>
+                        <div><span>算法（界面可选）</span><span>MOPSO · NSGA-II/III · CMA-ES · MOEA/D · RVEA</span></div>
+                        <div><span>代理模型（配置启用）</span><span>高斯过程 GPFlow SVG-P · Matérn-5/2</span></div>
                         <div><span>界面</span><span>Web (FastAPI + Vue3) · PyQt6</span></div>
                         <div><span>许可</span><span>MIT · 已开源</span></div>
                     </div>
                     <div class="prj-foot">
-                        <span class="go">GitHub 仓库<span aria-hidden="true">→</span></span>
-                        <span><span class="tag cu">已开源</span> <span class="tag">需本机 HFSS</span></span>
+                        <span class="go">打开界面演示<span aria-hidden="true">→</span></span>
+                        <span><span class="tag cu">已开源</span> <span class="tag">模拟数据</span></span>
                     </div>
                 </a>
 
-                <div class="card prj-card rv rv-d1">
+                <a class="card prj-card rv rv-d1" href="demos/spectrometer/">
                     <span class="brk"></span>
                     <div class="prj-top"><span class="prj-no">S-02</span><span class="prj-time">2026 上半年</span></div>
                     <h3>KSW-VSA01 频谱仪上位机</h3>
@@ -789,12 +791,12 @@
                         <div><span>可靠性</span><span>四步连接诊断 · 78 项闭环测试</span></div>
                     </div>
                     <div class="prj-foot">
-                        <span class="go" style="color:var(--dim)">仓库整理中，随后发布</span>
-                        <span><span class="tag">需实机或模拟器</span></span>
+                        <span class="go">打开界面演示<span aria-hidden="true">→</span></span>
+                        <span><span class="tag">复刻界面</span> <span class="tag">模拟迹线</span></span>
                     </div>
-                </div>
+                </a>
 
-                <a class="card prj-card rv rv-d2" href="tools/hall-thruster/" target="_blank" rel="noopener">
+                <a class="card prj-card rv rv-d2" href="demos/hall-thruster/">
                     <span class="brk"></span>
                     <div class="prj-top"><span class="prj-no">S-03</span><span class="prj-time">2026.08</span></div>
                     <h3>霍尔推力器 3D 交互教学</h3>
@@ -812,8 +814,69 @@
                 </a>
             </div>
 
+            <div class="prose rv" style="max-width:78ch;margin-top:56px">
+                <h3>S-01 · 一个优化闭环必须由四件事同时成立</h3>
+                <p>
+                    很多人把"算法优化 HFSS"理解成套一个 PSO。真正跑起来才发现，<b>难点不在算法，在闭环本身</b>：
+                    参数要能写进模型而不破坏几何拓扑；求解要能在无人值守时稳定收敛到解；结果要能按
+                    <b>目标函数</b>而不是按 S11 单点被评价；失败的一次发散不能把整轮寻优带走。
+                    所以这套东西的四个组件是绑在一起设计的：
+                    <b>几何参数化层</b>（变量边界与合法性校验，越界的个体在进求解器之前就被拒）、
+                    <b>求解调度层</b>（多 HFSS 实例并行，把一次评估的墙钟时间摊薄）、
+                    <b>目标与约束层</b>（增益、带宽、隔离度、轴比这类互相冲突的目标显式建模，
+                    因此它天然是多目标问题，输出 Pareto 前沿而不是"一个最优解"）、
+                    <b>算法层</b>（MOPSO / NSGA-II / NSGA-III / CMA-ES / MOEA/D / RVEA / AGE-MOEA2 可换，
+                    是为了在同一课题上做横向对比，而不是为了堆名词）。
+                </p>
+                <p>
+                    <b>代理模型是第二层关键。</b>全波仿真是分钟到小时级的代价，群体法一代上百个体、几十代就是上万次求解，
+                    直接寻优在工程预算上不成立。所以用贝叶斯优化 + 高斯过程代理（GPFlow SVG-P，Matérn-5/2 核）
+                    去"猜"哪些参数点值得真跑，靠<b>预测不确定性</b>做主动采样：不确定度大的地方才值得花钱。
+                    再往后是我在推进的方向 —— 把<b>物理先验嵌进强化学习</b>的架构里，
+                    避免智能体把预算浪费在物理上根本不可行的区域。
+                </p>
+
+                <h3>S-02 · 上位机的真正工作量在"连不上的时候"</h3>
+                <p>
+                    控制一台频谱仪，协议本身不难：以太网 TCP 上跑 ASCII SCPI，
+                    <b>不是 VISA / GPIB</b> —— 这个选择去掉了驱动栈依赖，也把责任全揽到了自己这边。
+                    于是真正花时间的是那些"仪器不会告诉你的失败"：
+                    端口通但指令无响应、响应被分包粘在一起来回解析、参考电平与衰减配合不当导致的过载或噪底过高、
+                    扫描点数与 RBW/VBW 组合出的测量时间被误判成"卡死"。
+                    所以界面上看起来"多余"的三块，其实是血泪换来的：<b>四步连接诊断</b>（把可达性、端口、
+                    身份识别、指令回环拆开逐层判）、<b>一键问题报告导出</b>、<b>全局异常钩子留痕</b>。
+                </p>
+                <p>
+                    显示侧用 pyqtgraph 而不是 QtCharts，是因为要在实时扫频下保持流畅；
+                    <b>频谱模式与零扫宽时域模式</b>共用一套参数面板但走不同的取数节奏。
+                    功能上覆盖了中心频率 / Span / RBW / VBW / 参考电平 / 衰减 / 扫描点数的远端控制，
+                    峰值标记、通道功率（CPOW）、<code class="mono">SENS:ADJ:ALL</code> 自动调整、
+                    <code class="mono">*RST</code>、以及迹线的 CSV 导出以便进 Origin 出图 ——
+                    最后这条是给我自己用的：测完要写报告，能直接拿到数很重要。
+                    另外内置了<b>模拟器</b>，没有仪器也能演示与回归测试；配套的 78 项闭环测试就是靠它跑的。
+                </p>
+
+                <h3>S-03 · 教学 3D 的难点是"讲清楚"而不是"画漂亮"</h3>
+                <p>
+                    霍尔推力器的科普内容大多错在两处：把<b>径向磁场</b>画成轴向或偶极，
+                    以及把电子运动画成"被电场拉着走"而忽略<b>霍尔漂移</b>。
+                    这个页面的取舍是：几何与量级按 SPT-100 一类器件搭，
+                    数值全部取自公开文献（Goebel &amp; Katz 的《Hall Thrusters》与 Morozov 的磁透镜工作），
+                    然后让<b>电压、磁场、流量三个滑杆真的改变粒子行为</b> ——
+                    因为只调数字不联动图像的教学页，看了等于没看。
+                </p>
+                <p>
+                    可点击拆解的部件包括陶瓷放电通道、内 / 外磁极与励磁线圈与磁轭、阳极、空心阴极与航天器底座；
+                    粒子层分别仿真电子的霍尔漂移与回旋、氙原子的电离级联、离子在通道内的加速与羽流膨胀、
+                    以及中和阴极提供的束流中和。剖切面随视角旋转，配合左侧四幅 2D 辅助曲线
+                    （电位、磁场强度、电子能量、离子速度分布）形成"三维看结构、二维看量"的读法。
+                </p>
+            </div>
+
             <p class="fnote" style="font-family:var(--mono);font-size:.88rem;color:var(--dim);margin-top:22px">
-                S-01 / S-02 的界面演示截图待补充；GitHub Pages 有容量限制，站内只放渲染结果图，不放工程本体。
+                站内三个演示均为前端呈现，<b style="color:var(--muted)">无后端</b>：S-01 以 mock 垫片提供模拟接口数据，
+                S-02 的界面按 <code>src</code> 源码复刻并生成模拟迹线，S-03 为原始静态页面（需联网加载 Three.js CDN）。
+                工程本体不在仓库内，GitHub Pages 有容量限制，站内只承载界面与说明。
             </p>
         </div>
     </section>

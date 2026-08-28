@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!--
+  ==========================================================================
+  README · 复刻演示 (replica demo) — HFSS-Python-Optimizer Web 前端
+  ==========================================================================
+  这是什么
+    HFSS-Python-Optimizer 的 web/index.html 原样副本（Vue3 + Element Plus，
+    全部走 unpkg CDN）。界面标记、样式、交互逻辑一字未改；本文件唯一新增的
+    内容是下面这段 mock 垫片和这条说明注释。源项目目录只读，这里是独立副本。
+
+  为什么要垫片
+    原程序需要本机 FastAPI 服务（server.py）+ 本机 HFSS 才能真跑。静态站点上
+    两者都不存在，所有 fetch 会失败，界面会变成一片报错。于是这里拦截
+    window.fetch，只对路径中含 /api/ 的请求返回按 server.py 真实路由结构
+    拼出来的 JSON，其余请求（CDN 脚本与样式）原样放行。
+
+  垫片覆盖的接口（字段名 / 嵌套 / 类型对齐 server.py 的路由与 Pydantic 模型）
+    GET  /api/config                 返回 display 形态（get_config 的转换结果：
+                                     variables 用 min_val/max_val 字符串，
+                                     objectives 的 type 反查为 S参数/Gain/Efficiency）
+    POST /api/config                 写入内存 store，所以「保存配置 → 刷新」能看到自己改的值
+    GET  /api/algorithms             7 个算法元信息（algorithms/__init__.py 注册表原文）
+    GET  /api/templates              预设模板列表（config/default_config.py）
+    GET  /api/templates/{id}         单个模板详情
+    POST /api/config/validate        {valid, errors, warnings}
+    GET  /api/browse                 原生 tkinter 文件对话框的替身，返回合成 .aedt 路径
+                                     （真实接口不是目录树，是弹一个系统对话框）
+    POST /api/start                  启动一次合成优化任务（进度/日志/早停按源码语义推进）
+    GET  /api/status                 running/progress/total/logs/error/traceback/result_dir
+    POST /api/stop                   停止；error 走 server.py 的「用户手动停止」分支
+    GET  /api/results                历史结果目录列表（最多 20 条）
+    GET  /api/results/{name}         Pareto 解数组（parameters / objectives.actual_value）
+    GET  /api/results/{name}/config  该次运行的 config.json
+    GET  /api/logs                   {logs, total}
+    /ws/logs（WebSocket）前端没有用到，垫片不实现。
+
+  已知的两处刻意偏离
+    1) 真实 GET /api/templates 只返回 id/name/description/n_variables/n_objectives
+       五个字段，而前端的 applyTemplate 却直接读列表项里的 tmpl.variables /
+       tmpl.objectives（上游前端的缺口：模板详情接口 /api/templates/{id} 根本没被调用）。
+       为了让「加载模板」在演示里可点，列表项额外附带了这两个字段。
+    2) 页面在 file:// 或静态站点域名下，/api/... 本来会打到不存在的地址；
+       这里全部由垫片接管，不产生任何真实网络请求。
+
+  数据诚实性
+    全部数值都是合成的：项目路径、变量名与边界、目标公式与目标值、迭代进度、
+    日志文本、Pareto 解、历史结果，没有一项来自任何真实仿真或真实工程配置。
+    算法 id / 名称 / 描述、模板名称与变量目标、日志措辞与字段名，则与源码保持一致，
+    以免演示与真实程序对不上。
+
+  怎么关掉 mock
+    把下面 window.__DEMO_MOCK__ = true 改成 false（或删掉那一行），
+    或给页面 URL 加 ?mock=0。关掉后 fetch 走原生实现——把这份文件放回源项目的
+    web/ 目录即可直连真后端：源前端里 const API = ''，请求是同源相对路径，
+    不需要改任何地址。
+  ==========================================================================
+-->
+<script>
+(function () {
+    'use strict';
+
+    /* ===== 显式开关：垫片只在没有真后端时生效 ============================== */
+    if (typeof window.__DEMO_MOCK__ === 'undefined') window.__DEMO_MOCK__ = true;
+    if (window.__DEMO_MOCK__ !== true) return;
+    if (/[?&]mock=0/.test(location.search)) { window.__DEMO_MOCK__ = false; return; }
+    if (typeof window.fetch !== 'function' || typeof window.Response !== 'function') return;
+
+    var NATIVE = window.fetch.bind(window);
+
+    /* ===== 小工具 ========================================================= */
+    function clone(o) { return JSON.parse(JSON.stringify(o)); }
+    function num(v, d) { var n = parseFloat(v); return isNaN(n) ? d : n; }
+    function pad2(n) { return (n < 10 ? '0' : '') + n; }
+    function hms(d) { d = d || new Date(); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()); }
+    function stamp(d) { d = d || new Date(); return '' + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + '_' + pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds()); }
+    function now(d) { d = d || new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + hms(d); }
+    function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = (h * 16777619) >>> 0; } return h >>> 0; }
+    function rng(seed) { var s = (seed >>> 0) || 1; return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+    function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+    var RULE = '============================================================';
+
+    /* 与 server.py 的 type_map / type_reverse_map 一致 */
+    var TYPE_MAP = { 'S参数': 'formula', 'Z参数': 'formula', 'Gain': 'gain', 'Efficiency': 'efficiency' };
+    var REV_TYPE = { 'formula': 'S参数', 's_db': 'S参数', 's_mag': 'S参数', 'gain': 'Gain', 'peak_gain': 'Gain', 'efficiency': 'Efficiency' };
+    var REGISTRY_ORDER = ['mopso', 'nsga2', 'cmaes', 'age_moea2', 'nsga3', 'moead', 'rvea'];
+    var ALGO_CLASS = {
+        mopso: 'MOPSO', nsga2: 'NSGA2', cmaes: 'CMAES', age_moea2: 'AGEMOEA2',
+        nsga3: 'NSGA3', moead: 'MOEAD', rvea: 'RVEA'
+    };
+
+    /* ===== 合成配置（内部形态 == user_config.json 的形态）================== */
+    var CONFIG = {
+        hfss: {
+            project_path: 'D:\\hfss-demo\\vehicle_5g_mimo\\mimo_patch.aedt',
+            design_name: 'HFSSDesign1',
+            setup_name: 'Setup1',
+            sweep_name: 'Sweep_5G',
+            parallel_paths: [
+                'D:\\hfss-demo\\vehicle_5g_mimo\\w2\\mimo_patch.aedt',
+                'D:\\hfss-demo\\vehicle_5g_mimo\\w3\\mimo_patch.aedt'
+            ],
+            n_parallel_instances: 3
+        },
+        variables: [
+            { name: 'Lp',    bounds: [10.0, 14.5], unit: 'mm' },
+            { name: 'Wp',    bounds: [12.0, 20.0], unit: 'mm' },
+            { name: 'FeedX', bounds: [0.5, 6.0],   unit: 'mm' },
+            { name: 'SlotL', bounds: [2.0, 9.0],   unit: 'mm' }
+        ],
+        objectives: [
+            { name: 'S11', type: 'formula', formula: 'dB(S(1,1))', freq_range: [5.15, 5.85], goal: -15.0, target: 'minimize', weight: 1.0 },
+            { name: 'PeakGain', type: 'gain', formula: 'Peak(Gain)', freq: 5.8, gain_type: 'GainTotal', sphere_name: '3D', goal: 5.0, target: 'maximize', weight: 1.0 },
+            { name: 'Iso21', type: 'formula', formula: 'dB(S(2,1))', freq_range: [5.15, 5.85], goal: -15.0, target: 'minimize', weight: 0.8 }
+        ],
+        algorithm: {
+            algorithm: 'mopso', population_size: 24, n_generations: 20,
+            stop_when_goal_met: true, n_solutions_to_stop: 5, use_weights: true,
+            w_min: 0.4, w_max: 0.9, c1: 1.5, c2: 1.5,
+            use_surrogate: true, surrogate_type: 'rf'
+        },
+        run: { output_dir: './optim_results', clear_old_results: false },
+        visualization: { plot_interval: 5 }
+    };
+
+    /* ===== 算法元信息（照抄 algorithms/__init__.py 的 ALGORITHM_REGISTRY）== */
+    var ALGORITHMS = [
+        { id: 'mopso', name: 'MOPSO', full_name: '多目标粒子群优化', description: '粒子群协作搜索，收敛速度快。适合仿真时间较短（< 1min）的问题。', strengths: ['收敛快', '实现简单', '参数少'], weaknesses: ['多样性保持一般', '高维目标（4+）效果下降'], best_for: '2-3 目标，仿真快速出结果', n_objectives: '2-3' },
+        { id: 'nsga2', name: 'NSGA-II', full_name: '非支配排序遗传算法 II', description: '经典多目标进化算法，久经考验。稳健但高维目标时支配崩溃。', strengths: ['稳健可靠', '经典算法', '文献丰富'], weaknesses: ['4+ 目标效果下降', '收敛速度一般'], best_for: '2-3 目标，经典基线对比', n_objectives: '2-3' },
+        { id: 'cmaes', name: 'CMA-ES', full_name: '协方差矩阵自适应进化策略', description: '自动学习变量间的协方差结构，适合变量强耦合的问题。本质是单目标算法。', strengths: ['变量耦合处理强', '自适应步长', '无需调参'], weaknesses: ['仅支持单目标（加权标量化）', '高维计算量大'], best_for: '变量强耦合，单目标或加权和', n_objectives: '1（加权多目标）' },
+        { id: 'age_moea2', name: 'AGE-MOEA2', full_name: '自适应几何估计 MOEA（第二代）', description: '基于超体积的几何自适应选择，前沿质量接近 SMS-EMOA 但快几个数量级。推荐作为默认算法。', strengths: ['收敛快', '前沿质量好', '3-6 目标均优', '自适应几何'], weaknesses: ['需要 pymoo 库'], best_for: '2-6 目标，推荐首选', n_objectives: '2-6' },
+        { id: 'nsga3', name: 'NSGA-III', full_name: '第三代非支配排序遗传算法', description: '使用参考点引导多样性，替代拥挤距离。4+ 目标时显著优于 NSGA-II。', strengths: ['高维目标效果好', '前沿分布均匀', '参考点引导'], weaknesses: ['2 目标不如 NSGA-II', '需要 pymoo 库'], best_for: '4+ 目标，高维问题', n_objectives: '3-10' },
+        { id: 'moead', name: 'MOEA/D-PBI', full_name: '基于分解的多目标进化算法', description: '将多目标分解为多个标量子问题，通过邻域协作搜索。天然产生均匀分布的解。', strengths: ['前沿均匀', '变量耦合处理', '适合代理模型'], weaknesses: ['参数 theta 敏感', '需要 pymoo 库'], best_for: '2-4 目标，需要均匀解集', n_objectives: '2-4' },
+        { id: 'rvea', name: 'RVEA', full_name: '参考向量引导进化算法', description: '角度惩罚距离 + 参考向量自适应。特别适合目标量纲差异大的问题。', strengths: ['目标尺度自适应', '高维效果好', '参考向量自适应'], weaknesses: ['参数较多', '需要 pymoo 库'], best_for: '4+ 目标，目标尺度差异大', n_objectives: '3-10' }
+    ];
+
+    /* ===== 预设模板（照抄 config/default_config.py）======================= */
+    var TEMPLATES = [
+        { id: 'blank', name: '空白模板', description: '从空白开始，自定义所有变量和目标', variables: [], objectives: [] },
+        {
+            id: 'antenna_s11_gain', name: '天线 - S11 + 增益',
+            description: '天线阻抗匹配与增益联合优化。适用于微带天线、贴片天线等。',
+            variables: [
+                { name: 'patch_length', bounds: [5.0, 20.0], unit: 'mm' },
+                { name: 'patch_width', bounds: [5.0, 20.0], unit: 'mm' },
+                { name: 'feed_offset', bounds: [0.5, 5.0], unit: 'mm' }
+            ],
+            objectives: [
+                { name: 'S11', type: 'formula', formula: 'dB(S(1,1))', goal: -15.0, target: 'minimize', weight: 1.0, freq_range: [2.4, 2.5], description: '回波损耗 (越低越好)' },
+                { name: 'PeakGain', type: 'formula', formula: 'Peak(Gain)', goal: 6.0, target: 'maximize', weight: 1.0, freq: 2.45, description: '峰值增益 (越高越好)' }
+            ]
+        },
+        {
+            id: 'antenna_wideband', name: '天线 - 宽带匹配',
+            description: '宽带天线阻抗匹配优化。适用于超宽带天线、多频段天线。',
+            variables: [
+                { name: 'slot_length', bounds: [5.0, 30.0], unit: 'mm' },
+                { name: 'slot_width', bounds: [0.5, 5.0], unit: 'mm' },
+                { name: 'stub_length', bounds: [1.0, 10.0], unit: 'mm' }
+            ],
+            objectives: [
+                { name: 'S11_wideband', type: 'formula', formula: 'dB(S(1,1))', goal: -10.0, target: 'minimize', weight: 1.0, freq_range: [3.1, 10.6], constraint: 'max', description: '全频段 S11 最大值 (越低越好)' }
+            ]
+        },
+        {
+            id: 'antenna_efficiency', name: '天线 - S11 + 增益 + 效率',
+            description: '天线综合优化：阻抗匹配 + 增益 + 辐射效率三目标。',
+            variables: [
+                { name: 'patch_length', bounds: [5.0, 20.0], unit: 'mm' },
+                { name: 'patch_width', bounds: [5.0, 20.0], unit: 'mm' },
+                { name: 'substrate_h', bounds: [0.5, 3.0], unit: 'mm' }
+            ],
+            objectives: [
+                { name: 'S11', type: 'formula', formula: 'dB(S(1,1))', goal: -15.0, target: 'minimize', weight: 1.0, freq_range: [2.4, 2.5], description: '回波损耗' },
+                { name: 'PeakGain', type: 'formula', formula: 'Peak(Gain)', goal: 6.0, target: 'maximize', weight: 1.0, freq: 2.45, description: '峰值增益' },
+                { name: 'RadiationEff', type: 'formula', formula: 'efficiency', goal: 0.8, target: 'maximize', weight: 0.5, freq: 2.45, description: '辐射效率' }
+            ]
+        },
+        {
+            id: 'filter_bandpass', name: '滤波器 - 带通',
+            description: '带通滤波器优化：通带插入损耗 + 带外抑制。',
+            variables: [
+                { name: 'resonator_length', bounds: [5.0, 30.0], unit: 'mm' },
+                { name: 'coupling_gap', bounds: [0.1, 2.0], unit: 'mm' },
+                { name: 'feed_width', bounds: [0.5, 3.0], unit: 'mm' }
+            ],
+            objectives: [
+                { name: 'S21_passband', type: 'formula', formula: 'dB(S(2,1))', goal: -1.0, target: 'maximize', weight: 1.0, freq_range: [2.4, 2.5], constraint: 'min', description: '通带插入损耗 (越高越好, 即损耗越小)' },
+                { name: 'S11_passband', type: 'formula', formula: 'dB(S(1,1))', goal: -15.0, target: 'minimize', weight: 1.0, freq_range: [2.4, 2.5], constraint: 'max', description: '通带回波损耗 (越低越好)' },
+                { name: 'S21_stopband', type: 'formula', formula: 'dB(S(2,1))', goal: -20.0, target: 'minimize', weight: 1.0, freq_range: [1.0, 2.0], constraint: 'max', description: '带外抑制 (越低越好)' }
+            ]
+        },
+        {
+            id: 'coupler_directional', name: '耦合器 - 定向耦合器',
+            description: '定向耦合器优化：耦合度 + 隔离度 + 回波损耗。',
+            variables: [
+                { name: 'couple_length', bounds: [5.0, 30.0], unit: 'mm' },
+                { name: 'couple_gap', bounds: [0.1, 2.0], unit: 'mm' },
+                { name: 'line_width', bounds: [0.5, 3.0], unit: 'mm' }
+            ],
+            objectives: [
+                { name: 'Coupling', type: 'formula', formula: 'dB(S(3,1))', goal: -10.0, target: 'maximize', weight: 1.0, freq: 2.45, description: '耦合度 (目标 -10dB 左右)' },
+                { name: 'Isolation', type: 'formula', formula: 'dB(S(4,1))', goal: -20.0, target: 'minimize', weight: 1.0, freq: 2.45, description: '隔离度 (越低越好)' },
+                { name: 'ReturnLoss', type: 'formula', formula: 'dB(S(1,1))', goal: -15.0, target: 'minimize', weight: 1.0, freq: 2.45, description: '回波损耗 (越低越好)' }
+            ]
+        },
+        {
+            id: 'impedance_matching', name: '阻抗匹配网络',
+            description: '阻抗匹配优化：在指定频段实现最小回波损耗。',
+            variables: [
+                { name: 'L1', bounds: [0.5, 10.0], unit: 'nH' },
+                { name: 'C1', bounds: [0.1, 5.0], unit: 'pF' },
+                { name: 'L2', bounds: [0.5, 10.0], unit: 'nH' },
+                { name: 'C2', bounds: [0.1, 5.0], unit: 'pF' }
+            ],
+            objectives: [
+                { name: 'S11', type: 'formula', formula: 'dB(S(1,1))', goal: -20.0, target: 'minimize', weight: 1.0, freq_range: [1.0, 3.0], constraint: 'max', description: '回波损耗 (全频段最大值越低越好)' }
+            ]
+        }
+    ];
+
+    /* ===== Pareto 解合成器 ================================================ */
+    /* 相邻目标沿同一标量 u 反向变化，于是呈现真实的权衡前沿；数值全是编的。 */
+    function makeSolutions(meta) {
+        var vs = meta.variables || [], os = meta.objectives || [];
+        if (!vs.length || !os.length) return [];
+        var r = rng(hash(meta.name));
+        var n = 8 + Math.floor(r() * 7);
+        var out = [];
+        for (var i = 0; i < n; i++) {
+            var u = n === 1 ? 0.5 : i / (n - 1);
+            var params = {}, objectives = {}, j, k;
+            for (j = 0; j < vs.length; j++) {
+                var v = vs[j], b = v.bounds || [0, 1];
+                var lo = num(b[0], 0), hi = num(b[1], 1);
+                var shape = clamp01(u * (0.7 + 0.4 * r()) + (j % 2 ? 0.16 : -0.05) * Math.sin(u * Math.PI));
+                params[v.name] = +(lo + (hi - lo) * shape).toFixed(4);
+            }
+            for (k = 0; k < os.length; k++) {
+                var o = os[k], goal = num(o.goal, 0);
+                var spread = Math.abs(goal) > 3 ? Math.max(3, Math.abs(goal) * 0.55) : 0.35;
+                var ue = (k % 2 === 0) ? u : (1 - u);
+                var raw = (o.target === 'maximize')
+                    ? goal + spread * 0.45 - spread * 0.9 * ue
+                    : goal - spread * 0.45 + spread * 0.9 * ue;
+                raw += (r() - 0.5) * spread * 0.10;
+                var val = +raw.toFixed(4);
+                objectives[o.name] = {
+                    value: val, actual_value: val,
+                    goal_met: o.target === 'minimize' ? val <= goal : val >= goal
+                };
+            }
+            out.push({ parameters: params, objectives: objectives, is_predicted: !!(meta.surrogate && r() < 0.3) });
+        }
+        return out;
+    }
+
+    function mkRun(name, created, algoId, pop, gen, nObj) {
+        var objs = clone(CONFIG.objectives.slice(0, nObj));
+        var cfg = {
+            hfss: clone(CONFIG.hfss),
+            variables: clone(CONFIG.variables),
+            objectives: objs,
+            algorithm: {
+                algorithm: algoId, population_size: pop, n_generations: gen,
+                stop_when_goal_met: algoId === 'mopso', n_solutions_to_stop: 5,
+                use_surrogate: algoId === 'mopso', surrogate_type: 'rf'
+            },
+            run: { output_dir: './optim_results' }
+        };
+        var sols = makeSolutions({ name: name, variables: cfg.variables, objectives: objs, surrogate: cfg.algorithm.use_surrogate });
+        return { name: name, created: created, cfg: cfg, solutions: sols };
+    }
+
+    var RUNS = [
+        mkRun('age_moea2_20260814_211402', '2026-08-14 21:31:47', 'age_moea2', 30, 30, 3),
+        mkRun('nsga2_20260806_194211', '2026-08-06 20:04:12', 'nsga2', 40, 25, 2),
+        mkRun('mopso_20260729_093218', '2026-07-29 09:51:33', 'mopso', 24, 30, 3)
+    ];
+
+    /* ===== 内存日志（模拟 utils/log_manager.py 的 memory buffer）========== */
+    function detectLevel(m) {
+        var u = m.toUpperCase();
+        if (u.indexOf('ERROR') > -1 || u.indexOf('EXCEPTION') > -1) return 'error';
+        if (m.indexOf('[WARN]') > -1 || u.indexOf('WARNING') > -1) return 'warning';
+        if (m.indexOf('[OK]') > -1 || u.indexOf('SUCCESS') > -1) return 'success';
+        return 'info';
+    }
+    var LOGS = [];
+    function pushLog(m) { LOGS.push({ time: hms(), message: m, level: detectLevel(m) }); }
+    ['[SERVER] HFSS 仿真优化服务器启动',
+     '[SERVER] 演示模式：/api 请求由页面内置 mock 垫片应答，无真实后端',
+     '[SERVER] 界面为复刻演示，配置与结果数值均为合成模拟'
+    ].forEach(pushLog);
+
+    /* ===== 合成优化任务运行器 ============================================= */
+    var SIM = null;
+    var SIM_DURATION = 34000;   /* 一次「运行」在演示里的墙钟时长 (ms) */
+
+    function genScript(sim) {
+        var pop = sim.pop, gen = sim.gen, endGen = sim.endGen, algo = sim.algo;
+        var inst = 1 + (CONFIG.hfss.parallel_paths || []).length;
+        var events = [];
+        var w, g;
+        function at(p, lines) { events.push({ p: p, m: lines }); }
+        var head = [
+            '[START] HFSS 优化任务开始', RULE,
+            '[CONFIG] 算法: ' + algo,
+            '[CONFIG] 变量数: ' + CONFIG.variables.length,
+            '[CONFIG] 目标数: ' + CONFIG.objectives.length, RULE,
+            '[RUN] 开始优化任务', '[RUN] 算法: ' + algo,
+            '[OK] Config saved: ' + sim.dir + '/config.json',
+            '[PROGRESS] TOTAL:' + sim.total,
+            '[STEP 1] Importing algorithms...',
+            "[STEP 1] Algorithms imported OK. Registry: ['" + REGISTRY_ORDER.join("', '") + "']",
+            "[STEP 2] Resolving algorithm '" + algo + "'...",
+            "[STEP 2] Algorithm '" + algo + "' found in registry",
+            "[STEP 2] AlgorithmClass: <class 'algorithms." + algo + '.' + (ALGO_CLASS[algo] || 'MOPSO') + "'>",
+            '[STEP 2] Optimizer created',
+            '[STEP 3] Creating visualizer...',
+            '[STEP 3] Visualizer created OK',
+            '[STEP 4] About to call optimizer.run()...',
+            '[OK] Multi-process evaluation configured: ' + inst + ' HFSS instance(s)',
+            '[MultiProcess] Waiting for ' + inst + ' HFSS instances to start...',
+            '[MultiProcess] This may take 1-2 minutes when starting multiple HFSS instances'
+        ];
+        for (w = 1; w <= inst; w++) {
+            head.push('[Worker ' + w + '] Ready (' + w + '/' + inst + ') - ' + (30 + w * 9) + 's - port: ' + (54911 + w));
+        }
+        head = head.concat([
+            RULE,
+            algo === 'mopso' ? 'MULTI-OBJECTIVE PARTICLE SWARM OPTIMIZATION (MOPSO)'
+                : algo === 'nsga2' ? 'NON-DOMINATED SORTING GENETIC ALGORITHM II'
+                : algo === 'cmaes' ? 'CMA-ES (weighted scalarization)'
+                : (ALGO_CLASS[algo] || algo) + ' via pymoo adapter',
+            RULE,
+            'Population size: ' + pop,
+            'Generations: ' + gen
+        ]);
+        if (algo === 'mopso') {
+            head.push('Inertia weight: ' + num(CONFIG.algorithm.w_min, 0.4) + '-' + num(CONFIG.algorithm.w_max, 0.9) + ' (adaptive)');
+            head.push('Learning factors: c1=' + num(CONFIG.algorithm.c1, 2.0) + ', c2=' + num(CONFIG.algorithm.c2, 2.0));
+        }
+        head.push(RULE);
+        if (inst > 1) head.push('[Initialization] Multi-process evaluating ' + pop + ' particles with ' + inst + ' processes...');
+        else head.push('[Initialization] Evaluating ' + pop + ' particles...');
+        head.push('[MultiProcess] Waiting for ' + pop + ' results...');
+        at(0, head);
+        at(Math.max(1, Math.round(pop * 0.35)), ['[MultiProcess] Progress: ' + Math.round(pop * 0.4) + '/' + pop]);
+        at(Math.max(2, Math.round(pop * 0.7)), ['[MultiProcess] Progress: ' + Math.round(pop * 0.85) + '/' + pop]);
+        at(pop, ['[MultiProcess] Progress: ' + pop + '/' + pop,
+                 '[INFO] Archive size after initialization: ' + sim.arch0]);
+
+        for (g = 1; g <= endGen; g++) {
+            var lines = ['[Generation ' + g + '/' + gen + ']'];
+            if (algo === 'mopso') {
+                var wmax = num(CONFIG.algorithm.w_max, 0.9), wmin = num(CONFIG.algorithm.w_min, 0.4);
+                var wi = wmax - (wmax - wmin) * (g - 1) / gen;
+                lines.push('  Archive size: ' + sim.arch[g] + ', Inertia: ' + wi.toFixed(3));
+            } else {
+                lines.push('  Pareto front: ' + sim.arch[g] + ' solutions');
+            }
+            lines.push('[MultiProcess] Progress: ' + pop + '/' + pop);
+            lines.push('[PROGRESS] ' + Math.min(pop * (g + 1), sim.endP));
+            if (sim.early && g === endGen) {
+                lines.push('[INFO] Goals check: ' + sim.nSolutions + ' solutions meet goals (threshold: ' + sim.threshold + ')');
+                lines.push('[INFO] Early stop: ' + sim.nSolutions + ' solutions meet goals');
+            }
+            at(Math.min(pop * (g + 1), sim.endP), lines);
+        }
+        at(sim.endP, [
+            '[STEP 4] optimizer.run() returned! ' + sim.nSolutions + ' solutions in ' + sim.secs + 's',
+            '[SUCCESS] 优化完成! 用时: ' + sim.secs + 's',
+            '[SUCCESS] Pareto 解数量: ' + sim.nSolutions,
+            '[SUCCESS] 结果保存至: ' + sim.dir,
+            RULE, 'OPTIMIZATION COMPLETE', RULE,
+            '  n_evaluations: ' + sim.endP,
+            '  real_evaluations: ' + (sim.surrogate ? Math.round(sim.endP * 0.62) : sim.endP),
+            '  pareto_size: ' + sim.nSolutions,
+            '  best_objectives: [' + sim.best.join(', ') + ']',
+            '  elapsed_time: ' + sim.secs + 's'
+        ]);
+        return events.sort(function (x, y) { return x.p - y.p; });
+    }
+
+    function startSim() {
+        var a = CONFIG.algorithm;
+        var algo = a.algorithm || 'age_moea2';
+        var pop = Math.max(5, num(a.population_size, 30));
+        var gen = Math.max(1, num(a.n_generations, 30));
+        var total = pop + pop * gen;                    /* run.py: total_evals = pop + pop*n_gen */
+        var r = rng(Date.now() & 0x7fffffff);
+        var early = !!a.stop_when_goal_met;
+        var endGen = early ? Math.max(2, Math.round(gen * (0.55 + r() * 0.3))) : gen;
+        var sim = {
+            algo: algo, pop: pop, gen: gen, total: total, early: early,
+            endGen: endGen, endP: Math.min(total, pop * (endGen + 1)),
+            threshold: Math.max(1, num(a.n_solutions_to_stop, 5)),
+            surrogate: !!a.use_surrogate,
+            t0: Date.now(), progress: 0, running: true, error: null, traceback: null,
+            dir: './optim_results/' + algo + '_' + stamp()
+        };
+        sim.solutions = makeSolutions({
+            name: sim.dir, variables: CONFIG.variables, objectives: CONFIG.objectives, surrogate: sim.surrogate
+        });
+        sim.nSolutions = sim.solutions.length;
+        sim.secs = (SIM_DURATION / 1000).toFixed(1);
+        sim.arch0 = Math.max(3, Math.round(pop * 0.4));
+        sim.arch = {};
+        for (var g = 1; g <= sim.endGen; g++) {
+            sim.arch[g] = Math.min(sim.nSolutions + 6, sim.arch0 + Math.round(g * pop * 0.12));
+        }
+        sim.best = Object.keys(sim.solutions[0].objectives).map(function (k) {
+            return sim.solutions[0].objectives[k].actual_value.toFixed(3);
+        });
+        sim.events = genScript(sim);
+        sim.cursor = 0;
+        LOGS = [];                                      /* server.py: LogManager.clear_logs() */
+        SIM = sim;
+        return sim;
+    }
+
+    function advance() {
+        if (!SIM || !SIM.running) return;
+        var frac = clamp01((Date.now() - SIM.t0) / SIM_DURATION);
+        SIM.progress = Math.round(SIM.endP * frac);
+        var ev = SIM.events[SIM.cursor];
+        while (ev && ev.p <= SIM.progress) {
+            for (var i = 0; i < ev.m.length; i++) pushLog(ev.m[i]);
+            SIM.cursor++;
+            ev = SIM.events[SIM.cursor];
+        }
+        if (frac >= 1) finishRun(null);
+    }
+
+    function finishRun(stopped) {
+        if (!SIM) return;
+        SIM.running = false;
+        if (stopped) {
+            pushLog('[STOP] stop_event.set() — 停止信号已发送');
+            pushLog('[STOP] progress_callback 检测到停止信号，中断优化');
+            pushLog('[STOP] 正在清理 HFSS worker 进程...');
+            pushLog('[STOP] HFSS worker 进程已清理');
+            pushLog('[WARN] Interrupted by user');
+            SIM.error = '用户手动停止';
+            return;                                      /* 中断路径不写 results.json */
+        }
+        RUNS.unshift({
+            name: SIM.dir.split('/').pop(), created: now(),
+            cfg: {
+                hfss: clone(CONFIG.hfss), variables: clone(CONFIG.variables),
+                objectives: clone(CONFIG.objectives), algorithm: clone(CONFIG.algorithm),
+                run: clone(CONFIG.run)
+            },
+            solutions: SIM.solutions
+        });
+        if (RUNS.length > 20) RUNS.length = 20;          /* server.py: results[:20] */
+    }
+
+    /* ===== 请求分发 ======================================================= */
+    var browseQueue = [];
+    function browse() {
+        if (!browseQueue.length) {
+            browseQueue = [
+                'D:\\hfss-demo\\vehicle_5g_mimo\\mimo_patch.aedt',
+                'D:\\hfss-demo\\dual_band_5g\\gnss_5g_combo.aedt',
+                'D:\\hfss-demo\\slot_filter\\bpf_3p5g.aedt',
+                'D:\\hfss-demo\\cpa_array\\array_4x4.aedt'
+            ];
+        }
+        var p = browseQueue.shift();
+        browseQueue.push(p);                              /* 轮流给出，像真的在翻目录 */
+        return { status: 'ok', path: p };
+    }
+
+    function displayConfig() {
+        return {
+            hfss: clone(CONFIG.hfss),
+            variables: (CONFIG.variables || []).map(function (v) {
+                var b = v.bounds || [0, 1];
+                return {
+                    name: v.name, min_val: String(b[0] === undefined ? 0 : b[0]),
+                    max_val: String(b[1] === undefined ? 1 : b[1]), unit: v.unit || 'mm'
+                };
+            }),
+            objectives: (CONFIG.objectives || []).map(function (o) {
+                var freq = '';
+                if (o.freq_range) freq = o.freq_range[0] + '-' + o.freq_range[1];
+                else if (o.freq !== undefined && o.freq !== null) freq = String(o.freq);
+                return {
+                    name: o.name, type: REV_TYPE[o.type] || 'S参数', freq: freq,
+                    formula: o.formula || 'dB(S(1,1))',
+                    goal: o.goal === undefined ? -10 : o.goal,
+                    target: o.target || 'minimize',
+                    weight: o.weight === undefined ? 1.0 : o.weight
+                };
+            }),
+            algorithm: clone(CONFIG.algorithm),
+            run: clone(CONFIG.run),
+            visualization: clone(CONFIG.visualization)
+        };
+    }
+
+    function ingest(payload) {
+        if (!payload || typeof payload !== 'object') return;
+        if (payload.hfss) CONFIG.hfss = Object.assign(clone(CONFIG.hfss), clone(payload.hfss));
+        if (!CONFIG.hfss.parallel_paths) CONFIG.hfss.parallel_paths = [];
+        if (payload.variables) {
+            CONFIG.variables = payload.variables.map(function (v) {
+                var b = (v.bounds && v.bounds.length === 2) ? v.bounds : [num(v.min_val, 0), num(v.max_val, 1)];
+                return { name: v.name || '', bounds: [num(b[0], 0), num(b[1], 1)], unit: v.unit || 'mm' };
+            });
+        }
+        if (payload.objectives) {
+            CONFIG.objectives = payload.objectives.map(function (o) {
+                var internal = TYPE_MAP[o.type] || o.type || 'formula';
+                var r = {
+                    name: o.name || '', type: internal, formula: o.formula || 'dB(S(1,1))',
+                    goal: num(o.goal, -10), target: o.target || 'minimize', weight: num(o.weight, 1.0)
+                };
+                if (o.freq_range && o.freq_range.length === 2) r.freq_range = o.freq_range;
+                else if (o.freq !== undefined && o.freq !== null && o.freq !== '') {
+                    if (typeof o.freq === 'string' && o.freq.indexOf('-') > -1) {
+                        var ps = o.freq.split('-');
+                        if (ps.length === 2 && !isNaN(parseFloat(ps[0])) && !isNaN(parseFloat(ps[1]))) {
+                            r.freq_range = [parseFloat(ps[0]), parseFloat(ps[1])];
+                        } else { r.freq = o.freq; }
+                    } else {
+                        var f = parseFloat(o.freq);
+                        r.freq = isNaN(f) ? o.freq : f;
+                    }
+                }
+                return r;
+            });
+        }
+        if (payload.algorithm) CONFIG.algorithm = Object.assign(clone(CONFIG.algorithm), clone(payload.algorithm));
+        if (payload.run) CONFIG.run = Object.assign(clone(CONFIG.run), clone(payload.run));
+        if (payload.visualization) CONFIG.visualization = Object.assign(clone(CONFIG.visualization), clone(payload.visualization));
+    }
+
+    function statusPayload() {
+        advance();
+        return {
+            running: !!(SIM && SIM.running),
+            progress: SIM ? SIM.progress : 0,
+            total: SIM ? SIM.total : 0,
+            logs: LOGS.slice(-50),                        /* server.py: get_recent_logs(50) */
+            error: SIM ? SIM.error : null,
+            traceback: SIM ? SIM.traceback : null,
+            result_dir: SIM ? SIM.dir : null
+        };
+    }
+
+    function findRun(name) {
+        for (var i = 0; i < RUNS.length; i++) if (RUNS[i].name === name) return RUNS[i];
+        return null;
+    }
+
+    function route(method, p, body) {
+        var m, i;
+        if (p === '/api/config') {
+            if (method === 'POST') { ingest(body); return { status: 'ok', message: '配置已保存' }; }
+            return displayConfig();
+        }
+        if (p === '/api/config/validate') {
+            var errors = [], warnings = [];
+            if (!CONFIG.hfss.project_path) warnings.push('未配置 HFSS 项目路径');
+            if (!CONFIG.variables.length) errors.push('未配置优化变量');
+            if (!CONFIG.objectives.length) errors.push('未配置优化目标');
+            return { valid: errors.length === 0, errors: errors, warnings: warnings };
+        }
+        if (p === '/api/algorithms') return { algorithms: clone(ALGORITHMS) };
+        if (p === '/api/templates') {
+            return {
+                templates: TEMPLATES.map(function (t) {
+                    return {
+                        id: t.id, name: t.name, description: t.description,
+                        n_variables: t.variables.length, n_objectives: t.objectives.length,
+                        /* 刻意附带（真实接口没有）— 见顶部 README「已知的两处刻意偏离」*/
+                        variables: clone(t.variables), objectives: clone(t.objectives)
+                    };
+                })
+            };
+        }
+        m = /^\/api\/templates\/([\w.\-]+)$/.exec(p);
+        if (m) {
+            var t = null;
+            for (i = 0; i < TEMPLATES.length; i++) if (TEMPLATES[i].id === m[1]) t = TEMPLATES[i];
+            if (!t) return { __status: 404, detail: '模板不存在' };
+            return clone(t);
+        }
+        if (p === '/api/browse') return browse();
+        if (p === '/api/start') {
+            if (SIM && SIM.running) return { __status: 400, detail: '优化正在运行中' };
+            if (!CONFIG.hfss.project_path) return { __status: 400, detail: '请先配置 HFSS 项目路径' };
+            if (!CONFIG.variables.length) return { __status: 400, detail: '请先配置优化变量' };
+            if (!CONFIG.objectives.length) return { __status: 400, detail: '请先配置优化目标' };
+            startSim();
+            return { status: 'started', message: '优化已启动' };
+        }
+        if (p === '/api/stop') {
+            if (SIM && SIM.running) finishRun(true);
+            return { status: 'stopped', message: '已发送停止信号' };
+        }
+        if (p === '/api/status') return statusPayload();
+        if (p === '/api/logs') {
+            var logs = LOGS.slice(-100);
+            return { logs: logs, total: logs.length };
+        }
+        if (p === '/api/results') {
+            return {
+                results: RUNS.slice(0, 20).map(function (r) {
+                    return {
+                        name: r.name, path: './optim_results/' + r.name, created: r.created,
+                        has_config: true, has_results: true, solutions_count: r.solutions.length
+                    };
+                })
+            };
+        }
+        m = /^\/api\/results\/([^/]+)\/config$/.exec(p);
+        if (m) {
+            var rc = findRun(decodeURIComponent(m[1]));
+            if (!rc) return { __status: 404, detail: '配置文件不存在' };
+            return clone(rc.cfg);
+        }
+        m = /^\/api\/results\/([^/]+)$/.exec(p);
+        if (m) {
+            var r2 = findRun(decodeURIComponent(m[1]));
+            if (!r2) return { __status: 404, detail: '结果不存在' };
+            return clone(r2.solutions);
+        }
+        return null;
+    }
+
+    function apiPath(input) {
+        var raw = (typeof input === 'string') ? input
+            : (input && input.url) ? input.url : String(input);
+        var path;
+        try { path = new URL(raw, location.href).pathname; } catch (e) { path = raw; }
+        var i = path.indexOf('/api/');
+        return i < 0 ? null : path.slice(i);
+    }
+
+    window.fetch = function (input, init) {
+        if (window.__DEMO_MOCK__ !== true) return NATIVE(input, init);
+        var p = apiPath(input);
+        if (!p) return NATIVE(input, init);
+        var method = ((init && init.method) || (input && input.method) || 'GET').toUpperCase();
+        var body = init && init.body;
+        if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = null; } }
+        var out;
+        try { out = route(method, p, body); } catch (e2) {
+            out = { __status: 500, detail: 'demo mock error: ' + (e2 && e2.message) };
+        }
+        if (out === null || out === undefined) return NATIVE(input, init);
+        var status = out.__status || 200;
+        if (out.__status) delete out.__status;
+        var text = JSON.stringify(out);
+        return new Promise(function (resolve) {
+            window.setTimeout(function () {
+                resolve(new Response(text, {
+                    status: status,
+                    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+                }));
+            }, 30 + Math.random() * 90);
+        });
+    };
+
+    /* ===== 演示水印：让看的人知道这些数据不是真的 ======================== */
+    var sheet = document.createElement('style');
+    sheet.textContent = '.demo-mock-badge{position:fixed;right:16px;bottom:16px;z-index:4000;' +
+        'font:11px/1.6 "Segoe UI","Microsoft YaHei",sans-serif;' +
+        'color:#e6d5c3;background:rgba(20,20,20,.88);border:1px solid rgba(207,138,82,.5);' +
+        'border-radius:2px;padding:6px 11px;max-width:44ch;pointer-events:none}';
+    var MARK = '<div class="demo-mock-badge">演示模式 · 数值为合成模拟，本页无 FastAPI 后端与 HFSS。' +
+        '点「运行控制 → 开始优化」可看一次合成任务从启动、迭代到早停的全过程。</div>';
+    function plant() {
+        document.head.appendChild(sheet);
+        document.body.insertAdjacentHTML('beforeend', MARK);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', plant);
+    else plant();
+})();
+</script>
+
+    <title>HFSS Optimizer - 仿真优化平台</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/theme-chalk/dark/css-vars.css">
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+        body { background: var(--el-bg-color); color: var(--el-text-color-primary); }
+        #app { height: 100%; }
+
+        .app-layout { display: flex; height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 200px;
+            background: var(--el-bg-color-overlay);
+            border-right: 1px solid var(--el-border-color-light);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .sidebar-logo {
+            padding: 20px 16px 16px;
+            border-bottom: 1px solid var(--el-border-color-light);
+        }
+        .sidebar-logo h1 {
+            margin: 0; font-size: 16px; font-weight: 700;
+            color: var(--el-color-primary); display: flex; align-items: center; gap: 8px;
+        }
+        .sidebar-logo .version { font-size: 11px; color: var(--el-text-color-secondary); margin-top: 4px; }
+        .sidebar-nav { flex: 1; padding: 8px 0; }
+        .nav-item {
+            padding: 10px 20px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+            color: var(--el-text-color-regular); transition: all 0.15s; font-size: 13px;
+            border-left: 3px solid transparent;
+        }
+        .nav-item:hover { background: var(--el-fill-color-light); color: var(--el-text-color-primary); }
+        .nav-item.active {
+            background: var(--el-color-primary-light-9);
+            color: var(--el-color-primary);
+            border-left-color: var(--el-color-primary);
+            font-weight: 600;
+        }
+
+        /* Main */
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .page-title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+        .page-desc { color: var(--el-text-color-secondary); font-size: 13px; margin: 0 0 20px; }
+
+        .section-card { margin-bottom: 20px; }
+        .section-card .el-card__header { padding: 12px 20px; font-weight: 600; font-size: 14px; }
+
+        /* Log viewer */
+        .log-box {
+            background: var(--el-fill-color-darker); border-radius: 6px; padding: 12px;
+            height: 420px; overflow-y: auto; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 12px;
+            border: 1px solid var(--el-border-color-lighter);
+        }
+        .log-line { margin-bottom: 1px; white-space: pre-wrap; word-break: break-all; line-height: 1.6; }
+        .log-info { color: var(--el-text-color-primary); }
+        .log-warn { color: var(--el-color-warning); }
+        .log-error { color: var(--el-color-danger); }
+        .log-success { color: var(--el-color-success); }
+        .log-time { color: var(--el-text-color-placeholder); margin-right: 4px; }
+
+        /* Solution cards */
+        .sol-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+        .sol-card { background: var(--el-fill-color-light); border-radius: 8px; padding: 14px; }
+        .sol-card h4 { margin: 0 0 8px; color: var(--el-color-primary); font-size: 13px; }
+        .sol-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; border-bottom: 1px solid var(--el-border-color-extra-light); }
+        .sol-label { color: var(--el-text-color-secondary); }
+        .sol-value { font-family: monospace; color: var(--el-text-color-primary); }
+
+        /* Template cards */
+        .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .template-card {
+            cursor: pointer; border: 2px solid transparent; transition: all 0.2s;
+        }
+        .template-card:hover { border-color: var(--el-color-primary-light-5); }
+        .template-card.selected { border-color: var(--el-color-primary); }
+
+        /* Algorithm info */
+        .algo-info { padding: 12px 0; }
+        .algo-tag { margin-right: 6px; margin-bottom: 4px; }
+
+        /* Native select (workaround for el-option rendering bug) */
+        .native-select {
+            width: 100%; height: 32px; padding: 0 8px; border-radius: 4px;
+            border: 1px solid var(--el-border-color); background: var(--el-fill-color-blank);
+            color: var(--el-text-color-primary); font-size: 14px; cursor: pointer;
+            outline: none; transition: border-color 0.2s;
+        }
+        .native-select:hover { border-color: var(--el-color-primary); }
+        .native-select:focus { border-color: var(--el-color-primary); box-shadow: 0 0 0 1px var(--el-color-primary-light-7); }
+        .native-select option { background: var(--el-bg-color-overlay); color: var(--el-text-color-primary); }
+
+        /* Native input with datalist */
+        .native-input {
+            height: 32px; padding: 0 8px; border-radius: 4px;
+            border: 1px solid var(--el-border-color); background: var(--el-fill-color-blank);
+            color: var(--el-text-color-primary); font-size: 14px;
+            outline: none; transition: border-color 0.2s;
+        }
+        .native-input:hover { border-color: var(--el-color-primary); }
+        .native-input:focus { border-color: var(--el-color-primary); box-shadow: 0 0 0 1px var(--el-color-primary-light-7); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { width: 60px; }
+            .sidebar-logo h1 span, .sidebar-logo .version, .nav-text { display: none; }
+            .nav-item { justify-content: center; padding: 12px; }
+            .main-content { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <h1>
+                    <el-icon :size="20"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></el-icon>
+                    <span>HFSS Optimizer</span>
+                </h1>
+                <div class="version">v2026.6 | 仿真优化平台</div>
+            </div>
+            <div class="sidebar-nav">
+                <div class="nav-item" :class="{active: page === 'project'}" @click="page = 'project'">
+                    <el-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></el-icon>
+                    <span class="nav-text">项目配置</span>
+                </div>
+                <div class="nav-item" :class="{active: page === 'variables'}" @click="page = 'variables'">
+                    <el-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></el-icon>
+                    <span class="nav-text">优化变量</span>
+                </div>
+                <div class="nav-item" :class="{active: page === 'objectives'}" @click="page = 'objectives'">
+                    <el-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></el-icon>
+                    <span class="nav-text">优化目标</span>
+                </div>
+                <div class="nav-item" :class="{active: page === 'algorithm'}" @click="page = 'algorithm'">
+                    <el-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></el-icon>
+                    <span class="nav-text">算法配置</span>
+                </div>
+                <div class="nav-item" :class="{active: page === 'run'}" @click="page = 'run'">
+                    <el-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></el-icon>
+                    <span class="nav-text">运行控制</span>
+                </div>
+                <div class="nav-item" :class="{active: page === 'results'}" @click="page = 'results'; loadResults()">
+                    <el-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></el-icon>
+                    <span class="nav-text">结果分析</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+
+            <!-- ==================== 项目配置 ==================== -->
+            <div v-if="page === 'project'">
+                <h2 class="page-title">项目配置</h2>
+                <p class="page-desc">配置 HFSS 仿真项目和预设模板</p>
+
+                <!-- 模板选择 -->
+                <el-card class="section-card" shadow="never">
+                    <template #header>快速开始：选择预设模板</template>
+                    <div class="template-grid">
+                        <el-card v-for="t in templates" :key="t.id"
+                            class="template-card" shadow="hover"
+                            :class="{selected: selectedTemplate === t.id}"
+                            @click="selectedTemplate = t.id"
+                            body-style="padding: 14px;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">{{ t.name }}</div>
+                            <div style="font-size: 12px; color: var(--el-text-color-secondary); margin-bottom: 8px;">{{ t.description }}</div>
+                            <el-tag size="small" type="info">{{ t.n_variables }} 变量</el-tag>
+                            <el-tag size="small" type="info" style="margin-left: 4px;">{{ t.n_objectives }} 目标</el-tag>
+                        </el-card>
+                    </div>
+                    <el-button type="primary" style="margin-top: 16px;" @click="applyTemplate" :disabled="!selectedTemplate">
+                        加载模板
+                    </el-button>
+                </el-card>
+
+                <!-- HFSS 项目 -->
+                <el-card class="section-card" shadow="never">
+                    <template #header>HFSS 仿真项目</template>
+                    <el-form label-position="top" label-width="120px">
+                        <el-row :gutter="16">
+                            <el-col :span="24">
+                                <el-form-item label="项目路径 (.aedt)">
+                                    <el-input v-model="config.hfss.project_path" placeholder="选择或输入 HFSS 项目文件路径">
+                                        <template #append>
+                                            <el-button @click="selectProject">浏览</el-button>
+                                        </template>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="16">
+                            <el-col :span="8">
+                                <el-form-item label="设计名称">
+                                    <el-input v-model="config.hfss.design_name" placeholder="HFSSDesign1" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="设置名称">
+                                    <el-input v-model="config.hfss.setup_name" placeholder="Setup1" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="扫频名称">
+                                    <el-input v-model="config.hfss.sweep_name" placeholder="Sweep" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                </el-card>
+
+                <!-- 并行 HFSS -->
+                <el-card class="section-card" shadow="never">
+                    <template #header>并行 HFSS 进程（可选）</template>
+                    <el-alert type="info" :closable="false" style="margin-bottom: 12px;">
+                        添加多个 HFSS 项目路径实现并行仿真加速。每个路径对应一个独立的 HFSS 进程。
+                    </el-alert>
+                    <el-row :gutter="8" style="margin-bottom: 12px;">
+                        <el-col :span="18">
+                            <el-input v-model="newParallelPath" placeholder="输入并行 HFSS 项目路径 (.aedt)" />
+                        </el-col>
+                        <el-col :span="3">
+                            <el-button @click="selectParallelProject">浏览</el-button>
+                        </el-col>
+                        <el-col :span="3">
+                            <el-button type="primary" @click="addParallelPath">添加</el-button>
+                        </el-col>
+                    </el-row>
+                    <el-table v-if="config.hfss.parallel_paths && config.hfss.parallel_paths.length > 0"
+                        :data="config.hfss.parallel_paths.map((p,i) => ({path: p, index: i}))" size="small">
+                        <el-table-column label="#" width="50">
+                            <template #default="scope">{{ scope.row.index + 1 }}</template>
+                        </el-table-column>
+                        <el-table-column label="项目路径">
+                            <template #default="scope">{{ scope.row.path }}</template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="80">
+                            <template #default="scope">
+                                <el-button type="danger" size="small" text @click="config.hfss.parallel_paths.splice(scope.row.index, 1)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-card>
+
+                <div style="text-align: right;">
+                    <el-button type="primary" size="large" @click="saveConfig">保存配置</el-button>
+                </div>
+            </div>
+
+            <!-- ==================== 优化变量 ==================== -->
+            <div v-if="page === 'variables'">
+                <h2 class="page-title">优化变量</h2>
+                <p class="page-desc">定义 HFSS 设计参数及其取值范围</p>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>{{ editVarIdx >= 0 ? '修改变量' : '添加变量' }}</template>
+                    <el-form :inline="true">
+                        <el-form-item label="变量名">
+                            <el-input v-model="newVar.name" placeholder="如: length" style="width: 140px;" />
+                        </el-form-item>
+                        <el-form-item label="最小值">
+                            <el-input v-model="newVar.min" placeholder="数字或公式" style="width: 120px;" />
+                        </el-form-item>
+                        <el-form-item label="最大值">
+                            <el-input v-model="newVar.max" placeholder="数字或公式" style="width: 120px;" />
+                        </el-form-item>
+                        <el-form-item label="单位">
+                            <input v-model="newVar.unit" list="unit-list" class="native-input" placeholder="单位" style="width: 120px;" />
+                            <datalist id="unit-list">
+                                <option value="mm">mm (毫米)</option>
+                                <option value="deg">deg (度)</option>
+                                <option value="nH">nH (纳亨)</option>
+                                <option value="pF">pF (皮法)</option>
+                                <option value="GHz">GHz (吉赫兹)</option>
+                                <option value="ohm">ohm (欧姆)</option>
+                                <option value="m">m (米)</option>
+                                <option value="mil">mil (密耳)</option>
+                                <option value="um">um (微米)</option>
+                            </datalist>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="saveVar">{{ editVarIdx >= 0 ? '更新' : '添加' }}</el-button>
+                            <el-button v-if="editVarIdx >= 0" @click="cancelEditVar">取消</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <el-alert type="info" :closable="false" style="margin-top: 8px;">
+                        提示：最小值/最大值支持输入公式引用其他变量，如 <code>(Wc-Wm2)/2+0.01</code>
+                    </el-alert>
+                </el-card>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>变量列表 ({{ config.variables.length }})</template>
+                    <el-table :data="config.variables" size="small" style="width: 100%;"
+                        @row-click="(row, col, event) => editVar(event, config.variables.indexOf(row))"
+                        row-style="cursor: pointer;" highlight-current-row>
+                        <el-table-column label="变量名" min-width="120">
+                            <template #default="scope">{{ scope.row.name }}</template>
+                        </el-table-column>
+                        <el-table-column label="最小值" width="120">
+                            <template #default="scope">{{ scope.row.bounds[0] }}</template>
+                        </el-table-column>
+                        <el-table-column label="最大值" width="120">
+                            <template #default="scope">{{ scope.row.bounds[1] }}</template>
+                        </el-table-column>
+                        <el-table-column label="单位" width="80">
+                            <template #default="scope">{{ scope.row.unit || 'mm' }}</template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="140">
+                            <template #default="scope">
+                                <el-button size="small" text type="primary" @click.stop="editVar(null, config.variables.indexOf(scope.row))">编辑</el-button>
+                                <el-button size="small" text type="danger" @click.stop="deleteVar(config.variables.indexOf(scope.row))">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <el-empty v-if="config.variables.length === 0" description="暂无变量，请在上方添加" :image-size="60" />
+                </el-card>
+            </div>
+
+            <!-- ==================== 优化目标 ==================== -->
+            <div v-if="page === 'objectives'">
+                <h2 class="page-title">优化目标</h2>
+                <p class="page-desc">定义仿真优化目标函数，支持自定义公式</p>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>{{ editObjIdx >= 0 ? '修改目标' : '添加目标' }}</template>
+                    <el-form label-position="top">
+                        <el-row :gutter="16">
+                            <el-col :span="6">
+                                <el-form-item label="名称">
+                                    <el-input v-model="newObj.name" placeholder="如: S11, Gain, Isolation" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="公式">
+                                    <el-input v-model="newObj.formula" placeholder="dB(S(1,1))">
+                                        <template #prepend>f(x) =</template>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="频率/频段 (GHz)">
+                                    <el-input v-model="newObj.freq" placeholder="5.9 或 5.6-6.2" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="16">
+                            <el-col :span="6">
+                                <el-form-item label="目标值">
+                                    <el-input-number v-model="newObj.goal" :step="0.5" :precision="2" style="width: 100%;" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="方向">
+                                    <select v-model="newObj.target" class="native-select">
+                                        <option value="minimize">最小化 (越小越好)</option>
+                                        <option value="maximize">最大化 (越大越好)</option>
+                                    </select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="权重">
+                                    <el-input-number v-model="newObj.weight" :min="0.1" :max="10" :step="0.1" :precision="1" style="width: 100%;" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6" style="display: flex; align-items: flex-end;">
+                                <el-form-item>
+                                    <el-button type="primary" @click="saveObj">{{ editObjIdx >= 0 ? '更新' : '添加' }}</el-button>
+                                    <el-button v-if="editObjIdx >= 0" @click="cancelEditObj">取消</el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                    <el-divider />
+                    <div style="font-size: 12px; color: var(--el-text-color-secondary);">
+                        <strong>常用公式示例：</strong>
+                        <el-tag size="small" style="margin: 2px;">dB(S(1,1))</el-tag>
+                        <el-tag size="small" style="margin: 2px;">dB(S(2,1))</el-tag>
+                        <el-tag size="small" style="margin: 2px;">Peak(Gain)</el-tag>
+                        <el-tag size="small" style="margin: 2px;">Gain(Phi=0,Theta=90)</el-tag>
+                        <el-tag size="small" style="margin: 2px;">Gain(Phi=0,Theta=90)-Gain(Phi=180,Theta=90)</el-tag>
+                        <el-tag size="small" style="margin: 2px;">efficiency</el-tag>
+                        <el-tag size="small" style="margin: 2px;">mag(Z(1,1))</el-tag>
+                    </div>
+                </el-card>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>目标列表 ({{ config.objectives.length }})</template>
+                    <el-table :data="config.objectives" size="small" style="width: 100%;"
+                        @row-click="(row) => editObj(null, config.objectives.indexOf(row))"
+                        row-style="cursor: pointer;">
+                        <el-table-column label="名称" min-width="100">
+                            <template #default="scope">{{ scope.row.name }}</template>
+                        </el-table-column>
+                        <el-table-column label="公式" min-width="200">
+                            <template #default="scope">
+                                <code style="font-size: 12px;">{{ scope.row.formula }}</code>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="频率" width="120">
+                            <template #default="scope">
+                                <span v-if="scope.row.freq_range">{{ scope.row.freq_range[0] }}-{{ scope.row.freq_range[1] }}</span>
+                                <span v-else-if="scope.row.freq">{{ scope.row.freq }}</span>
+                                <span v-else>-</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="目标值" width="80">
+                            <template #default="scope">{{ scope.row.goal }}</template>
+                        </el-table-column>
+                        <el-table-column label="方向" width="110">
+                            <template #default="scope">
+                                <el-tag :type="scope.row.target === 'minimize' ? 'danger' : 'success'" size="small">
+                                    {{ scope.row.target === 'minimize' ? '最小化' : '最大化' }}
+                                </el-tag>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="权重" width="60">
+                            <template #default="scope">{{ scope.row.weight }}</template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="120">
+                            <template #default="scope">
+                                <el-button size="small" text type="primary" @click.stop="editObj(null, config.objectives.indexOf(scope.row))">编辑</el-button>
+                                <el-button size="small" text type="danger" @click.stop="deleteObj(config.objectives.indexOf(scope.row))">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <el-empty v-if="config.objectives.length === 0" description="暂无目标，请在上方添加" :image-size="60" />
+                </el-card>
+            </div>
+
+            <!-- ==================== 算法配置 ==================== -->
+            <div v-if="page === 'algorithm'">
+                <h2 class="page-title">算法配置</h2>
+                <p class="page-desc">选择优化算法并配置参数</p>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>算法选择</template>
+                    <el-radio-group v-model="config.algorithm.algorithm" size="large" style="width: 100%;">
+                        <el-row :gutter="12">
+                            <el-col :span="8" v-for="algo in algorithms" :key="algo.id" style="margin-bottom: 8px;">
+                                <el-radio-button :value="algo.id" style="width: 100%; height: 100%;">
+                                    <div style="text-align: left; padding: 4px 0; min-height: 36px; display: flex; flex-direction: column; justify-content: center;">
+                                        <strong>{{ algo.name }}</strong>
+                                        <div style="font-size: 11px; opacity: 0.8; margin-top: 2px; line-height: 1.3; white-space: normal;">{{ algo.description?.substring(0, 50) }}</div>
+                                    </div>
+                                </el-radio-button>
+                            </el-col>
+                        </el-row>
+                    </el-radio-group>
+
+                    <!-- 算法详情 -->
+                    <div class="algo-info" v-if="currentAlgoInfo">
+                        <el-descriptions :column="2" border size="small">
+                            <el-descriptions-item label="全称">{{ currentAlgoInfo.full_name || currentAlgoInfo.name }}</el-descriptions-item>
+                            <el-descriptions-item label="适用目标数">{{ currentAlgoInfo.n_objectives }}</el-descriptions-item>
+                            <el-descriptions-item label="描述" :span="2">{{ currentAlgoInfo.description }}</el-descriptions-item>
+                            <el-descriptions-item label="优势" :span="2">
+                                <el-tag v-for="s in currentAlgoInfo.strengths" :key="s" size="small" type="success" class="algo-tag">{{ s }}</el-tag>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="局限" :span="2" v-if="currentAlgoInfo.weaknesses && currentAlgoInfo.weaknesses.length">
+                                <el-tag v-for="w in currentAlgoInfo.weaknesses" :key="w" size="small" type="warning" class="algo-tag">{{ w }}</el-tag>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="最佳场景" :span="2">{{ currentAlgoInfo.best_for }}</el-descriptions-item>
+                        </el-descriptions>
+                    </div>
+                </el-card>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>基础参数</template>
+                    <el-form label-position="top" style="max-width: 700px;">
+                        <el-row :gutter="16">
+                            <el-col :span="8">
+                                <el-form-item label="种群大小">
+                                    <el-input-number v-model="config.algorithm.population_size" :min="5" :max="500" style="width: 100%;" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="迭代次数">
+                                    <el-input-number v-model="config.algorithm.n_generations" :min="1" :max="1000" style="width: 100%;" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                </el-card>
+
+                <!-- 算法特有参数 -->
+                <el-card class="section-card" shadow="never" v-if="algoSpecificParams.length > 0">
+                    <template #header>{{ currentAlgoInfo?.name }} 专有参数</template>
+                    <el-form label-position="top" style="max-width: 700px;">
+                        <el-row :gutter="16">
+                            <el-col :span="8" v-for="p in algoSpecificParams" :key="p.key">
+                                <el-form-item :label="p.label">
+                                    <el-input-number v-model="config.algorithm[p.key]"
+                                        :min="p.min" :max="p.max" :step="p.step" :precision="p.precision || 2"
+                                        style="width: 100%;" />
+                                    <div v-if="p.hint" style="font-size: 11px; color: var(--el-text-color-secondary); margin-top: 2px;">{{ p.hint }}</div>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                </el-card>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>早停配置</template>
+                    <el-form label-position="top" style="max-width: 700px;">
+                        <el-row :gutter="16">
+                            <el-col :span="8">
+                                <el-form-item label="启用早停">
+                                    <el-switch v-model="config.algorithm.stop_when_goal_met" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8" v-if="config.algorithm.stop_when_goal_met">
+                                <el-form-item label="达标解数量">
+                                    <el-input-number v-model="config.algorithm.n_solutions_to_stop" :min="1" :max="100" style="width: 100%;" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                </el-card>
+
+                <div style="text-align: right;">
+                    <el-button type="primary" size="large" @click="saveConfig">保存配置</el-button>
+                </div>
+            </div>
+
+            <!-- ==================== 运行控制 ==================== -->
+            <div v-if="page === 'run'">
+                <h2 class="page-title">运行控制</h2>
+                <p class="page-desc">启动和监控优化过程</p>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span>运行状态</span>
+                                <el-tag :type="status.running ? 'success' : 'info'" effect="dark">
+                                    {{ status.running ? '运行中' : '已停止' }}
+                                </el-tag>
+                            </div>
+                            <div>
+                                <el-button type="success" :disabled="status.running" @click="startOptimization" :loading="status.running">
+                                    {{ status.running ? '运行中...' : '开始优化' }}
+                                </el-button>
+                                <el-button type="danger" :disabled="!status.running" @click="stopOptimization">停止</el-button>
+                                <el-button @click="loadConfig">刷新</el-button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <el-progress v-if="status.running && status.total > 0"
+                        :percentage="progressPercent"
+                        :format="() => `${status.progress} / ${status.total}`"
+                        :stroke-width="20"
+                        style="margin-bottom: 16px;" />
+
+                    <el-alert v-if="status.error" type="error" :closable="false" style="margin-bottom: 12px;">
+                        <template #title>优化错误: {{ status.error }}</template>
+                        <div v-if="showTraceback">
+                            <pre style="font-size: 11px; max-height: 200px; overflow: auto; margin: 8px 0 0;">{{ status.traceback }}</pre>
+                        </div>
+                        <el-button v-if="status.traceback" size="small" text @click="showTraceback = !showTraceback">
+                            {{ showTraceback ? '隐藏详情' : '显示详情' }}
+                        </el-button>
+                    </el-alert>
+                </el-card>
+
+                <el-card class="section-card" shadow="never">
+                    <template #header>
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span>运行日志</span>
+                            <div>
+                                <el-checkbox v-model="autoScroll" size="small">自动滚动</el-checkbox>
+                                <el-button size="small" text @click="status.logs = []">清空</el-button>
+                            </div>
+                        </div>
+                    </template>
+                    <div class="log-box" ref="logBox">
+                        <div v-for="(log, i) in displayedLogs" :key="i" class="log-line" :class="getLogClass(log)">
+                            <span class="log-time" v-if="log.time">[{{ log.time }}]</span>{{ log.message || log }}
+                        </div>
+                        <div v-if="displayedLogs.length === 0" style="color: var(--el-text-color-placeholder); text-align: center; padding: 40px;">
+                            暂无日志
+                        </div>
+                    </div>
+                </el-card>
+            </div>
+
+            <!-- ==================== 结果分析 ==================== -->
+            <div v-if="page === 'results'">
+                <h2 class="page-title">结果分析</h2>
+                <p class="page-desc">查看历史优化结果</p>
+
+                <el-card class="section-card" shadow="never" v-if="results.length > 0">
+                    <template #header>优化结果 ({{ results.length }})</template>
+                    <el-table :data="results" size="small" stripe>
+                        <el-table-column label="名称">
+                            <template #default="scope">{{ scope.row.name }}</template>
+                        </el-table-column>
+                        <el-table-column label="时间" width="180">
+                            <template #default="scope">{{ scope.row.created }}</template>
+                        </el-table-column>
+                        <el-table-column label="解数量" width="100">
+                            <template #default="scope">{{ scope.row.solutions_count || '-' }}</template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="160">
+                            <template #default="scope">
+                                <el-button size="small" type="primary" text @click="viewResult(scope.row.name)">查看详情</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-card>
+                <el-card v-else shadow="never">
+                    <el-empty description="暂无优化结果" />
+                </el-card>
+
+                <!-- 结果详情弹窗 -->
+                <el-dialog v-model="showResultDialog" :title="'结果详情: ' + (currentResult?.name || '')" width="80%" top="5vh">
+                    <div class="sol-grid" v-if="currentResultSolutions && currentResultSolutions.length > 0">
+                        <div v-for="(sol, i) in currentResultSolutions.slice(0, 20)" :key="i" class="sol-card">
+                            <h4>解 #{{ i + 1 }}</h4>
+                            <div v-if="sol.parameters">
+                                <div class="sol-row" v-for="(val, key) in sol.parameters" :key="key">
+                                    <span class="sol-label">{{ key }}</span>
+                                    <span class="sol-value">{{ typeof val === 'number' ? val.toFixed(4) : val }}</span>
+                                </div>
+                            </div>
+                            <div v-if="sol.objectives" style="margin-top: 8px; border-top: 1px solid var(--el-border-color-light); padding-top: 6px;">
+                                <div class="sol-row" v-for="(val, key) in sol.objectives" :key="key">
+                                    <span class="sol-label">{{ key }}</span>
+                                    <span class="sol-value">{{ typeof val === 'number' ? val.toFixed(4) : (val?.actual_value?.toFixed(4) || JSON.stringify(val)) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <el-empty v-else description="暂无数据" />
+                </el-dialog>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/element-plus/dist/index.full.min.js"></script>
+<script src="https://unpkg.com/@element-plus/icons-vue/dist/index.iife.min.js"></script>
+<script>
+const { createApp, ref, reactive, computed, onMounted, watch, nextTick } = Vue;
+const API = '';
+
+createApp({
+    setup() {
+        // ===== State =====
+        const page = ref('project');
+        const config = reactive({
+            hfss: { project_path: '', design_name: 'HFSSDesign1', setup_name: 'Setup1', sweep_name: 'Sweep', parallel_paths: [] },
+            variables: [],
+            objectives: [],
+            algorithm: { algorithm: 'age_moea2', population_size: 30, n_generations: 20, stop_when_goal_met: false, n_solutions_to_stop: 5, use_weights: true, crossover_prob: 0.9, mutation_prob: 0.1 }
+        });
+
+        const templates = ref([]);
+        const selectedTemplate = ref('');
+        const algorithms = ref([]);
+
+        const newVar = reactive({ name: '', min: '', max: '', unit: 'mm' });
+        const editVarIdx = ref(-1);
+        const newObj = reactive({ name: '', formula: '', freq: '', goal: -10, target: 'minimize', weight: 1.0 });
+        const editObjIdx = ref(-1);
+        const newParallelPath = ref('');
+
+        const status = reactive({ running: false, progress: 0, total: 0, logs: [], error: null, traceback: null });
+        const results = ref([]);
+        const showResultDialog = ref(false);
+        const currentResult = ref(null);
+        const currentResultSolutions = ref(null);
+        const logBox = ref(null);
+        const autoScroll = ref(true);
+        const showTraceback = ref(false);
+
+        const displayedLogs = computed(() => status.logs.slice(-300));
+        const progressPercent = computed(() => status.total > 0 ? Math.round(status.progress / status.total * 100) : 0);
+        const currentAlgoInfo = computed(() => algorithms.value.find(a => a.id === config.algorithm.algorithm));
+
+        // Algorithm-specific parameter definitions
+        const ALGO_PARAM_DEFS = {
+            mopso: [
+                { key: 'w_min', label: '惯性权重下限', min: 0.01, max: 0.5, step: 0.01, precision: 2, hint: '粒子速度衰减下限' },
+                { key: 'w_max', label: '惯性权重上限', min: 0.5, max: 1.5, step: 0.05, precision: 2, hint: '初始惯性权重' },
+                { key: 'c1', label: '个体学习因子', min: 0.5, max: 3.0, step: 0.1, precision: 1, hint: '向自身最优学习' },
+                { key: 'c2', label: '全局学习因子', min: 0.5, max: 3.0, step: 0.1, precision: 1, hint: '向群体最优学习' },
+            ],
+            nsga2: [
+                { key: 'crossover_prob', label: '交叉概率', min: 0.5, max: 1.0, step: 0.05, precision: 2 },
+                { key: 'mutation_prob', label: '变异概率', min: 0.01, max: 0.5, step: 0.01, precision: 2 },
+            ],
+            cmaes: [
+                { key: 'sigma0', label: '初始步长 σ₀', min: 0.01, max: 2.0, step: 0.05, precision: 2, hint: '搜索空间比例，建议 0.3-0.5' },
+            ],
+            age_moea2: [
+                { key: 'crossover_prob', label: '交叉概率', min: 0.5, max: 1.0, step: 0.05, precision: 2 },
+                { key: 'mutation_prob', label: '变异概率', min: 0.01, max: 0.5, step: 0.01, precision: 2 },
+            ],
+            nsga3: [
+                { key: 'crossover_prob', label: '交叉概率', min: 0.5, max: 1.0, step: 0.05, precision: 2 },
+                { key: 'mutation_prob', label: '变异概率', min: 0.01, max: 0.5, step: 0.01, precision: 2 },
+                { key: 'n_partitions', label: '参考点分区数', min: 4, max: 24, step: 1, precision: 0, hint: '每维方向分区，越大前沿越密' },
+            ],
+            moead: [
+                { key: 'crossover_prob', label: '交叉概率', min: 0.5, max: 1.0, step: 0.05, precision: 2 },
+                { key: 'mutation_prob', label: '变异概率', min: 0.01, max: 0.5, step: 0.01, precision: 2 },
+                { key: 'n_partitions', label: '权重向量分区', min: 4, max: 24, step: 1, precision: 0 },
+                { key: 'theta', label: '邻域大小 θ', min: 2, max: 20, step: 1, precision: 0, hint: 'PBI 惩罚参数' },
+            ],
+            rvea: [
+                { key: 'crossover_prob', label: '交叉概率', min: 0.5, max: 1.0, step: 0.05, precision: 2 },
+                { key: 'mutation_prob', label: '变异概率', min: 0.01, max: 0.5, step: 0.01, precision: 2 },
+                { key: 'n_partitions', label: '参考向量分区', min: 4, max: 24, step: 1, precision: 0 },
+                { key: 'alpha', label: '角度惩罚系数 α', min: 0.5, max: 5.0, step: 0.1, precision: 1, hint: '控制参考向量选择严格度' },
+            ],
+        };
+        const ALGO_PARAM_DEFAULTS = {
+            mopso: { w_min: 0.1, w_max: 0.9, c1: 2.0, c2: 2.0 },
+            nsga2: { crossover_prob: 0.9, mutation_prob: 0.1 },
+            cmaes: { sigma0: 0.4 },
+            age_moea2: { crossover_prob: 0.9, mutation_prob: 0.1 },
+            nsga3: { crossover_prob: 0.9, mutation_prob: 0.1, n_partitions: 12 },
+            moead: { crossover_prob: 0.9, mutation_prob: 0.1, n_partitions: 12, theta: 5 },
+            rvea: { crossover_prob: 0.9, mutation_prob: 0.1, n_partitions: 12, alpha: 2.0 },
+        };
+        const algoSpecificParams = computed(() => {
+            return ALGO_PARAM_DEFS[config.algorithm.algorithm] || [];
+        });
+
+        // ===== Config API =====
+        const loadConfig = async () => {
+            try {
+                const res = await fetch(`${API}/api/config`);
+                const data = await res.json();
+                if (data.hfss) Object.assign(config.hfss, data.hfss);
+                if (!config.hfss.parallel_paths) config.hfss.parallel_paths = [];
+
+                if (data.variables) {
+                    config.variables = data.variables.map(v => {
+                        if (v.bounds) return { name: v.name, bounds: v.bounds, unit: v.unit || 'mm' };
+                        return { name: v.name || '', bounds: [parseFloat(v.min_val) || 0, parseFloat(v.max_val) || 1], unit: v.unit || 'mm' };
+                    });
+                }
+                if (data.objectives) {
+                    config.objectives = data.objectives.map(o => ({
+                        name: o.name || '',
+                        type: o.type || 'formula',
+                        formula: o.formula || '',
+                        goal: o.goal ?? -10,
+                        target: o.target || 'minimize',
+                        weight: o.weight ?? 1.0,
+                        freq: o.freq || '',
+                        freq_range: o.freq_range || null,
+                        freq_val: o.freq_val || null,
+                    }));
+                }
+                if (data.algorithm) Object.assign(config.algorithm, data.algorithm);
+                // Fill in algorithm-specific defaults if missing
+                const algoDefaults = ALGO_PARAM_DEFAULTS[config.algorithm.algorithm];
+                if (algoDefaults) {
+                    for (const [k, v] of Object.entries(algoDefaults)) {
+                        if (config.algorithm[k] === undefined || config.algorithm[k] === null) {
+                            config.algorithm[k] = v;
+                        }
+                    }
+                }
+            } catch (e) { console.error('Load config failed:', e); }
+        };
+
+        const saveConfig = async () => {
+            try {
+                const payload = {
+                    hfss: config.hfss,
+                    variables: config.variables.map(v => ({
+                        name: v.name,
+                        bounds: v.bounds,
+                        unit: v.unit || 'mm'
+                    })),
+                    objectives: config.objectives.map(o => {
+                        const obj = {
+                            name: o.name, type: 'formula', formula: o.formula,
+                            goal: o.goal, target: o.target, weight: o.weight
+                        };
+                        if (o.freq_range) obj.freq_range = o.freq_range;
+                        else if (o.freq) {
+                            if (typeof o.freq === 'string' && o.freq.includes('-')) {
+                                const parts = o.freq.split('-');
+                                obj.freq_range = [parseFloat(parts[0]), parseFloat(parts[1])];
+                            } else {
+                                obj.freq = parseFloat(o.freq) || o.freq;
+                            }
+                        }
+                        return obj;
+                    }),
+                    algorithm: config.algorithm,
+                };
+                await fetch(`${API}/api/config`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                ElementPlus.ElMessage.success('配置已保存');
+            } catch (e) {
+                ElementPlus.ElMessage.error('保存失败: ' + e.message);
+            }
+        };
+
+        // ===== Templates =====
+        const loadTemplates = async () => {
+            try {
+                const res = await fetch(`${API}/api/templates`);
+                const data = await res.json();
+                templates.value = data.templates || [];
+            } catch (e) { console.error('Load templates failed:', e); }
+        };
+
+        const applyTemplate = async () => {
+            if (!selectedTemplate.value) return;
+            const tmpl = templates.value.find(t => t.id === selectedTemplate.value);
+            if (!tmpl) return;
+            if (config.variables.length > 0 || config.objectives.length > 0) {
+                try {
+                    await ElementPlus.ElMessageBox.confirm('加载模板将覆盖当前变量和目标，是否继续？', '确认', { type: 'warning' });
+                } catch { return; }
+            }
+            config.variables = (tmpl.variables || []).map(v => ({ name: v.name, bounds: [...v.bounds], unit: v.unit || 'mm' }));
+            config.objectives = (tmpl.objectives || []).map(o => ({
+                name: o.name, type: 'formula', formula: o.formula, goal: o.goal,
+                target: o.target, weight: o.weight,
+                freq: o.freq ? String(o.freq) : '',
+                freq_range: o.freq_range || null,
+            }));
+            ElementPlus.ElMessage.success(`已加载模板: ${tmpl.name}`);
+        };
+
+        // ===== Algorithms =====
+        const loadAlgorithms = async () => {
+            try {
+                const res = await fetch(`${API}/api/algorithms`);
+                const data = await res.json();
+                algorithms.value = data.algorithms || [];
+            } catch (e) { console.error('Load algorithms failed:', e); }
+        };
+
+        // ===== Variable CRUD =====
+        const editVar = (_, idx) => {
+            const v = config.variables[idx];
+            newVar.name = v.name;
+            newVar.min = String(v.bounds[0]);
+            newVar.max = String(v.bounds[1]);
+            newVar.unit = v.unit || 'mm';
+            editVarIdx.value = idx;
+        };
+        const saveVar = () => {
+            if (!newVar.name) return ElementPlus.ElMessage.warning('请输入变量名');
+            const bounds = [isNaN(parseFloat(newVar.min)) ? newVar.min : parseFloat(newVar.min),
+                            isNaN(parseFloat(newVar.max)) ? newVar.max : parseFloat(newVar.max)];
+            const v = { name: newVar.name, bounds, unit: newVar.unit };
+            if (editVarIdx.value >= 0) { config.variables[editVarIdx.value] = v; editVarIdx.value = -1; }
+            else config.variables.push(v);
+            Object.assign(newVar, { name: '', min: '', max: '', unit: 'mm' });
+        };
+        const deleteVar = (idx) => {
+            if (confirm('确定删除此变量？')) config.variables.splice(idx, 1);
+        };
+        const cancelEditVar = () => { editVarIdx.value = -1; Object.assign(newVar, { name: '', min: '', max: '', unit: 'mm' }); };
+
+        // ===== Objective CRUD =====
+        const editObj = (_, idx) => {
+            const o = config.objectives[idx];
+            newObj.name = o.name;
+            newObj.formula = o.formula || '';
+            newObj.freq = o.freq || (o.freq_range ? `${o.freq_range[0]}-${o.freq_range[1]}` : '');
+            newObj.goal = o.goal;
+            newObj.target = o.target;
+            newObj.weight = o.weight;
+            editObjIdx.value = idx;
+        };
+        const saveObj = () => {
+            if (!newObj.name) return ElementPlus.ElMessage.warning('请输入目标名称');
+            if (!newObj.formula) return ElementPlus.ElMessage.warning('请输入公式');
+            const o = { name: newObj.name, type: 'formula', formula: newObj.formula, goal: newObj.goal, target: newObj.target, weight: newObj.weight };
+            if (newObj.freq && newObj.freq.includes('-')) {
+                const parts = newObj.freq.split('-');
+                o.freq_range = [parseFloat(parts[0]), parseFloat(parts[1])];
+            } else if (newObj.freq) {
+                o.freq = parseFloat(newObj.freq) || newObj.freq;
+            }
+            if (editObjIdx.value >= 0) { config.objectives[editObjIdx.value] = o; editObjIdx.value = -1; }
+            else config.objectives.push(o);
+            Object.assign(newObj, { name: '', formula: '', freq: '', goal: -10, target: 'minimize', weight: 1.0 });
+        };
+        const deleteObj = (idx) => { if (confirm('确定删除此目标？')) config.objectives.splice(idx, 1); };
+        const cancelEditObj = () => { editObjIdx.value = -1; Object.assign(newObj, { name: '', formula: '', freq: '', goal: -10, target: 'minimize', weight: 1.0 }); };
+
+        // ===== Parallel paths =====
+        const addParallelPath = () => {
+            if (!newParallelPath.value) return;
+            if (!config.hfss.parallel_paths) config.hfss.parallel_paths = [];
+            if (config.hfss.project_path === newParallelPath.value) return ElementPlus.ElMessage.warning('与主项目路径重复');
+            if (config.hfss.parallel_paths.includes(newParallelPath.value)) return ElementPlus.ElMessage.warning('路径已存在');
+            config.hfss.parallel_paths.push(newParallelPath.value);
+            newParallelPath.value = '';
+        };
+        const selectProject = async () => {
+            try {
+                ElementPlus.ElMessage.info('正在打开文件选择器...');
+                const res = await fetch(`${API}/api/browse`);
+                const data = await res.json();
+                if (data.status === 'ok' && data.path) {
+                    config.hfss.project_path = data.path;
+                    ElementPlus.ElMessage.success('已选择: ' + data.path);
+                } else if (data.status === 'cancelled') {
+                    // 用户取消选择，不做任何操作
+                } else {
+                    ElementPlus.ElMessage.error(data.detail || '文件选择失败');
+                }
+            } catch (e) { ElementPlus.ElMessage.error('文件选择器打开失败: ' + e.message); }
+        };
+        const selectParallelProject = async () => {
+            try {
+                ElementPlus.ElMessage.info('正在打开文件选择器...');
+                const res = await fetch(`${API}/api/browse`);
+                const data = await res.json();
+                if (data.status === 'ok' && data.path) {
+                    newParallelPath.value = data.path;
+                    ElementPlus.ElMessage.success('已选择: ' + data.path);
+                } else if (data.status === 'cancelled') {
+                    // 用户取消选择
+                } else {
+                    ElementPlus.ElMessage.error(data.detail || '文件选择失败');
+                }
+            } catch (e) { ElementPlus.ElMessage.error('文件选择器打开失败: ' + e.message); }
+        };
+
+        // ===== Run control =====
+        const startOptimization = async () => {
+            try {
+                const res = await fetch(`${API}/api/start`, { method: 'POST' });
+                const data = await res.json();
+                if (data.status === 'started') {
+                    status.logs = [{ message: '优化已启动...', level: 'info', time: '' }];
+                    status.running = true;
+                    status.error = null;
+                } else {
+                    ElementPlus.ElMessage.error(data.detail || '启动失败');
+                }
+            } catch (e) { ElementPlus.ElMessage.error('启动失败: ' + e.message); }
+        };
+        const stopOptimization = async () => {
+            await fetch(`${API}/api/stop`, { method: 'POST' });
+            status.logs.push({ message: '已发送停止信号', level: 'warn', time: '' });
+        };
+
+        // ===== Results =====
+        const loadResults = async () => {
+            try {
+                const res = await fetch(`${API}/api/results`);
+                const data = await res.json();
+                results.value = data.results || [];
+            } catch (e) { console.error(e); }
+        };
+        const viewResult = async (name) => {
+            currentResult.value = { name };
+            currentResultSolutions.value = null;
+            showResultDialog.value = true;
+            try {
+                const res = await fetch(`${API}/api/results/${encodeURIComponent(name)}`);
+                let data = await res.json();
+                if (!Array.isArray(data)) data = [data];
+                currentResultSolutions.value = data.map(sol => ({
+                    parameters: sol.parameters || sol.params || {},
+                    objectives: sol.objectives || {},
+                }));
+            } catch (e) { currentResultSolutions.value = []; }
+        };
+
+        // ===== Logs =====
+        const getLogClass = (log) => {
+            const msg = log.message || log;
+            const lvl = log.level || '';
+            if (lvl === 'error' || msg.includes('[ERROR]') || msg.includes('[FAIL]')) return 'log-error';
+            if (lvl === 'warning' || msg.includes('[WARN]')) return 'log-warn';
+            if (lvl === 'success' || msg.includes('[OK]') || msg.includes('[SUCCESS]')) return 'log-success';
+            return 'log-info';
+        };
+
+        const pollStatus = async () => {
+            try {
+                const res = await fetch(`${API}/api/status`);
+                const data = await res.json();
+                status.running = data.running;
+                status.progress = data.progress;
+                status.total = data.total;
+                status.error = data.error;
+                status.traceback = data.traceback;
+                if (data.logs && data.logs.length > 0) {
+                    const last = data.logs[data.logs.length - 1];
+                    const curLast = status.logs[status.logs.length - 1];
+                    if (!curLast || last.time !== curLast.time || last.message !== curLast.message) {
+                        status.logs = data.logs;
+                    }
+                }
+            } catch {}
+        };
+
+        // ===== Lifecycle =====
+        watch(() => config.algorithm.algorithm, (newAlgo) => {
+            const defaults = ALGO_PARAM_DEFAULTS[newAlgo];
+            if (defaults) {
+                for (const [k, v] of Object.entries(defaults)) {
+                    if (config.algorithm[k] === undefined || config.algorithm[k] === null) {
+                        config.algorithm[k] = v;
+                    }
+                }
+            }
+        });
+
+        watch(() => status.logs.length, () => {
+            if (!autoScroll.value) return;
+            nextTick(() => { if (logBox.value) logBox.value.scrollTop = logBox.value.scrollHeight; });
+        });
+
+        onMounted(() => {
+            loadConfig();
+            loadTemplates();
+            loadAlgorithms();
+            setInterval(pollStatus, 1000);
+        });
+
+        return {
+            page, config, templates, selectedTemplate, algorithms, currentAlgoInfo, algoSpecificParams,
+            newVar, editVarIdx, newObj, editObjIdx, newParallelPath,
+            status, results, showResultDialog, currentResult, currentResultSolutions,
+            logBox, autoScroll, displayedLogs, showTraceback, progressPercent,
+            loadConfig, saveConfig, applyTemplate,
+            editVar, saveVar, deleteVar, cancelEditVar,
+            editObj, saveObj, deleteObj, cancelEditObj,
+            addParallelPath, selectProject, selectParallelProject,
+            startOptimization, stopOptimization,
+            loadResults, viewResult, getLogClass,
+        };
+    }
+}).use(ElementPlus).mount('#app');
+</script>
+</body>
+</html>

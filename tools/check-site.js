@@ -7,11 +7,14 @@ const PII = require('./_pii-rules.js');
 
 const root = path.resolve(__dirname, '..');
 const PAGES = ['index.html', 'project1', 'project2', 'project3', 'project4',
-               'project5', 'project6', 'emc1', 'experience1'].map(p =>
+               'project5', 'project6', 'emc1', 'experience1',
+               'demos/optimizer', 'demos/spectrometer', 'demos/hall-thruster'].map(p =>
   path.join(root, p.endsWith('.html') ? p : path.join(p, 'index.html')));
 const ASSETS = ['assets/theme.css', 'assets/theme.js'].map(p => path.join(root, p));
 
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu;
+// 演示容器页：刻意不装整站外壳（导航/面板/页脚），以便把屏幕让给 iframe
+const IS_DEMO = /^demos\/[^/]+\/index\.html$/;
 let fail = 0, total = 0;
 const bad = (f, m) => { console.log('  FAIL  ' + m); fail++; };
 const info = (f, m) => console.log('  .     ' + m);
@@ -21,14 +24,16 @@ function readPage(f) {
   return { buf, html: buf.toString('utf8'), rel: path.relative(root, f).replace(/\\/g, '/') };
 }
 
-/* 抽取 <link>/<script src>/本地 href，判定引用是否存在 */
+/* 抽取本地 href/src 引用。以 / 结尾的目录链接必须存在 <dir>/index.html ——
+   existsSync 对裸目录同样返回真，否则「链到一个还没有首页的目录」会静默通过。 */
 function localRefs(html, base) {
   const dir = path.dirname(base);
   const refs = [];
   for (const m of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const u = m[1];
     if (/^(https?:|mailto:|tel:|data:|#|javascript:)/i.test(u)) continue;
-    refs.push(path.resolve(root, dir, u.split('#')[0].split('?')[0] || '.'));
+    const clean = u.split('#')[0].split('?')[0];
+    refs.push({ abs: path.resolve(root, dir, clean || '.'), dirLink: /\/$/.test(clean) });
   }
   return refs;
 }
@@ -55,6 +60,12 @@ for (const a of ASSETS) {
 console.log('\n=== 逐页检查 ===');
 const perPage = {};
 for (const f of PAGES) {
+  if (!fs.existsSync(f)) {
+    // 清单里的页面不存在要报干净的一条失败，而不是让检查器带着栈追踪崩掉
+    const rel0 = path.relative(root, f).replace(/\\/g, '/');
+    total++; bad(rel0, '清单中的页面文件不存在');
+    continue;
+  }
   const { buf, html, rel } = readPage(f);
   perPage[rel] = html;
   console.log('\n[' + rel + ']  ' + (buf.length / 1024).toFixed(1) + ' KB');
@@ -64,18 +75,21 @@ for (const f of PAGES) {
   else console.log('  ok    UTF-8 无 BOM');
   console.log('  ok    charset 前 1024 字节: ' + (html.slice(0, 1024).includes('charset="UTF-8"') ? 'yes' : 'NO'));
   if (!html.slice(0, 1024).includes('charset="UTF-8"')) bad(rel, 'charset 不在前 1024 字节');
-  if (!/lang="zh-CN"/.test(html.slice(0, 200))) bad(rel, '缺少 lang="zh-CN"');
+  const htmlTag = (html.match(/<html\b[^>]*>/) || [''])[0];
+  if (!/lang="zh-CN"/.test(htmlTag)) bad(rel, '缺少 lang="zh-CN"');
   else console.log('  ok    lang="zh-CN"');
   if (!/<title>[^<]+<\/title>/.test(html)) bad(rel, '缺少非空 <title>');
   else console.log('  ok    <title>' + html.match(/<title>([^<]*)/)[1] + '</title>');
 
-  // 必须引用共享主题
+  // 必须引用共享主题。前缀按目录深度算，demos/optimizer/ 这类二级页需要 ../../
   total += 2;
-  const pre = rel === 'index.html' ? '' : '../';
-  if (!html.includes('href="' + pre + 'assets/theme.css"')) bad(rel, '未引用 assets/theme.css');
+  const depth = (rel.match(/\//g) || []).length;
+  const pre = depth === 0 ? '' : '../'.repeat(depth);
+  if (!html.includes('href="' + pre + 'assets/theme.css"')) bad(rel, '未引用 ' + pre + 'assets/theme.css');
   else console.log('  ok    引用 theme.css');
-  if (!html.includes('src="' + pre + 'assets/theme.js"')) bad(rel, '未引用 assets/theme.js');
-  else console.log('  ok    引用 theme.js');
+  if (!IS_DEMO.test(rel) && !html.includes('src="' + pre + 'assets/theme.js"')) {
+    bad(rel, '未引用 ' + pre + 'assets/theme.js');
+  } else console.log('  ok    引用 theme.js' + (IS_DEMO.test(rel) ? '（演示容器页免强制）' : ''));
 
   // 手机号：用通用形态匹配，检测器内不含任何真实号码字面量
   total++;
@@ -107,9 +121,18 @@ for (const f of PAGES) {
 
   // 本地文件引用
   total++;
-  const miss = localRefs(html, rel).filter(p => !fs.existsSync(p));
-  if (miss.length) bad(rel, '断链: ' + miss.map(p => path.relative(root, p).replace(/\\/g, '/')).join(', '));
-  else console.log('  ok    本地引用完整 (' + localRefs(html, rel).length + ' 项)');
+  const refs = localRefs(html, rel);
+  const miss = refs.filter(r => {
+    if (!fs.existsSync(r.abs)) return true;
+    // 目录式链接（GitHub Pages 靠 index.html 解析）必须真的有 index.html
+    if (r.dirLink && !fs.existsSync(path.join(r.abs, 'index.html'))) return true;
+    return false;
+  });
+  if (miss.length) bad(rel, '断链: ' + miss.map(r => {
+    const p = path.relative(root, r.abs).replace(/\\/g, '/');
+    return r.dirLink ? p + '/(缺 index.html)' : p;
+  }).join(', '));
+  else console.log('  ok    本地引用完整 (' + refs.length + ' 项)');
 
   // 图片都有 alt
   total++;
@@ -153,7 +176,12 @@ for (const f of PAGES) {
 
   // 导航与章节编号自洽（重排编号时最容易出错）
   total += 2;
-  const secIds = new Set([...html.matchAll(/<(?:section|footer)[^>]*\bid="([^"]+)"/g)].map(m => m[1]));
+  // 与 theme.js 的「可导航区域」定义保持一致，否则会出现检查通过但导航不高亮的假绿
+  const secIds = new Set([
+    ...[...html.matchAll(/<(?:section|footer)[^>]*\bid="([^"]+)"/g)].map(m => m[1]),
+    ...[...html.matchAll(/<div[^>]*class="[^"]*\bdemo-full\b[^"]*"[^>]*\bid="([^"]+)"/g)].map(m => m[1]),
+    ...[...html.matchAll(/<div[^>]*\bid="([^"]+)"[^>]*class="[^"]*\bdemo-full\b[^"]*"/g)].map(m => m[1]),
+  ]);
   const navs = [...html.matchAll(/data-nav="([^"]+)"/g)].map(m => m[1]);
   const dangling = navs.filter(x => !secIds.has(x));
   if (dangling.length) bad(rel, '导航指向不存在的区块: ' + [...new Set(dangling)].join(', '));

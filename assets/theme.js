@@ -74,7 +74,8 @@
     var fill = $('#rulerFill'), hd = $('#hd'), topBtn = $('#topBtn');
     var hudSec = $('#hudSec'), hudName = $('#hudName'), hudPct = $('#hudPct');
     var links = $$('.nav-links a[data-nav]');
-    var secs = $$('main section[id], main footer[id]');
+    // 可导航区域：常规 section/footer，以及演示容器页顶层的 .demo-full 区块
+    var secs = $$('main section[id], main footer[id], main .demo-full[id]');
     // 子页在滚动到顶时没有 section 命中，用 body[data-hud] 作为页面级标签
     var pageLabel = document.body.dataset.hud || 'HOME';
     // 章节标题优先取 .sec-t；无 .sec-t 的（如首页 hero）用 data-hud 显式声明
@@ -151,7 +152,10 @@
             { u: 'project5/', idx: 'P-05', t: '高增益全向车载阵列天线', k: 'ANTENNA' },
             { u: 'project6/', idx: 'P-06', t: 'GNSS 天线及有源射频模块', k: 'RF' },
             { u: 'emc1/', idx: 'T-01', t: '整星 EMC 试验科目与测量框图', k: 'EMC' },
-            { u: 'experience1/', idx: 'E-01', t: '实习经历 · 江苏骅盛车用电子', k: 'INTERN' }
+            { u: 'experience1/', idx: 'E-01', t: '实习经历 · 江苏骅盛车用电子', k: 'INTERN' },
+            { u: 'demos/optimizer/', idx: 'S-01', t: 'HFSS 优化系统 · 界面演示', k: 'DEMO' },
+            { u: 'demos/spectrometer/', idx: 'S-02', t: '频谱仪上位机 · 界面演示', k: 'DEMO' },
+            { u: 'demos/hall-thruster/', idx: 'S-03', t: '霍尔推力器 3D · 交互演示', k: 'DEMO' }
         ].map(function (i) {
             var local = isHome && i.u.indexOf('index.html#') === 0;
             return {

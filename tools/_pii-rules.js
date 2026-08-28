@@ -27,4 +27,18 @@ function findPII(text) {
   return out;
 }
 
-module.exports = { CN_MOBILE, CN_MOBILE_TIGHT, TEL_HREF, CN_ID, findPII };
+/* 已接受风险：按「文件 + 命中类型」豁免，绝不按号码值豁免（含哈希）。
+   只覆盖登记过的具体文件；同一号码出现在别处仍然报红。 */
+function loadAccepted(root) {
+  try {
+    const p = require('path').join(root, 'tools', 'pii-accepted.json');
+    return JSON.parse(require('fs').readFileSync(p, 'utf8')).accepted || [];
+  } catch { return []; }
+}
+function isAccepted(accepted, rel, kind) {
+  const n = String(rel).replace(/\\/g, '/');
+  return accepted.some(a => a.kind === kind &&
+    (n === a.file || n.endsWith('/' + a.file) || n.endsWith(a.file)));
+}
+
+module.exports = { CN_MOBILE, CN_MOBILE_TIGHT, TEL_HREF, CN_ID, findPII, loadAccepted, isAccepted };

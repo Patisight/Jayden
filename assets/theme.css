@@ -162,6 +162,39 @@ button { font: inherit; }
 .brk::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
 .card:hover .brk::before, .card:hover .brk::after { opacity: 1; }
 
+/* ---------- 内嵌演示容器 ---------- */
+.demo-bar {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    border: 1px solid var(--cu-dim); border-left: 2px solid var(--cu);
+    background: rgba(207, 138, 82, .05); padding: 12px 18px; margin-bottom: 18px;
+    border-radius: 2px; font-family: var(--mono); font-size: .84rem; color: var(--muted);
+}
+.demo-bar .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cu); flex-shrink: 0; }
+.demo-bar b { color: var(--text); font-weight: 500; }
+.demo-bar .ext { margin-left: auto; white-space: nowrap; }
+.demo-bar .ext a { color: var(--cu); }
+.demo-bar .ext a:hover { text-decoration: underline; }
+.demo-frame {
+    position: relative; border: 1px solid var(--line-2); border-radius: 2px;
+    background: var(--ink-1); overflow: hidden;
+}
+.demo-frame iframe {
+    display: block; width: 100%; height: min(78vh, 900px); border: 0;
+    background: #fff; color-scheme: light;
+}
+.demo-frame.f-dark iframe { background: var(--ink-0); color-scheme: dark; }
+.demo-frame .load-hint {
+    position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none;
+    font-family: var(--mono); font-size: .84rem; color: var(--dim);
+}
+.demo-frame.ready .load-hint { display: none; }
+.demo-full { padding: 118px 0 0; }
+.demo-full .wrap { max-width: 1480px; }
+@media (max-width: 860px) {
+    .demo-frame iframe { height: 72vh; }
+    .demo-bar { font-size: .8rem; }
+}
+
 /* ---------- 边界/告警提示块 ---------- */
 .notice {
     display: flex; gap: 12px; align-items: flex-start;

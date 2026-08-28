@@ -30,6 +30,7 @@ const skip = p => BAD_DIR.test(p) || /[\\/]\.git[\\/]/.test(p) || /node_modules/
 const IS_DETECTOR = /tools[\\/](?:_|check-|verify-|bump-type|bulk_update)/i;
 
 const hits = [];
+const scanned = new Set();
 let skipped = 0;
 function walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -40,6 +41,7 @@ function walk(dir) {
     let txt;
     try { txt = fs.readFileSync(p, 'utf8'); } catch { continue; }
     const rel = path.relative(root, p).replace(/\\/g, '/');
+    scanned.add(rel);
     // 检测器文件跳过泛化规则（其正则本身就会命中），但绝不跳过真实号码检测——
     // 此前正是这条豁免让我把号码写进了 4 个公开脚本而毫无察觉
     if (IS_DETECTOR.test(rel)) {
@@ -60,7 +62,11 @@ function walk(dir) {
 }
 walk(root);
 
-const HIGH = hits.filter(h => h.lvl === 'high');
+const ACCEPTED = PII.loadAccepted(root);
+// 命中分类：已登记接受 > 高危 > 待确认。已接受项不再拦门禁，但仍列出可审计
+const isAcc = h => PII.isAccepted(ACCEPTED, h.rel, h.why);
+const ACK = hits.filter(h => h.lvl === 'high' && isAcc(h));
+const HIGH = hits.filter(h => h.lvl === 'high' && !isAcc(h));
 const LOW = hits.filter(h => h.lvl === 'review');
 
 console.log('=== 高危：公开前必须处理 ===');
@@ -76,5 +82,18 @@ for (const [w, s] of Object.entries(byWhy)) {
 }
 if (!LOW.length) console.log('  无');
 
-console.log('\n扫描完成：' + HIGH.length + ' 处高危，' + LOW.length + ' 处待确认（已跳过 ' + skipped + ' 个检测器自身文件）');
+console.log('\n=== 已登记接受（tools/pii-accepted.json，按文件+类型豁免）===');
+if (!ACCEPTED.length) console.log('  清单为空');
+ACCEPTED.forEach(a => console.log('  ' + a.file + '  [' + a.kind + ']  ' + (a.note || '')));
+const unused = ACCEPTED.filter(a => {
+  // 只在本工具确实扫描过的文件里判断"未命中"：PDF 条目归 check-pdf-secrets 负责，
+  // 在这里报"未命中"是假警报
+  if (!scanned.has(a.file)) return false;
+  return !ACK.some(h => h.rel === a.file);
+});
+if (ACK.length) console.log('  → 本次实际豁免 ' + ACK.length + ' 处命中');
+if (unused.length) console.log('  ! ' + unused.length + ' 条登记未命中（文件可能已改名/删除，建议清理）');
+
+console.log('\n扫描完成：' + HIGH.length + ' 处高危，' + LOW.length + ' 处待确认，' + ACK.length +
+  ' 处已豁免（跳过 ' + skipped + ' 个检测器自身文件）');
 process.exit(HIGH.length ? 1 : 0);

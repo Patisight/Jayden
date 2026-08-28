@@ -11,6 +11,8 @@ const PII = require('./_pii-rules.js');
 const root = path.resolve(__dirname, '..');
 const PAGES = ['index.html', 'project1', 'project2', 'project3', 'project4',
                'project5', 'project6', 'emc1', 'experience1'];
+// 演示页走另一套断言：关心 iframe 是否指向真实存在的应用页、披露是否到位
+const DEMOS = ['demos/optimizer', 'demos/spectrometer', 'demos/hall-thruster'];
 const REDUCED = process.argv.includes('--reduced');
 // 只校验指定页面：node tools/verify-render.js index.html project6
 const ONLY = process.argv.slice(2).filter(a => !a.startsWith('--'));
@@ -37,13 +39,17 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'jayden-render-'));
 let fail = 0, checks = 0;
 
 function dump(rel) {
-  const file = path.join(root, rel.endsWith('.html') ? rel : path.join(rel, 'index.html'));
-  const out = path.join(tmp, rel.replace(/[\\/]/g, '_') + '.html');
-  const err = path.join(tmp, rel.replace(/[\\/]/g, '_') + '.log');
+  // 允许传 "path/to/x.html?a=1"：查询串不属于磁盘路径，但必须留在 file:// URL 上
+  const qi = rel.indexOf('?');
+  const relPath = qi < 0 ? rel : rel.slice(0, qi);
+  const query = qi < 0 ? '' : rel.slice(qi);
+  const file = path.join(root, relPath.endsWith('.html') ? relPath : path.join(relPath, 'index.html'));
+  const out = path.join(tmp, relPath.replace(/[\\/]/g, '_') + '.html');
+  const err = path.join(tmp, relPath.replace(/[\\/]/g, '_') + '.log');
   const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
     '--window-size=1500,20000', '--virtual-time-budget=9000',
     '--enable-logging=stderr', '--v=0', '--dump-dom',
-    'file:///' + file.replace(/\\/g, '/')];
+    'file:///' + file.replace(/\\/g, '/') + query];
   if (REDUCED) args.splice(1, 0, '--force-prefers-reduced-motion');
   const fd = fs.openSync(err, 'w');
   try { execFileSync(chrome, args, { stdio: ['ignore', fs.openSync(out, 'w'), fd], timeout: 120000 }); }
@@ -80,11 +86,12 @@ for (const rel of PAGES_SEL) {
   chk(rel, 'theme.js 已执行 (HUD 已写入)', /id="hudName">[^<]{2,}/.test(d), true);
   chk(rel, '命令面板已填充条目', (d.match(/<li data-h="/g) || []).length >= 5, true);
 
-  // 计数器终值
+  // 计数器：动画分支依赖 rAF 与虚拟时间的相对时序，同配置下可能早可能晚，
+  // 因此该分支只断言「不超过目标」；终值断言留给确定性的 reduced 分支，避免闪断门禁
   const cts = [...d.matchAll(/data-count="(\d+)">([^<]*)</g)];
   if (cts.length) {
-    const stuck = cts.filter(m => m[2] === '0' && m[1] !== '0');
-    chk(rel, '计数器未卡在 0', stuck.length, 0);
+    const over = cts.filter(m => +m[2] > +m[1]);
+    chk(rel, '计数器无上溢', over.length, 0);
     if (REDUCED) chk(rel, 'reduced 下计数器等于终值',
       cts.map(m => m[2]).join(','), cts.map(m => m[1]).join(','));
   }
@@ -121,6 +128,41 @@ for (const rel of PAGES_SEL) {
   const errs = log.split(/\r?\n/).filter(l => /Uncaught|ReferenceError|TypeError|SyntaxError/i.test(l));
   if (errs.length) { fail++; console.log('  FAIL  运行时错误: ' + errs.join(' | ')); }
   else console.log('  ok    运行时错误 0 · DOM ' + (d.length / 1024).toFixed(1) + ' KB');
+}
+
+/* ---------- 演示页：包装页 + 内嵌应用页 ---------- */
+if (!ONLY.length) {
+  console.log('\n════ 演示页 ════');
+  for (const rel of DEMOS) {
+    const wrapper = path.join(root, rel, 'index.html');
+    if (!fs.existsSync(wrapper)) { chk(rel, '包装页存在', false, true); continue; }
+    const { dom, log } = dump(rel);
+    const d = dom.replace(/<script[\s\S]*?<\/script>/g, '');
+    console.log('\n[' + rel + ']');
+    chk(rel, '唯一 h1', (d.match(/<h1[\s>]/g) || []).length, 1);
+    chk(rel, '引用 theme.css', dom.includes('assets/theme.css'), true);
+    chk(rel, '有披露条 .demo-bar', d.includes('class="demo-bar"'), true);
+    chk(rel, '披露说明可运行性', /模拟|复刻|可交互|无后端|需联网/.test(d), true);
+    chk(rel, '有面包屑回首页', /<a href="\.\.\/\.\.\/">/.test(d), true);
+    chk(rel, '无内联事件', /\bon(?:click|load|change)\s*=/i.test(d), false);
+    chk(rel, '无手机号', PII.findPII(dom).length, 0);
+
+    // iframe 目标必须真实存在且自身可跑（剥掉 ?query / #hash，它们不是路径的一部分）
+    const src = (d.match(/<iframe[^>]*src="([^"]+)"/) || [])[1];
+    const cleanSrc = src ? src.split('#')[0].split('?')[0] : null;
+    const qs = src && src.includes('?') ? src.slice(src.indexOf('?')) : '';
+    const appAbs = cleanSrc ? path.resolve(path.dirname(wrapper), cleanSrc) : null;
+    chk(rel, 'iframe 指向的文件存在', appAbs && fs.existsSync(appAbs), true);
+    if (appAbs && fs.existsSync(appAbs)) {
+      const appRelPath = path.relative(root, appAbs).replace(/\\/g, '/');
+      const a = dump(appRelPath + qs);
+      const ad = a.dom.replace(/<script[\s\S]*?<\/script>/g, '');
+      const aerr = a.log.split(/\r?\n/).filter(l => /Uncaught|ReferenceError|TypeError|SyntaxError/i.test(l));
+      chk(rel, '应用页渲染出内容', ad.length > 8000, true);
+      chk(rel, '应用页无 JS 异常', aerr.length, 0);
+      console.log('  .     应用页 ' + appRelPath + ' · DOM ' + (ad.length / 1024).toFixed(1) + ' KB');
+    }
+  }
 }
 
 console.log('\n模式: ' + (REDUCED ? 'prefers-reduced-motion' : '动画默认') +

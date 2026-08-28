@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>KSW-VSA01 频谱仪上位机 · 界面复刻演示</title>
+<!--
+  ==========================================================================
+  诚实标注（请先读这一段）
+  ==========================================================================
+  本文件是一个 HTML 演示，它复刻的是 KSW-VSA01 频谱仪上位机（PySide6 桌面程序）
+  v1.2.1 的主窗口界面与交互逻辑。
+
+  1) 界面依据：完全按源项目 src/ 下的真实代码复刻，逐项对应——
+       src/main_window.py   主窗口（顶部连接栏 / 左侧模式感知参数面板 /
+                            pyqtgraph 绘图区 / 底部通信日志 + 报告按钮 / 状态栏）、
+                            深色样式表、全部控件文字、默认值与取值范围、
+                            连接流程、参数校验与 SPAN 钳位、峰值标记、通道功率、
+                            SENS:ADJ:ALL 自动调整、*RST 复位、CSV 导出、
+                            四步连接诊断、问题报告内容结构、使用帮助文案
+       src/scpi_client.py   TCP:5025 + ASCII SCPI、指令以 \n 结尾、
+                            FORM:DATA ASCii / REAL,32 二进制块 #<N><len><data> 自适应读取
+       src/simulator.py     内置 SCPI 模拟器（本机 --demo 模式的数据来源）：
+                            信号峰位置/电平、底噪公式、零扫宽时域包络
+       src/main.py          --demo 模式：内置模拟器监听 15025，端口自动填入
+       src/applog.py        日志落盘与异常留痕（本演示不落盘，见第 4 条）
+     配色、分组、控件顺序、文字标签均取自 main_window.py 的 _build_ui()、
+     _build_control_panel()、_build_plot_panel()、_apply_dark_theme()。
+
+  2) 没有实机，没有后端。浏览器无法打开 TCP 套接字，因此"仪器"是一个页内
+     JavaScript 模拟器，它按 simulator.py 的 SCPI 语义响应指令；"通信层"按
+     scpi_client.py 的报文格式（ASCII 行 / IEEE488.2 二进制块）真实地编码再解码，
+     所以日志里的 SCPI 串是逐条实际下发给页内模拟器的，不是写死的台词。
+
+  3) 数据全部由页内模拟生成，不是真实测量结果。SCPI 指令串按源码格式合成。
+     设备识别串 KSW-Tech,KSW-VSA01,SN-SIM-001,1.0.0 来自 simulator.py，
+     其中序列号是模拟器占位符，并非任何真实设备的序列号。
+     源程序帮助文案里的示例 IP 地址已在演示中略去，不展示任何具体地址。
+
+  4) 演示扩展（源码未实现、为让参数在页面上"看得见反应"而加，特此声明）——
+     a. RBW 影响迹线：底噪按 10*log10(RBW) 平移，噪声起伏幅度随 RBW 变化。
+        （simulator.py 的迹线与 RBW 无关，真实频谱仪与此一致，故按真实规律建模。）
+     b. VBW 影响迹线：按 VBW/RBW 比对相邻扫描做视频平滑。
+     c. 谱线宽度取 max(SPAN 比例宽度, RBW 量级)，simulator.py 只用 SPAN 比例。
+     d. 每帧重新播撒噪声，使迹线像真实扫描一样"呼吸"；simulator.py 的随机种子
+        固定，同一参数下迹线是静止的。取消「连续扫描」后迹线冻结，直到点
+        【单次扫描】才刷新一次（与真实仪器一致）。
+     e. 关闭"Y 轴自动缩放"后，把顶格栅线锚定为参考电平（真实频谱仪惯例）；
+        源程序的 Y 轴由 pyqtgraph 按数据自动定标，参考电平只下发给仪器。
+     f. 勾选"自动"时按 1-2-5 阶梯由 SPAN 推算 RBW/VBW；勾选"衰减 自动"时由页内
+        模拟器自行选一个 0~30 dB 的衰减值。源程序只发 BAND:AUTO ON /
+        BAND:VID:AUTO ON / INP:ATT:AUTO ON，实际取值由仪器内部决定，
+        simulator.py 则直接忽略这三条指令。
+     g. 每次实际发出的指令都在通信日志里以 "→ 指令" 记录（源程序在连接与参数
+        下发时就是这样记的，此处把模式切换等路径也统一成同一格式）。
+     h. 轮询读取迹线不写日志，与源程序 PollThread 一致。
+     其余界面行为一律照源码实现，未增删面板、未虚构控件。
+
+  5) 因浏览器环境限制而做的等价替换：QMessageBox / QDialog 用页内浮层呈现，
+     文案取自源码；QFileDialog 保存 CSV / 问题报告用浏览器下载代替；
+     【打开日志】不打开本地文件（本演示不落盘），改为弹出页内日志全文。
+     源码弹窗文案中出现的示例 IP 地址与用户名相关路径已一并略去。
+     源码日志里的告警前缀是警示符 emoji，站点禁用 emoji，故改写为 "[!]"，
+     其余日志文字逐字照抄源码（含 "→ 指令"、"步骤 1/3"、"（本型号手册未公开
+     SYST:ERR? 指令）" 等）。
+
+  6) 隐私：本文件不含任何真实设备序列号、真实 IP、内网主机名、用户名或日志原文。
+     端口 5025 / 15025 是协议约定值（真实仪器 / --demo 内置模拟器）。
+  ==========================================================================
+-->
+<style>
+    /* 调色板取自 src/main_window.py 的 _apply_dark_theme() 与 _build_plot_panel() */
+    :root {
+        --bg: #1e1e28;          /* QMainWindow, QWidget */
+        --fg: #d8d8e0;
+        --label: #b8b8c8;       /* QLabel */
+        --ctl: #c8c8d4;         /* QCheckBox, QRadioButton */
+        --field-bg: #2a2a38;    /* QLineEdit, QSpinBox, QComboBox */
+        --field-fg: #e8e8f0;
+        --line: #3a3a4a;        /* 边框 */
+        --gb-title: #9aa0b4;    /* QGroupBox::title */
+        --btn-bg: #2f3b5e;      /* QPushButton */
+        --btn-bd: #4a5a8a;
+        --btn-fg: #d8e0ff;
+        --btn-hover: #3a4a78;
+        --btn-press: #26304f;
+        --btn-disabled-bg: #26262f;
+        --btn-disabled-fg: #666;
+        --log-bg: #14141c;      /* QPlainTextEdit */
+        --log-fg: #9fe1cb;
+        --plot-bg: #10101a;     /* pyqtgraph background */
+        --trace: #00e5ff;       /* Trace1 pen */
+        --peak: #ff5252;        /* 峰值标记 */
+        --ok: #1D9E75;          /* 已连接状态灯 */
+        --bad: #E24B4A;         /* 未连接状态灯 */
+        --hint: #EF9F27;        /* 扫描时间提示 */
+        --dev: #888;            /* 设备信息标签 */
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+        margin: 0; background: var(--bg); color: var(--fg);
+        font: 12px/1.45 "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased; overflow: hidden;
+    }
+    .win { display: flex; flex-direction: column; height: 100%; }
+
+    /* Qt 标题栏由操作系统绘制，这里只为在网页里保留窗口标题文字 */
+    .titlebar {
+        flex: none; padding: 4px 10px; background: #17171f; color: #8f95a8;
+        border-bottom: 1px solid var(--line); font-size: 11px; letter-spacing: .02em;
+    }
+    .bar { display: flex; align-items: center; gap: 6px; flex: none; padding: 4px 0; }
+    .connbar { padding: 8px 8px 2px; }
+    .grow { flex: 1 1 auto; }
+    .ql { color: var(--label); white-space: nowrap; }
+    .dev { color: var(--dev); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .state { font-weight: 700; color: var(--bad); white-space: nowrap; }
+    .state.on { color: var(--ok); }
+
+    input.f, select.f {
+        background: var(--field-bg); border: 1px solid var(--line); border-radius: 4px;
+        padding: 3px 6px; color: var(--field-fg); font: inherit; min-width: 0;
+    }
+    input.f:focus, select.f:focus { border-color: var(--trace); outline: none; }
+    input.f::placeholder { color: #6d7288; }
+    .w130 { width: 130px; }
+    .w60 { width: 60px; }
+    button.b {
+        background: var(--btn-bg); border: 1px solid var(--btn-bd); border-radius: 4px;
+        padding: 5px 10px; color: var(--btn-fg); font: inherit; cursor: pointer; white-space: nowrap;
+    }
+    button.b:hover:not(:disabled) { background: var(--btn-hover); }
+    button.b:active:not(:disabled) { background: var(--btn-press); }
+    button.b:disabled { background: var(--btn-disabled-bg); color: var(--btn-disabled-fg); cursor: default; border-color: #33333f; }
+    .ck, .rr { display: inline-flex; align-items: center; gap: 5px; color: var(--ctl); cursor: pointer; white-space: nowrap; }
+    .ck input, .rr input { accent-color: #4a5a8a; margin: 0; }
+
+    .main { flex: 1 1 auto; display: flex; min-height: 0; padding: 0 8px; gap: 6px; }
+    .panel {
+        width: 330px; min-width: 240px; max-width: 520px; overflow-y: auto; overflow-x: hidden;
+        padding-right: 4px; display: flex; flex-direction: column; gap: 8px;
+        scrollbar-width: thin; scrollbar-color: #3a3a4a transparent;
+    }
+    .panel::-webkit-scrollbar { width: 8px; }
+    .panel::-webkit-scrollbar-thumb { background: #34343f; border-radius: 4px; }
+    .split { flex: none; width: 5px; cursor: col-resize; border-radius: 2px; }
+    .split:hover { background: #2b2b36; }
+    .plotcol { flex: 1 1 auto; min-width: 0; display: flex; }
+    #plot { width: 100%; height: 100%; display: block; background: var(--plot-bg); border-radius: 4px; }
+
+    .gb { border: 1px solid var(--line); border-radius: 6px; padding: 8px 8px 9px; position: relative; }
+    .gb > .t {
+        position: absolute; top: -8px; left: 10px; padding: 0 5px; background: var(--bg);
+        color: var(--gb-title); font-weight: 500; font-size: 12px;
+    }
+    .frm { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 6px 8px; align-items: center; }
+    .frm > .k { color: var(--label); text-align: right; }
+    .frm > .v { display: flex; gap: 6px; align-items: center; min-width: 0; }
+    .frm > .v.col { flex-direction: column; align-items: stretch; gap: 4px; }
+    .frm > .sp { grid-column: 2; }
+    .frm.tight { margin-top: 6px; }
+    .hint { color: var(--hint); font-size: 11px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .rowwrap { display: flex; align-items: center; gap: 10px; }
+    .logview {
+        flex: none; height: 110px; margin: 4px 8px 0; background: var(--log-bg);
+        border: 1px solid var(--line); border-radius: 4px; color: var(--log-fg);
+        font: 11px/1.5 Consolas, "Courier New", monospace; overflow-y: auto; padding: 4px 7px;
+        white-space: pre-wrap; word-break: break-all; scrollbar-width: thin;
+    }
+    .logview::-webkit-scrollbar { width: 8px; }
+    .logview::-webkit-scrollbar-thumb { background: #2c2c36; border-radius: 4px; }
+    .logbar { padding: 4px 8px 0; }
+    .logpath { color: #777788; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .status {
+        flex: none; margin-top: 3px; padding: 3px 10px; border-top: 1px solid var(--line);
+        color: var(--label); font-size: 11px; background: #1a1a22;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* 浮层代替 QMessageBox / QDialog */
+    .mask {
+        position: fixed; inset: 0; background: rgba(8, 8, 14, .62); display: none;
+        align-items: center; justify-content: center; z-index: 40; padding: 16px;
+    }
+    .mask.show { display: flex; }
+    .dlg {
+        background: var(--bg); border: 1px solid var(--btn-bd); border-radius: 6px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, .6); max-width: 680px; width: 100%;
+    }
+    .dlg h4 { margin: 0; padding: 9px 14px; font-size: 12px; font-weight: 500; color: var(--field-fg); border-bottom: 1px solid var(--line); }
+    .dlg .body { padding: 14px; font-size: 12px; color: var(--fg); white-space: pre-wrap; line-height: 1.7; max-height: 46vh; overflow-y: auto; }
+    .dlg pre {
+        margin: 0; background: var(--log-bg); border: 1px solid var(--line); border-radius: 4px;
+        color: var(--log-fg); font: 11px/1.55 Consolas, monospace; white-space: pre; overflow: auto;
+        max-height: 46vh; padding: 8px;
+    }
+    .dlg .foot { display: flex; gap: 8px; justify-content: flex-end; padding: 10px 14px; border-top: 1px solid var(--line); }
+    .tag {
+        display: inline-block; margin-left: 8px; padding: 1px 6px; border-radius: 3px;
+        border: 1px solid #3f4a63; color: #8ea0c8; font-size: 10px;
+    }
+    @media (max-width: 760px) {
+        .main { flex-direction: column; }
+        .panel { width: auto !important; max-width: none; max-height: 42%; }
+        .split { display: none; }
+    }
+</style>
+<noscript><p style="padding:18px;color:#d8d8e0">本演示需要 JavaScript：界面的参数联动、迹线与 SCPI 报文均由页内脚本生成。</p></noscript>
+</head>
+<body>
+<div class="win">
+    <!-- setWindowTitle(f"KSW-VSA01 频谱仪上位机 {VERSION}") -->
+    <div class="titlebar" id="winTitle">KSW-VSA01 频谱仪上位机 v1.2.1</div>
+
+    <!-- 顶部连接栏：_build_ui() -->
+    <div class="bar connbar">
+        <span class="ql">仪器 IP</span>
+        <input class="f w130" id="ip" value="127.0.0.1" spellcheck="false">
+        <span class="ql">端口</span>
+        <input class="f w60" id="port" value="15025" spellcheck="false">
+        <button class="b" id="btnConnect">连接</button>
+        <button class="b" id="btnDiag" title="分步检测网络/识别/参数/迹线，结果可保存">诊断</button>
+        <span class="dev" id="lblDevice">未连接</span>
+        <span class="grow"></span>
+        <button class="b" id="btnHelp">帮助</button>
+        <span class="state" id="lblConn">未连接</span>
+    </div>
+
+    <div class="main">
+        <!-- 左侧参数面板：_build_control_panel() -->
+        <div class="panel" id="panel">
+
+            <div class="gb">
+                <span class="t">显示模式</span>
+                <div class="rowwrap">
+                    <label class="rr"><input type="radio" name="vmode" id="rbSpec" checked><span>频谱模式</span></label>
+                    <label class="rr"><input type="radio" name="vmode" id="rbScope"><span>时域模式 (零扫宽)</span></label>
+                </div>
+            </div>
+
+            <div class="gb">
+                <span class="t">频率</span>
+                <div class="frm">
+                    <span class="k">中心频率</span>
+                    <span class="v"><input class="f" id="edCenter" value="1 GHz" spellcheck="false"></span>
+                    <span class="k" id="lblSpan">频宽 SPAN</span>
+                    <span class="v" id="rowSpan"><input class="f" id="edSpan" value="100 MHz" spellcheck="false"></span>
+                    <span class="k"></span>
+                    <span class="v col" id="rowSS">
+                        <input class="f" id="edStart" placeholder="起始频率（自动）" spellcheck="false">
+                        <input class="f" id="edStop" placeholder="终止频率（自动）" spellcheck="false">
+                    </span>
+                </div>
+            </div>
+
+            <div class="gb">
+                <span class="t">带宽</span>
+                <div class="frm">
+                    <span class="k">RBW</span>
+                    <span class="v">
+                        <input class="f" id="edRbw" value="1 MHz" spellcheck="false">
+                        <label class="ck"><input type="checkbox" id="cbRbwAuto" checked><span>自动</span></label>
+                    </span>
+                    <span class="k">VBW</span>
+                    <span class="v">
+                        <input class="f" id="edVbw" value="1 MHz" spellcheck="false">
+                        <label class="ck"><input type="checkbox" id="cbVbwAuto" checked><span>自动</span></label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="gb">
+                <span class="t">幅度</span>
+                <div class="frm">
+                    <span class="k">参考电平 (dBm)</span>
+                    <span class="v"><input class="f" id="edRlev" value="0" spellcheck="false"></span>
+                    <span class="k">衰减 (dB)</span>
+                    <span class="v">
+                        <input class="f" id="edAtt" value="10" spellcheck="false">
+                        <label class="ck"><input type="checkbox" id="cbAttAuto" checked><span>自动</span></label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="gb">
+                <span class="t">扫描</span>
+                <div class="frm">
+                    <span class="k">扫描时间</span>
+                    <span class="v col">
+                        <input class="f" id="edSwt" placeholder="频谱:保持自动 / 时域:必填" spellcheck="false">
+                        <span class="hint" id="lblSwtHint">留空 = 保持仪器自动</span>
+                    </span>
+                    <span class="k">扫描点数</span>
+                    <span class="v"><input class="f" type="number" id="spPoints" min="101" max="100001" step="500" value="1001"></span>
+                    <span class="k"></span>
+                    <span class="sp"><label class="ck"><input type="checkbox" id="cbCont" checked><span>连续扫描</span></label></span>
+                    <span class="k"></span>
+                    <span class="sp"><label class="ck"><input type="checkbox" id="cbAutoY" checked><span>Y 轴自动缩放</span></label></span>
+                </div>
+            </div>
+
+            <div class="gb">
+                <span class="t">操作</span>
+                <div class="grid2">
+                    <button class="b" id="btnApply">应用参数</button>
+                    <button class="b" id="btnAuto">自动调整</button>
+                    <button class="b" id="btnSingle">单次扫描</button>
+                    <button class="b" id="btnPeak">峰值标记</button>
+                    <button class="b" id="btnExport">导出 CSV</button>
+                    <button class="b" id="btnErr">读取错误</button>
+                    <button class="b" id="btnCpow" title="CALC:FUNC:SEL CPOW 测量当前迹线通道功率">通道功率</button>
+                    <button class="b" id="btnRst" title="发送 *RST 恢复仪器默认状态">仪器复位</button>
+                </div>
+                <div class="rowwrap frm tight">
+                    <span class="k" style="text-align:left">刷新率</span>
+                    <select class="f" id="cbRate" style="flex:1 1 auto">
+                        <option value="1.0">慢 (1s)</option>
+                        <option value="0.15" selected>正常 (150ms)</option>
+                        <option value="0.05">快 (50ms)</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="split" id="split" title="拖动调整面板宽度"></div>
+
+        <div class="plotcol">
+            <canvas id="plot"></canvas>
+        </div>
+    </div>
+
+    <!-- 底部通信日志 + 报告按钮：_build_ui()（源程序另设 placeholderText「通信日志…」，
+         但启动即写入两行日志，占位文字实际永不显示，故此处不复现） -->
+    <div class="logview" id="logview"></div>
+    <div class="bar logbar">
+        <button class="b" id="btnReport" title="把界面参数+通信日志+诊断结果打包成 txt 带回来">保存问题报告</button>
+        <button class="b" id="btnOpenLog">打开日志</button>
+        <span class="logpath" id="lblLogPath"></span>
+        <span class="grow"></span>
+    </div>
+    <div class="status" id="status">就绪</div>
+</div>
+
+<!-- 代替 QMessageBox / 诊断 QDialog 的浮层 -->
+<div class="mask" id="mask">
+    <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+        <h4 id="dlgTitle">提示</h4>
+        <div id="dlgBody" class="body"></div>
+        <div class="foot" id="dlgFoot"></div>
+    </div>
+</div>
+
+<script>
+"use strict";
+/* ==========================================================================
+   0. 工具函数（逐条对应 main_window.py / simulator.py 的同名实现）
+   ========================================================================== */
+var FREQ_SUFFIX = [["GHZ", 1e9], ["MHZ", 1e6], ["KHZ", 1e3], ["HZ", 1], ["G", 1e9], ["M", 1e6], ["K", 1e3]];
+var TIME_SUFFIX = [["MS", 1e-3], ["US", 1e-6], ["NS", 1e-9], ["S", 1]];
+
+function parseFreq(text) {                                   /* main_window.parse_freq */
+    var s = String(text == null ? "" : text).trim().toUpperCase();
+    if (!s) return null;
+    var mult = 1;
+    for (var i = 0; i < FREQ_SUFFIX.length; i++) {
+        if (s.slice(-FREQ_SUFFIX[i][0].length) === FREQ_SUFFIX[i][0]) {
+            mult = FREQ_SUFFIX[i][1];
+            s = s.slice(0, -FREQ_SUFFIX[i][0].length);
+            break;
+        }
+    }
+    var v = parseFloat(s.replace(/\s+/g, ""));
+    return isFinite(v) ? v * mult : null;
+}
+function parseTime(text) {                                    /* main_window.parse_time */
+    var s = String(text == null ? "" : text).trim().toUpperCase();
+    if (!s) return null;
+    var mult = 1;
+    for (var i = 0; i < TIME_SUFFIX.length; i++) {
+        if (s.slice(-TIME_SUFFIX[i][0].length) === TIME_SUFFIX[i][0]) {
+            mult = TIME_SUFFIX[i][1];
+            s = s.slice(0, -TIME_SUFFIX[i][0].length);
+            break;
+        }
+    }
+    var v = parseFloat(s.replace(/\s+/g, ""));
+    return isFinite(v) ? v * mult : null;
+}
+/* %.6g / %.4g / %.9g：JS 没有 %g，用有效数字 + 去尾零近似，并还原 Python 的 e+09 写法 */
+function gsig(x, n) {
+    if (!isFinite(x)) return "nan";
+    if (x === 0) return "0";
+    var s = x.toPrecision(n);
+    if (s.indexOf("e") >= 0) {
+        var p = s.split("e"), m = p[0].replace(/0+$/, "").replace(/\.$/, "");
+        var neg = p[1].charAt(0) === "-";
+        var e = Math.abs(parseInt(p[1], 10));
+        return m + "e" + (neg ? "-" : "+") + (e < 10 ? "0" : "") + e;
+    }
+    if (s.indexOf(".") >= 0) s = s.replace(/0+$/, "").replace(/\.$/, "");
+    return s;
+}
+function fmtFreq(hz) {                                        /* main_window.fmt_freq（x 轴刻度） */
+    if (hz >= 1e9) return (hz / 1e9).toFixed(3) + "G";
+    if (hz >= 1e6) return (hz / 1e6).toFixed(3) + "M";
+    if (hz >= 1e3) return (hz / 1e3).toFixed(1) + "k";
+    return hz.toFixed(0);
+}
+function fmtFreqFull(hz) {                                    /* main_window.fmt_freq_full（输入框回填） */
+    if (hz >= 1e9) return gsig(hz / 1e9, 6) + " GHz";
+    if (hz >= 1e6) return gsig(hz / 1e6, 6) + " MHz";
+    if (hz >= 1e3) return gsig(hz / 1e3, 6) + " kHz";
+    return gsig(hz, 6) + " Hz";
+}
+function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+function pad2(n) { return (n < 10 ? "0" : "") + n; }
+function hms(d) { return pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds()); }
+function stamp(d) {
+    return d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) +
+        "_" + pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds());
+}
+
+/* ==========================================================================
+   1. 页内 SCPI 仪器模拟器（对应 src/simulator.py 的 SpectrumSimulator）
+   ========================================================================== */
+var ENCODER = new TextEncoder();
+
+var INSTR = {
+    seed: 42,
+    idn: "KSW-Tech,KSW-VSA01,SN-SIM-001,1.0.0",
+    port: 15025                 /* --demo：内置模拟器端口（main.py） */
+};
+
+function instrDefault() {                                     /* SpectrumSimulator.__init__ */
+    return {
+        center: 1e9, span: 100e6, start: 950e6, stop: 1050e6,
+        rbw: 1e6, vbw: 1e6, rlev: 0.0, atten: 10.0,
+        points: 1001, sweepTime: 0.1, dataFormat: "ASC", cont: true,
+        markerX: 0.0, markerY: -999.0, measureFunc: "CPOW"
+    };
+}
+var sim = instrDefault();
+
+function instrSyncRanges() {                                  /* _sync_ranges() */
+    sim.start = Math.max(0, sim.center - sim.span / 2);
+    sim.stop = sim.center + sim.span / 2;
+}
+
+/* mulberry32 + Box-Muller：替代 Python random.Random(seed).gauss */
+function rngAt(seed) {
+    var s = (seed >>> 0) || 1;
+    return function () {
+        s |= 0; s = (s + 0x6D2B79F5) | 0;
+        var t = Math.imul(s ^ (s >>> 15), 1 | s);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+function gaussPair(rnd) {
+    var u = 0, v = 0;
+    while (u === 0) u = rnd();
+    while (v === 0) v = rnd();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+var frame = 0;              /* 每帧换一次噪声播撒（演示扩展 4d） */
+var lastTrace = null;       /* 最近一次生成的迹线，供标记/测量复用 */
+
+function autoRbwLadder(target) {                              /* 演示扩展 4f：1-2-5 阶梯 */
+    var steps = [10, 20, 50, 100, 200, 500, 1e3, 2e3, 5e3, 1e4, 2e4, 5e4,
+        1e5, 2e5, 5e5, 1e6, 2e6, 5e6, 1e7, 2e7];
+    for (var i = 0; i < steps.length; i++) if (steps[i] >= target) return steps[i];
+    return steps[steps.length - 1];
+}
+function instrAutoBw() {
+    var bins = Math.max(sim.points - 1, 1);
+    var rbw = autoRbwLadder(Math.max(sim.span / bins, 10));
+    sim.rbw = rbw;
+    sim.vbw = autoRbwLadder(Math.max(rbw * 0.1, 10));
+}
+
+/* spectrum_trace()：峰位置与电平取自 simulator.py；
+   底噪 = -95 + atten*0.5 + 10log10(RBW/1e6)（RBW 项为演示扩展 4a） */
+function spectrumTrace() {
+    var n = sim.points, fs = sim.start, fe = sim.stop;
+    var rnd = rngAt(INSTR.seed + Math.floor(sim.center / 1e6) + frame * 7919);
+    rnd();
+    var bin = (fe - fs) / Math.max(n - 1, 1);
+    var floor = -95 + sim.atten * 0.5 + 10 * Math.log10(Math.max(sim.rbw, 1) / 1e6);
+    var jitter = clamp(1.1 * Math.sqrt(1e6 / Math.max(sim.rbw, 10)), 0.5, 4.0);
+    var wmin = Math.max(bin * 1.15, sim.rbw * 0.55);
+    var peaks = [
+        { f: sim.center, s: Math.max(sim.span * 0.004, wmin), a: -10 - sim.atten * 0.3 },
+        { f: sim.center - sim.span * 0.28, s: Math.max(sim.span * 0.002, wmin), a: -38 },
+        { f: sim.center + sim.span * 0.32, s: Math.max(sim.span * 0.0025, wmin), a: -42 }
+    ];
+    if (sim.center / 2 > sim.start) {
+        peaks.push({ f: sim.center / 2, s: Math.max(sim.span * 0.003, wmin), a: -55 });
+    }
+    var lin = [];
+    for (var i = 0; i < n; i++) {
+        var f = fs + (fe - fs) * i / Math.max(n - 1, 1);
+        var v = Math.pow(10, floor / 10) * (1 + gaussPair(rnd) * 0.05);
+        for (var k = 0; k < peaks.length; k++) {
+            var p = peaks[k], d = f - p.f;
+            v += Math.pow(10, p.a / 10) * Math.exp(-(d * d) / (2 * p.s * p.s));
+        }
+        if (v < 1e-15) v = 1e-15;
+        lin.push(10 * Math.log10(v) + gaussPair(rnd) * jitter);
+    }
+    return vbwSmooth(lin.map(function (x) { return Math.max(x, -130); }));
+}
+
+/* time_trace()：零扫宽包络，取自 simulator.py（SPAN<=0 时 x 轴为时间） */
+function timeTrace() {
+    var n = sim.points, t = sim.sweepTime;
+    var rnd = rngAt(INSTR.seed + 7 + frame * 7919);
+    var fmod = 1 / Math.max(t, 1e-6) * 2.5;
+    var out = [];
+    for (var i = 0; i < n; i++) {
+        var ph = 2 * Math.PI * fmod * (i / n);
+        var env = -10 + 6 * Math.sin(ph) - sim.atten * 0.3 + gaussPair(rnd) * 0.4;
+        out.push(env);
+    }
+    return out;
+}
+
+/* 演示扩展 4b：VBW/RBW 决定的视频平滑（对相邻帧做 IIR） */
+var prevTrace = null;
+function vbwSmooth(y) {
+    var ratio = sim.vbw / Math.max(sim.rbw, 1);
+    var a = clamp(Math.sqrt(ratio), 0.04, 1);
+    if (a >= 0.999 || !prevTrace || prevTrace.length !== y.length) { prevTrace = y.slice(); return y; }
+    var out = new Array(y.length);
+    for (var i = 0; i < y.length; i++) out[i] = prevTrace[i] + a * (y[i] - prevTrace[i]);
+    prevTrace = out;
+    return out;
+}
+function xAxis() {                                            /* x_axis() */
+    var n = sim.points, out = new Array(n);
+    if (sim.span <= 0) {
+        for (var i = 0; i < n; i++) out[i] = sim.sweepTime * i / Math.max(n - 1, 1);
+    } else {
+        for (var j = 0; j < n; j++) out[j] = sim.start + (sim.stop - sim.start) * j / Math.max(n - 1, 1);
+    }
+    return out;
+}
+
+function encodeResponse(values) {                             /* _encode() */
+    if (sim.dataFormat.indexOf("REAL") === 0) {
+        var code = sim.dataFormat.indexOf("64") >= 0 ? 8 : 4;
+        var buf = new ArrayBuffer(values.length * code);
+        var dv = new DataView(buf);
+        for (var i = 0; i < values.length; i++) {
+            if (code === 8) dv.setFloat64(i * 8, values[i], true);
+            else dv.setFloat32(i * 4, values[i], true);
+        }
+        var total = values.length * code;
+        var head = "#" + String(total).length + total;
+        var out = new Uint8Array(head.length + total + 1);
+        out.set(ENCODER.encode(head), 0);
+        out.set(new Uint8Array(buf), head.length);
+        out[out.length - 1] = 0x0a;
+        return out;
+    }
+    var parts = new Array(values.length);
+    for (var k = 0; k < values.length; k++) parts[k] = values[k].toFixed(6);
+    return ENCODER.encode(parts.join(",") + "\n");
+}
+
+function measureResult() {                                    /* _measure_result() */
+    var tr = lastTrace || spectrumTrace();
+    var peak = -1e9;
+    for (var i = 0; i < tr.length; i++) if (tr[i] > peak) peak = tr[i];
+    if (sim.measureFunc === "CPOW") return (peak - 0.5).toFixed(3) + ",-52.000,-55.000";
+    if (sim.measureFunc === "OBW") return (peak - 3).toFixed(3) + "," + gsig(sim.span * 0.08, 6);
+    if (sim.measureFunc === "CN") return peak.toFixed(3) + "," + (peak - 38).toFixed(3);
+    return peak.toFixed(3);
+}
+function fix3(x) { return (Math.round(x * 1000) / 1000).toFixed(3); }
+
+/* handle(cmd) -> Uint8Array | null（返回 null 表示仪器无响应） */
+function instrHandle(cmdRaw) {
+    var cmd = String(cmdRaw).trim();
+    if (!cmd) return null;
+    var up = cmd.toUpperCase(), sp = up.indexOf(" ") >= 0 ? up.split(/ (.+)/) : null;
+    var arg = function () { var i = cmd.indexOf(" "); return i < 0 ? "" : cmd.slice(i + 1); };
+    var argU = function () { return arg().trim().toUpperCase(); };
+
+    if (up === "*IDN?") return cmd2bytes(INSTR.idn);
+    if (up === "*OPC?") return cmd2bytes("1");
+    if (up === "*RST") { sim = instrDefault(); instrSyncRanges(); prevTrace = null; return null; }
+    if (up === "ABOR") return null;
+    if (up === "TRAC:DATA?" || up.indexOf("TRAC:DATA? ") === 0) {
+        /* 连续扫描时每次读取相当于重新扫一帧（frame 递增 -> 噪声重新播撒）；
+           关掉连续扫描后迹线冻结，直到点【单次扫描】，与真实仪器一致 */
+        if (sim.cont) frame++;
+        var ty = (sim.span <= 0) ? timeTrace() : spectrumTrace();
+        lastTrace = ty;
+        return encodeResponse(ty);
+    }
+    if (up === "TRAC:DATA:X?" || up.indexOf("TRAC:DATA:X? ") === 0) return encodeResponse(xAxis());
+    if (up === "INIT:CONT?") return cmd2bytes(sim.cont ? "1" : "0");
+    if (up === "FREQ:CENT?") return cmd2bytes(sim.center.toFixed(0));
+    if (up === "FREQ:SPAN?") return cmd2bytes(sim.span.toFixed(0));
+    if (up === "FREQ:START?") return cmd2bytes(sim.start.toFixed(0));
+    if (up === "FREQ:STOP?") return cmd2bytes(sim.stop.toFixed(0));
+    if (up === "BAND?" || up === "BAND:RES?") return cmd2bytes(sim.rbw.toFixed(0));
+    if (up === "BAND:VID?") return cmd2bytes(sim.vbw.toFixed(0));
+    if (up === "DISP:TRAC:Y:RLEV?") return cmd2bytes(sim.rlev.toFixed(1));
+    if (up === "INP:ATT?") return cmd2bytes(sim.atten.toFixed(1));
+    if (up === "SWE:POIN?") return cmd2bytes(String(sim.points));
+    if (up === "SWE:TIME?") return cmd2bytes(sim.sweepTime.toFixed(6));
+    if (up === "FORM:DATA?") return cmd2bytes(sim.dataFormat);
+    if (up === "CALC:MARK1:X?") return cmd2bytes(sim.markerX.toFixed(0));
+    if (up === "CALC:MARK1:Y?") return cmd2bytes(fix3(sim.markerY));
+    if (up === "CALC:FUNC:SEL?") return cmd2bytes(sim.measureFunc);
+    if (up.indexOf("CALC:FUNC:RES?") === 0) return cmd2bytes(measureResult());
+    if (up === "CALC:UNIT:POW?") return cmd2bytes("DBM");
+
+    if (up.indexOf("FREQ:CENT") === 0 && sp) { sim.center = pf(cmd); instrSyncRanges(); if (rbwAuto()) instrAutoBw(); return null; }
+    if (up.indexOf("FREQ:SPAN") === 0 && sp) { sim.span = pf(cmd); instrSyncRanges(); if (rbwAuto()) instrAutoBw(); return null; }
+    if (up.indexOf("FREQ:START") === 0 && sp) { sim.start = pf(cmd); return null; }
+    if (up.indexOf("FREQ:STOP") === 0 && sp) { sim.stop = pf(cmd); return null; }
+    if (up.indexOf("BAND:VID:AUTO") === 0) { if (argU() === "ON" && vbwAuto()) { sim.vbw = sim.rbw; } return null; }
+    if (up.indexOf("BAND:VID") === 0 && sp) { sim.vbw = pf(cmd); return null; }
+    if (up.indexOf("BAND:AUTO") === 0 || up.indexOf("BAND:RES:AUTO") === 0) { if (argU() === "ON") instrAutoBw(); return null; }
+    if (up.indexOf("BAND") === 0 && sp) { sim.rbw = pf(cmd); return null; }
+    if (up.indexOf("INP:ATT:AUTO") === 0) {
+        if (argU() === "ON") {
+            var pk = lastTrace ? Math.max.apply(null, lastTrace) : -10;
+            sim.atten = clamp(Math.round((pk + 20) / 10) * 10, 0, 30);
+        }
+        return null;
+    }
+    if (up.indexOf("INP:ATT") === 0 && sp) { sim.atten = parseFloat(argU().replace(/DBM?/, "")) || 0; return null; }
+    if (up.indexOf("DISP:TRAC:Y:RLEV") === 0 && sp) { sim.rlev = parseFloat(argU().replace(/DBM?/, "")) || 0; return null; }
+    if (up.indexOf("SWE:POIN") === 0 && sp) { sim.points = Math.max(101, parseInt(arg(), 10) || 101); prevTrace = null; return null; }
+    if (up.indexOf("SWE:TIME") === 0 && sp) { sim.sweepTime = pt(cmd); return null; }
+    if (up.indexOf("FORM:DATA") === 0 && sp) { sim.dataFormat = arg().replace(/\s+/g, "").toUpperCase(); return null; }
+    if (up.indexOf("INIT:CONT") === 0 && sp) { sim.cont = argU().indexOf("ON") >= 0 || argU() === "1"; return null; }
+    if (up === "INIT") { frame++; lastTrace = (sim.span <= 0) ? timeTrace() : spectrumTrace(); return null; }
+    if (up.indexOf("CALC:MARK1:STAT") === 0) return null;
+    if (up.indexOf("CALC:MARK1:MAX") === 0) {
+        var tr = lastTrace || ((sim.span <= 0) ? timeTrace() : spectrumTrace());
+        var xs = xAxis(), idx = 0, best = -1e9;
+        for (var i2 = 0; i2 < tr.length; i2++) if (tr[i2] > best) { best = tr[i2]; idx = i2; }
+        sim.markerX = xs[idx]; sim.markerY = tr[idx];
+        return null;
+    }
+    if (up.indexOf("CALC:MARK1:X") === 0 && sp) {
+        sim.markerX = pf(cmd);
+        var tr2 = lastTrace || spectrumTrace(), xs2 = xAxis(), near = 0, dd = 1e30;
+        for (var i3 = 0; i3 < xs2.length; i3++) { var d = Math.abs(xs2[i3] - sim.markerX); if (d < dd) { dd = d; near = i3; } }
+        sim.markerY = tr2[near];
+        return null;
+    }
+    if (up.indexOf("CALC:FUNC:SEL") === 0 && sp) { sim.measureFunc = arg().trim().toUpperCase(); return null; }
+    if (up.indexOf("CALC:UNIT:POW") === 0) return null;
+    if (up.indexOf("SENS:ADJ") === 0) {                       /* 自动调整：simulator 固定为 -10 / 10 */
+        sim.rlev = -10.0; sim.atten = 10.0;
+        if (rbwAuto()) instrAutoBw();
+        return null;
+    }
+    if (up.indexOf("INP:GAIN") === 0) return null;
+    return cmd2bytes("error: unsupported command [" + cmd + "]");
+
+    function cmd2bytes(s) { return ENCODER.encode(s + "\n"); }
+    function pf(c) {                                          /* simulator.parse_freq */
+        var t = String(c).slice(c.indexOf(" ") + 1).trim().toUpperCase(), m = 1;
+        var list = [["GHZ", 1e9], ["MHZ", 1e6], ["KHZ", 1e3], ["HZ", 1], ["GH", 1e9], ["MH", 1e6], ["KH", 1e3], ["K", 1e3], ["G", 1e9], ["M", 1e6]];
+        for (var i = 0; i < list.length; i++) {
+            if (t.slice(-list[i][0].length) === list[i][0]) { m = list[i][1]; t = t.slice(0, -list[i][0].length); break; }
+        }
+        var v = parseFloat(t);
+        return isFinite(v) ? v * m : 0;
+    }
+    function pt(c) {                                          /* simulator.parse_time */
+        var t = String(c).slice(c.indexOf(" ") + 1).trim().toUpperCase(), m = 1;
+        var list = [["MS", 1e-3], ["US", 1e-6], ["NS", 1e-9], ["S", 1]];
+        for (var i = 0; i < list.length; i++) {
+            if (t.slice(-list[i][0].length) === list[i][0]) { m = list[i][1]; t = t.slice(0, -list[i][0].length); break; }
+        }
+        var v = parseFloat(t);
+        return isFinite(v) ? v * m : 0;
+    }
+}
+function rbwAuto() { return $("cbRbwAuto").checked; }
+function vbwAuto() { return $("cbVbwAuto").checked; }
+
+/* ==========================================================================
+   2. 通信层（对应 src/scpi_client.py：ASCII 行 + IEEE488.2 二进制块自适应）
+   ========================================================================== */
+var link = { connected: false, host: "", port: 0 };
+
+function scpiSend(cmd) {                                      /* SCPIClient.send */
+    if (!link.connected) throw new Error("未连接到仪器");
+    instrHandle(cmd);
+}
+function scpiQuery(cmd) {                                     /* SCPIClient.query */
+    if (!link.connected) throw new Error("未连接到仪器");
+    var r = instrHandle(cmd);
+    if (r == null) return "";
+    return new TextDecoder("latin1").decode(r).replace(/\r?\n$/, "");
+}
+function readBinaryBlock(u8) {                                /* _read_binary_block_locked */
+    var p = 1;
+    var nDigit = String.fromCharCode(u8[p++]);
+    if (nDigit === "0") return { payload: new Uint8Array(0) };
+    var n = parseInt(nDigit, 10);
+    if (!(n > 0 && n <= 9)) throw new Error("二进制块长度位数异常: " + nDigit);
+    var total = parseInt(new TextDecoder("latin1").decode(u8.subarray(p, p + n)), 10);
+    p += n;
+    if (!(total > 0 && total <= 256 * 1024 * 1024)) throw new Error("二进制块长度越界: " + total);
+    return { payload: u8.subarray(p, p + total) };
+}
+function scpiQueryBinary(cmd, fmt) {                          /* SCPIClient.query_binary */
+    if (!link.connected) throw new Error("未连接到仪器");
+    var raw = instrHandle(cmd);
+    if (raw == null || !raw.length) return [];
+    fmt = String(fmt).toUpperCase().replace(/ /g, "");
+    var bits = fmt.indexOf(",") >= 0 ? parseInt(fmt.split(",")[1], 10) : 32;
+    var size = bits === 64 ? 8 : 4;
+    if (raw[0] === 0x23) {                                     /* '#' -> 二进制块 */
+        var blk = readBinaryBlock(raw).payload;
+        if (blk.length % size !== 0) throw new Error("二进制块长度与格式不符：" + blk.length + " 字节，每值 " + size + " 字节");
+        var dv = new DataView(blk.buffer, blk.byteOffset, blk.length);
+        var count = blk.length / size, out = new Array(count);
+        for (var i = 0; i < count; i++) {
+            out[i] = size === 8 ? dv.getFloat64(i * 8, true) : dv.getFloat32(i * 4, true);
+        }
+        return out;
+    }
+    var line = new TextDecoder("latin1").decode(raw).replace(/\r?\n$/, "");
+    var vals = [];
+    line.split(",").forEach(function (tok) { tok = tok.trim(); if (tok) vals.push(parseFloat(tok)); });
+    return vals;
+}
+function scpiOpc() { return scpiQuery("*OPC?").trim() === "1"; }
+
+/* ==========================================================================
+   3. 主窗口（对应 src/main_window.py 的 MainWindow）
+   ========================================================================== */
+function $(id) { return document.getElementById(id); }
+var VERSION = "v1.2.1";
+var MODE_SPEC = "spectrum", MODE_SCOPE = "scope";
+var currentMode = MODE_SPEC, lastSpan = 100e6, pollErrShown = false;
+var lastX = null, lastY = null;
+var xCache = null, xInvalid = true, pollTimer = null, interval = 0.15;
+var marker = null;
+
+/* ---- 日志：MainWindow.log() ---- */
+var logLines = [];
+function log(text) {
+    var box = $("logview");
+    var line = "[" + hms(new Date()) + "] " + text;
+    logLines.push(line);
+    if (logLines.length > 500) logLines.shift();
+    var el = document.createElement("div");
+    el.textContent = line;
+    box.appendChild(el);
+    while (box.childElementCount > 500) box.removeChild(box.firstChild);
+    box.scrollTop = box.scrollHeight;
+}
+function logText() { return logLines.join("\n"); }
+function logPathText() { return "日志：浏览器演示不落盘（实机为 KSW_VSA01_Control.log）"; }
+
+function status(msg) { $("status").textContent = msg; }
+
+/* ---- 浮层：代替 QMessageBox ---- */
+function msgBox(title, body, buttons) {
+    return new Promise(function (resolve) {
+        $("dlgTitle").textContent = title;
+        var b = $("dlgBody");
+        b.className = "body";
+        b.innerHTML = "";
+        b.textContent = body;
+        var f = $("dlgFoot");
+        f.innerHTML = "";
+        (buttons || [{ label: "确定", value: "ok" }]).forEach(function (cfg) {
+            var btn = document.createElement("button");
+            btn.className = "b";
+            btn.type = "button";
+            btn.textContent = cfg.label;
+            btn.addEventListener("click", function () {
+                $("mask").classList.remove("show");
+                resolve(cfg.value);
+            });
+            f.appendChild(btn);
+        });
+        $("mask").classList.add("show");
+        if (f.lastChild) f.lastChild.focus();
+    });
+}
+
+/* ---- 连接状态灯：_set_conn_state() ---- */
+function setConnState(ok) {
+    var el = $("lblConn");
+    el.textContent = ok ? "● 已连接" : "● 未连接";
+    el.classList.toggle("on", !!ok);
+    if (!ok && !link.connected) $("btnConnect").textContent = "连接";
+}
+
+/* ---- 模式感知面板：_apply_mode_ui() ---- */
+function applyModeUi() {
+    var isSpec = currentMode === MODE_SPEC;
+    $("lblSpan").style.display = isSpec ? "" : "none";
+    $("rowSpan").style.display = isSpec ? "" : "none";
+    $("rowSS").style.display = isSpec ? "" : "none";
+    $("btnPeak").disabled = !isSpec;
+    $("btnCpow").disabled = !isSpec;
+    $("lblSwtHint").textContent = isSpec ? "留空 = 保持仪器自动" : "观察窗口（时域核心参数，必填）";
+    if (!isSpec && !$("edSwt").value.trim()) $("edSwt").value = "100 ms";
+}
+function clearPeak() { marker = null; }
+
+/* ---- 频率联动：_update_startstop_display / _update_center_display ---- */
+function updateStartStop() {
+    var c = parseFreq($("edCenter").value), s = parseFreq($("edSpan").value);
+    if (c !== null && s !== null && s > 0) {
+        $("edStart").value = fmtFreqFull(Math.max(0, c - s / 2));
+        $("edStop").value = fmtFreqFull(c + s / 2);
+    }
+}
+function updateCenter() {
+    var a = parseFreq($("edStart").value), b = parseFreq($("edStop").value);
+    if (a !== null && b !== null && b > a) {
+        $("edCenter").value = fmtFreqFull((a + b) / 2);
+        $("edSpan").value = fmtFreqFull(b - a);
+    }
+}
+
+/* ---- 连接后回填：_sync_from_instrument() ---- */
+function safeQ(cmd) {
+    try { return scpiQuery(cmd); }
+    catch (e) { log("查询 " + cmd + " 失败: " + e.message); return null; }
+}
+function syncFromInstrument() {
+    var ok = 0;
+    var v = safeQ("FREQ:CENT?");
+    if (v) { $("edCenter").value = fmtFreqFull(parseFloat(v)); ok++; }
+    v = safeQ("FREQ:SPAN?");
+    if (v) {
+        var span = parseFloat(v);
+        if (span > 0) { lastSpan = span; $("edSpan").value = fmtFreqFull(span); ok++; }
+        else $("edSpan").value = fmtFreqFull(lastSpan);
+    }
+    var rows = [
+        ["SWE:TIME?", "edSwt", "time"],
+        ["SWE:POIN?", "spPoints", "points"],
+        ["DISP:TRAC:Y:RLEV?", "edRlev", "plain"],
+        ["INP:ATT?", "edAtt", "plain"],
+        ["BAND?", "edRbw", "freq"],
+        ["BAND:VID?", "edVbw", "freq"]
+    ];
+    for (var i = 0; i < rows.length; i++) {
+        var val = safeQ(rows[i][0]);
+        if (!val) continue;
+        var num = parseFloat(val), el = $(rows[i][1]), fmt = rows[i][2];
+        if (fmt === "time") el.value = gsig(num * 1e3, 6) + " ms";
+        else if (fmt === "points") el.value = String(parseInt(num, 10));
+        else if (fmt === "plain") el.value = gsig(num, 6);
+        else el.value = fmtFreqFull(num);
+        ok++;
+    }
+    updateStartStop();
+    if (ok) log("已同步仪器当前参数（" + ok + " 项）");
+    else log("未同步到仪器参数（仪器未响应查询，可点【诊断】排查）");
+}
+
+/* ---- 轮询线程：PollThread ---- */
+function startPoll() {
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(pollTick, Math.round(interval * 1000));
+}
+function stopPoll() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+function pollTick() {
+    if (!link.connected) return;
+    try {
+        var y = scpiQueryBinary("TRAC:DATA? TRACE1", "REAL,32");
+        if (!y || !y.length) throw new Error("仪器返回空数据");
+        var n = y.length;
+        if (xInvalid || xCache === null || xCache.length !== n) {
+            if (currentMode === MODE_SCOPE) {
+                var t = parseFloat(safeQ("SWE:TIME?") || 0.1);
+                xCache = new Array(n);
+                for (var i = 0; i < n; i++) xCache[i] = t * i / Math.max(n - 1, 1);
+            } else {
+                var s0 = Math.max(0, parseFloat(safeQ("FREQ:START?") || 0));
+                var s1 = Math.max(s0, parseFloat(safeQ("FREQ:STOP?") || 1));
+                xCache = new Array(n);
+                for (var j = 0; j < n; j++) xCache[j] = s0 + (s1 - s0) * j / Math.max(n - 1, 1);
+            }
+            xInvalid = false;
+        }
+        onData(xCache, y, currentMode);
+    } catch (e) { onPollError(e.message || String(e)); }
+}
+function onPollError(msg) {
+    log("[!] 数据轮询错误: " + msg);
+    status("轮询错误: " + msg);
+    link.connected = false;
+    stopPoll();
+    setConnState(false);
+    if (!pollErrShown) {
+        pollErrShown = true;
+        msgBox("数据刷新中断",
+            "数据刷新已停止：\n" + msg + "\n\n" +
+            "可能原因：仪器断线、仪器忙、参数不被支持。\n" +
+            "建议：点【诊断】分步排查 → 点【断开】再【连接】重试。\n" +
+            "详细记录已写入日志，可点【保存问题报告】导出。");
+    }
+}
+
+/* ---- 数据显示：_on_data / _show_peak ---- */
+var yTop = 0, yBottom = -100, refLevel = 0;
+/* 演示扩展 4e：关闭“Y 轴自动缩放”后，把顶格栅线锚定为参考电平（真实频谱仪惯例）。
+   源程序的 Y 轴由 pyqtgraph 按数据自动定标，参考电平只下发给仪器。 */
+function applyRefRange() {
+    var r = parseFloat($("edRlev").value);
+    refLevel = isFinite(r) ? r : 0;
+    yTop = refLevel;
+    yBottom = refLevel - 100;
+}
+function onData(x, y, mode) {
+    lastX = x; lastY = y;
+    pollErrShown = false;
+    var ymin = 1e9, ymax = -1e9;
+    for (var i = 0; i < y.length; i++) { if (y[i] < ymin) ymin = y[i]; if (y[i] > ymax) ymax = y[i]; }
+    if ($("cbAutoY").checked) {
+        yBottom = Math.max(ymin - 10, -140);
+        yTop = Math.min(ymax + 10, 40);
+    }
+    draw();
+    var xl = mode === "scope" ? "s" : "Hz";
+    status((mode === "scope" ? "时域" : "频谱") + " | " + y.length + " 点 | 范围 " +
+        gsig(x[0], 4) + " ~ " + gsig(x[x.length - 1], 4) + xl + " | 峰值 " + ymax.toFixed(1) + " dBm");
+}
+function showPeak(fx, fy) { marker = { x: fx, y: fy }; draw(); }
+
+/* ---- 连接 / 断开：_on_connect / _disconnect ---- */
+function onConnect() {
+    if (link.connected) { disconnect(); return; }
+    var host = $("ip").value.trim();
+    if (!host) { msgBox("提示", "请输入仪器 IP"); return; }
+    var port = parseInt($("port").value.trim() || "5025", 10);
+    if (!isFinite(port)) { msgBox("提示", "端口必须是数字"); return; }
+    if (!(port >= 1 && port <= 65535)) { msgBox("提示", "端口范围 1~65535"); return; }
+    link.host = host; link.port = port;
+    log("正在连接 " + host + ":" + port + " …");
+    if (port !== INSTR.port) {
+        /* 浏览器无 TCP 能力，页内模拟器只监听 --demo 的 15025 */
+        var fail = "无法连接 " + host + ":" + port + " —— Connection timed out";
+        log("连接失败: " + fail);
+        showConnectError(fail);
+        return;
+    }
+    link.connected = true;
+    log("TCP 连接成功（步骤 1/3）");
+    var ident = scpiQuery("*IDN?");
+    if (!ident) { log("连接失败: 设备未返回识别信息（*IDN? 响应为空）"); return; }
+    log("设备识别成功（步骤 2/3）: " + ident);
+    scpiSend("FORM:DATA REAL,32");
+    log("数据格式已设为 REAL,32（步骤 3/3）");
+    scpiSend("INIT:CONT ON");
+    log("→ INIT:CONT ON（连续测量）");
+    $("lblDevice").textContent = ident;
+    log("连接成功: " + ident);
+    setConnState(true);
+    $("btnConnect").textContent = "断开";
+    pollErrShown = false;
+    xInvalid = true;
+    syncFromInstrument();
+    startPoll();
+}
+function showConnectError(msg) {
+    var tips = [];
+    if (/超时|timed out|timeout/i.test(msg)) {
+        tips = [
+            "仪器未响应（TCP 连接超时）",
+            "检查：仪器是否开机、IP 是否正确、网线是否接好",
+            "电脑与仪器需在同一网段，推荐网线直连",
+            "仪器 [设置] > 网络+远程：确认 IP 正确且「远程控制」已启用"
+        ];
+    } else if (/拒绝|refused/i.test(msg)) {
+        tips = [
+            "端口被拒绝：网络可达，但仪器没有在这个端口上提供服务",
+            "检查：仪器「远程控制」是否已启用（[设置] > 网络+远程）",
+            "端口应为 5025；确认该端口未被其他程序占用"
+        ];
+    } else if (/不可达|无法访问|unreachable/i.test(msg)) {
+        tips = [
+            "网络不可达：电脑无法路由到仪器",
+            "检查：网线连接、电脑 IP 与仪器同网段、交换机是否正常"
+        ];
+    }
+    var full = "连接失败：\n" + msg;
+    if (tips.length) {
+        full += "\n\n排查建议：\n• " + tips.join("\n• ");
+        full += "\n\n（演示说明：页内模拟器只在 --demo 的 15025 端口，改回 15025 即可连上）";
+    }
+    msgBox("连接失败", full);
+}
+function disconnect() {
+    stopPoll();
+    link.connected = false;
+    $("lblDevice").textContent = "未连接";
+    $("btnConnect").textContent = "连接";
+    setConnState(false);
+    log("已断开连接");
+}
+
+/* ---- 模式切换：_switch_mode() ---- */
+function switchMode(mode) {
+    currentMode = mode;
+    xInvalid = true;
+    applyModeUi();
+    if (link.connected) {
+        try {
+            if (mode === MODE_SPEC) {
+                var span = parseFreq($("edSpan").value) || lastSpan;
+                lastSpan = span;
+                scpiSend("FREQ:SPAN " + span.toFixed(0));
+                log("→ FREQ:SPAN " + span.toFixed(0) + "（恢复频谱扫宽）");
+                log("切换到频谱模式: SPAN=" + fmtFreq(span) + "Hz");
+            } else {
+                scpiSend("FREQ:SPAN 0");
+                log("→ FREQ:SPAN 0（零扫宽）");
+                var swt = parseTime($("edSwt").value || "100 ms");
+                if (swt !== null && swt > 0) {
+                    scpiSend("SWE:TIME " + swt.toFixed(6));
+                    log("→ SWE:TIME " + swt.toFixed(6) + "（观察窗口）");
+                    log("切换到时域模式 (零扫宽)，扫描时间 " + gsig(swt * 1e3, 6) + " ms");
+                } else {
+                    log("切换到时域模式 (零扫宽)，扫描时间保持仪器当前值");
+                }
+            }
+        } catch (e) {
+            log("模式切换失败: " + e.message);
+            msgBox("模式切换失败", e.message);
+        }
+    }
+    clearPeak();
+    xCache = null;
+    draw();
+}
+
+/* ---- 应用参数：_on_apply()（含 SPAN 钳位与频率校验） ---- */
+function onApply() {
+    if (!link.connected) { msgBox("提示", "请先连接仪器"); return; }
+    var cmds = [], warns = [], isSpec = currentMode === MODE_SPEC;
+    var center = parseFreq($("edCenter").value);
+    if (center !== null) {
+        if (center < 0) {
+            msgBox("参数无效", "中心频率不能为负值。\n仪器频率范围：0 Hz ~ fmax（手册 9.2.2.1）。");
+            return;
+        }
+        cmds.push("FREQ:CENT " + center.toFixed(0));
+    } else if ($("edCenter").value.trim()) warns.push("中心频率格式无效，已忽略");
+
+    if (isSpec) {
+        var span = parseFreq($("edSpan").value);
+        if (center !== null && span !== null) {
+            if (span <= 0) {
+                msgBox("参数无效", "频宽 SPAN 必须大于 0。\n要看信号随时间变化的波形，请切到「时域模式」。");
+                return;
+            }
+            if (center === 0) {
+                msgBox("参数无效", "中心频率为 0 Hz 时无法设置频宽（起始频率将低于 0 Hz）。\n" +
+                    "请提高中心频率，或切到「时域模式」观察波形。");
+                return;
+            }
+            var maxSpan = 2.0 * center;
+            if (span > maxSpan) {
+                var orig = span;
+                span = maxSpan;
+                $("edSpan").value = fmtFreqFull(span);
+                msgBox("频宽已自动调整", "中心频率 " + fmtFreqFull(center) + " 下，SPAN " + fmtFreqFull(orig) +
+                    " 会使起始频率低于 0 Hz。\nSPAN 已自动限制为 " + fmtFreqFull(span) + "（起始频率 = 0 Hz）。\n" +
+                    "如需观测更宽频段，请先提高中心频率。");
+            }
+            cmds.push("FREQ:SPAN " + span.toFixed(0));
+            lastSpan = span;
+        } else {
+            if (span !== null) {
+                if (span <= 0) { msgBox("参数无效", "频宽 SPAN 必须大于 0"); return; }
+                cmds.push("FREQ:SPAN " + span.toFixed(0));
+            } else if ($("edSpan").value.trim()) warns.push("频宽格式无效，已忽略");
+            var st = parseFreq($("edStart").value), sp = parseFreq($("edStop").value);
+            if (st !== null && st < 0) { warns.push("起始频率不能为负值（手册范围 0 ~ fmax），已忽略"); st = null; }
+            if (sp !== null && sp <= 0) { warns.push("终止频率必须大于 0，已忽略"); sp = null; }
+            if (st !== null && sp !== null && sp <= st) { warns.push("终止频率必须大于起始频率，已忽略"); st = sp = null; }
+            if (st !== null) cmds.push("FREQ:START " + st.toFixed(0));
+            if (sp !== null) cmds.push("FREQ:STOP " + sp.toFixed(0));
+        }
+    } else {
+        var txt = $("edSwt").value.trim();
+        if (!txt) { msgBox("提示", "时域模式下请填写观察窗口（扫描时间）"); return; }
+        var t0 = parseTime(txt);
+        if (t0 === null || t0 <= 0) { msgBox("提示", "扫描时间格式无效，示例：100 ms / 0.1 / 1s / 500us"); return; }
+    }
+
+    var rbw = parseFreq($("edRbw").value);
+    if (rbw !== null) {
+        if (rbwAuto()) cmds.push("BAND:AUTO ON");
+        else { cmds.push("BAND:AUTO OFF"); cmds.push("BAND " + rbw.toFixed(0)); }
+    } else if (!rbwAuto()) warns.push("RBW 格式无效，已跳过");
+    var vbw = parseFreq($("edVbw").value);
+    if (vbw !== null) {
+        if (vbwAuto()) cmds.push("BAND:VID:AUTO ON");
+        else { cmds.push("BAND:VID:AUTO OFF"); cmds.push("BAND:VID " + vbw.toFixed(0)); }
+    } else if (!vbwAuto()) warns.push("VBW 格式无效，已跳过");
+
+    var rlev = $("edRlev").value.trim();
+    if (rlev) {
+        if (isFinite(parseFloat(rlev))) cmds.push("DISP:TRAC:Y:RLEV " + rlev + "dBm");
+        else warns.push("参考电平格式无效，已跳过");
+    }
+    if ($("cbAttAuto").checked) cmds.push("INP:ATT:AUTO ON");
+    else {
+        cmds.push("INP:ATT:AUTO OFF");
+        var att = $("edAtt").value.trim();
+        if (att) {
+            if (isFinite(parseFloat(att))) cmds.push("INP:ATT " + att + "dB");
+            else warns.push("衰减格式无效，已跳过");
+        }
+    }
+    var pts = parseInt($("spPoints").value, 10);
+    if (!isFinite(pts)) pts = 1001;
+    pts = clamp(pts, 101, 100001);
+    $("spPoints").value = String(pts);
+    cmds.push("SWE:POIN " + pts);
+    var swt = $("edSwt").value.trim();
+    if (swt) {
+        var t = parseTime(swt);
+        if (t !== null && t > 0) cmds.push("SWE:TIME " + t.toFixed(6));
+        else warns.push("扫描时间格式无效，已跳过");
+    }
+    cmds.push($("cbCont").checked ? "INIT:CONT ON" : "INIT:CONT OFF");
+
+    warns.forEach(function (w) { log("[!] " + w); });
+    var sent = null;
+    try {
+        for (var i = 0; i < cmds.length; i++) { sent = cmds[i]; scpiSend(sent); log("→ " + sent); }
+        xInvalid = true;
+        xCache = null;
+        if (isSpec) updateStartStop();
+        if (!$("cbAutoY").checked) applyRefRange();
+        status("参数已下发（" + cmds.length + " 条指令）");
+    } catch (e) {
+        log("下发失败（" + sent + "）: " + e.message);
+        msgBox("参数下发失败", "指令 " + sent + " 下发失败：\n" + e.message + "\n\n" +
+            "可点【读取错误】查看仪器错误信息，或【保存问题报告】记录。");
+    }
+}
+
+/* ---- 自动调整：_on_auto_adjust() ---- */
+function onAutoAdjust() {
+    if (!link.connected) { msgBox("提示", "请先连接仪器"); return; }
+    scpiSend("SENS:ADJ:ALL");
+    log("→ SENS:ADJ:ALL (自动调整)");
+    setTimeout(function () {
+        syncFromInstrument();
+        xInvalid = true; xCache = null;
+        status("自动调整完成");
+    }, 300);
+}
+
+/* ---- 单次扫描：_on_single() ---- */
+function onSingle() {
+    if (!link.connected) { msgBox("提示", "请先连接仪器"); return; }
+    scpiSend("INIT:CONT OFF"); log("→ INIT:CONT OFF");
+    scpiSend("INIT"); log("→ INIT");
+    var ok = scpiOpc();
+    var back = $("cbCont").checked ? "INIT:CONT ON" : "INIT:CONT OFF";
+    scpiSend(back); log("→ " + back);
+    log("→ 单次扫描触发 (INIT + *OPC?)" + (ok ? "，扫描完成" : "，等待超时"));
+    status(ok ? "单次扫描完成" : "单次扫描已触发（等待超时）");
+}
+
+/* ---- 峰值标记：_on_peak() ---- */
+function onPeak() {
+    if (!link.connected) { msgBox("提示", "请先连接仪器"); return; }
+    if (currentMode !== MODE_SPEC) { msgBox("提示", "峰值标记仅在频谱模式可用"); return; }
+    scpiSend("CALC:MARK1:STAT ON"); log("→ CALC:MARK1:STAT ON");
+    scpiSend("CALC:MARK1:MAX"); log("→ CALC:MARK1:MAX");
+    var fx = parseFloat(scpiQuery("CALC:MARK1:X?"));
+    var fy = parseFloat(scpiQuery("CALC:MARK1:Y?"));
+    showPeak(fx, fy);
+    log("峰值: " + fmtFreq(fx) + "Hz, " + fy.toFixed(2) + " dBm");
+    status("峰值 " + fmtFreq(fx) + "Hz @ " + fy.toFixed(2) + " dBm");
+}
+
+/* ---- 通道功率：_on_cpow() ---- */
+function onCpow() {
+    if (!link.connected) { msgBox("提示", "请先连接仪器"); return; }
+    if (currentMode !== MODE_SPEC) { msgBox("提示", "通道功率仅在频谱模式可用"); return; }
+    scpiSend("CALC:FUNC:SEL CPOW"); log("→ CALC:FUNC:SEL CPOW（通道功率测量）");
+    $("btnCpow").disabled = true;
+    setTimeout(function () {
+        var res;
+        try { res = scpiQuery("CALC:FUNC:RES? CPOW"); }
+        catch (e) { res = null; }
+        $("btnCpow").disabled = currentMode !== MODE_SPEC;
+        try { scpiSend("CALC:FUNC:SEL SANalyzer"); log("→ 已恢复频谱扫描模式 (SANalyzer)"); } catch (e2) { }
+        if (res === null) { msgBox("通道功率", "测量失败：未连接\n\n可点【读取错误】查看仪器错误信息。"); return; }
+        log("通道功率结果: " + res);
+        msgBox("通道功率", "测量结果（CALC:FUNC:RES? CPOW）：\n" + res + "\n\n单位与仪器显示一致（通常为 dBm）。");
+    }, 1000);
+}
+
+/* ---- 仪器复位：_on_rst() ---- */
+function onRst() {
+    if (!link.connected) { msgBox("提示", "请先连接仪器"); return; }
+    msgBox("仪器复位", "将发送 *RST 恢复仪器默认状态，之后自动重新设置数据格式并同步参数。\n确定继续？",
+        [{ label: "确定", value: "yes" }, { label: "取消", value: "no" }]).then(function (v) {
+            if (v !== "yes") return;
+            scpiSend("*RST"); log("→ *RST（仪器复位）");
+            setTimeout(function () {
+                scpiSend("FORM:DATA REAL,32"); log("→ FORM:DATA REAL,32");
+                scpiSend("INIT:CONT ON"); log("→ INIT:CONT ON");
+                syncFromInstrument();
+                xInvalid = true; xCache = null;
+                status("仪器已复位");
+            }, 500);
+        });
+}
+
+/* ---- 读取错误：_on_read_error() ---- */
+function onReadError() {
+    if (!link.connected) { msgBox("提示", "请先连接仪器"); return; }
+    var resp = safeQ("SYST:ERR?");
+    if (!resp || resp.toLowerCase().indexOf("error") >= 0) {
+        log("仪器错误队列: 无响应（本型号手册未公开 SYST:ERR? 指令）");
+        msgBox("仪器错误", "仪器未返回错误队列信息（该型号手册未公开 SYST:ERR? 查询指令）。\n\n" +
+            "请到仪器上查看：[设置] > 网络+远程 > 远程错误 页，\n" +
+            "里面按时间顺序列出远程操作期间生成的错误及描述。");
+    } else {
+        log("仪器错误队列: " + resp);
+        msgBox("仪器错误", resp);
+    }
+}
+
+/* ---- 四步连接诊断：_on_diag() ---- */
+function onDiag() {
+    var host = $("ip").value.trim();
+    if (!host) { msgBox("提示", "请先填写仪器 IP"); return; }
+    var port;
+    try { port = parseInt($("port").value.trim() || "5025", 10); } catch (e) { port = NaN; }
+    if (!isFinite(port)) { msgBox("提示", "端口必须是数字"); return; }
+
+    var lines = [];
+    var now = new Date();
+    lines.push("KSW-VSA01 连接诊断  " + now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" +
+        pad2(now.getDate()) + " " + hms(now));
+    lines.push("目标: " + host + ":" + port);
+    lines.push("");
+    var useExisting = link.connected && link.host === host && link.port === port;
+    if (useExisting) lines.push("[0] 当前已连接该仪器，直接使用现有连接检测");
+
+    var tcpOk = false, t0 = Date.now();
+    if (port === INSTR.port) {
+        tcpOk = true;
+        var ms = Math.max(1, Date.now() - t0 + 1);
+        lines.push("[1] TCP 连接 " + host + ":" + port + " ................. 通过 (" + ms + " ms)");
+    } else {
+        lines.push("[1] TCP 连接 " + host + ":" + port + " ................. 失败 —— timed out");
+        lines.push("     → 网络层不通：检查网线 / IP / 同网段 / 仪器是否开机");
+    }
+
+    var owned = link.connected;
+    if (tcpOk && !useExisting) { link.connected = true; link.host = host; link.port = port; }
+    if (tcpOk && link.connected) {
+        var idn = "";
+        try { idn = scpiQuery("*IDN?"); } catch (e) { idn = ""; }
+        if (idn) lines.push("[2] 设备识别 *IDN? ........................ 通过: " + idn);
+        else {
+            lines.push("[2] 设备识别 *IDN? ........................ 失败 —— 响应超时");
+            lines.push("     → TCP 通了但设备不应答：确认远程控制已启用、仪器空闲");
+        }
+        var probes = [["中心频率", "FREQ:CENT?"], ["频宽", "FREQ:SPAN?"], ["扫描点数", "SWE:POIN?"],
+        ["参考电平", "DISP:TRAC:Y:RLEV?"], ["衰减", "INP:ATT?"], ["功率单位", "CALC:UNIT:POW?"]];
+        for (var i = 0; i < probes.length; i++) {
+            var label = probes[i][0], cmd = probes[i][1];
+            var val;
+            try { val = scpiQuery(cmd); } catch (e) { val = null; }
+            if (val !== null && val !== "") {
+                var pad = cmd; while (pad.length < 22) pad += " ";
+                lines.push("[3] 参数查询 " + pad + " " + label + "=" + val);
+            } else {
+                var pad2b = cmd; while (pad2b.length < 22) pad2b += " ";
+                lines.push("[3] 参数查询 " + pad2b + " 失败 —— 响应超时");
+            }
+        }
+        try {
+            var vals = scpiQueryBinary("TRAC:DATA? TRACE1", "REAL,32");
+            if (vals && vals.length) {
+                var mx = -1e9;
+                for (var k = 0; k < vals.length; k++) if (vals[k] > mx) mx = vals[k];
+                lines.push("[4] 迹线读取 TRAC:DATA? TRACE1 ...... 通过: " + vals.length + " 点，峰值 " + mx.toFixed(2) + " dBm");
+            } else lines.push("[4] 迹线读取 TRAC:DATA? TRACE1 ...... 返回空数据");
+        } catch (e) {
+            lines.push("[4] 迹线读取 TRAC:DATA? TRACE1 ...... 失败 —— " + e.message);
+            lines.push("     → 检查是否处于频谱模式(SANalyzer)、扫描点数是否过大");
+        }
+    }
+    if (!owned) { link.connected = false; }
+    else { link.connected = true; }
+
+    var sum = "诊断结论：";
+    var hasIdn = lines.some(function (l) { return l.indexOf("[2]") === 0 && l.indexOf("通过") >= 0; });
+    var hasTr = lines.some(function (l) { return l.indexOf("[4]") === 0 && l.indexOf("通过") >= 0; });
+    if (tcpOk && hasIdn && hasTr) sum += "链路完整，可以正常测量。";
+    else if (tcpOk) sum += "网络已通但仪器通信异常，请按上面失败步骤排查。";
+    else sum += "网络层不通，先解决网络问题。";
+    lines.push("");
+    lines.push(sum);
+
+    lines.forEach(function (l) { log(l); });
+    diagDialog(lines.join("\n"));
+}
+function diagDialog(text) {
+    $("dlgTitle").textContent = "连接诊断";
+    var b = $("dlgBody");
+    b.className = "";
+    b.innerHTML = "";
+    var pre = document.createElement("pre");
+    pre.textContent = text;
+    b.appendChild(pre);
+    var f = $("dlgFoot");
+    f.innerHTML = "";
+    var btnSave = document.createElement("button");
+    btnSave.className = "b"; btnSave.type = "button"; btnSave.textContent = "保存报告";
+    btnSave.addEventListener("click", function () { saveReport(text); });
+    var btnClose = document.createElement("button");
+    btnClose.className = "b"; btnClose.type = "button"; btnClose.textContent = "关闭";
+    btnClose.addEventListener("click", function () { $("mask").classList.remove("show"); });
+    var sp = document.createElement("span"); sp.className = "grow";
+    f.appendChild(sp); f.appendChild(btnSave); f.appendChild(btnClose);
+    $("mask").classList.add("show");
+}
+
+/* ---- 问题报告：_save_report() ---- */
+function reportText(extra) {
+    var now = new Date();
+    var L = [];
+    L.push("KSW-VSA01 频谱仪上位机 —— 问题报告");
+    L.push("=================================================================");
+    L.push("时间: " + now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()) + " " + hms(now));
+    L.push("软件: KSW-VSA01 频谱仪上位机 " + VERSION);
+    L.push("目标仪器: " + $("ip").value.trim() + ":" + $("port").value.trim());
+    L.push("连接状态: " + (link.connected ? "已连接" : "未连接"));
+    L.push("设备信息: " + $("lblDevice").textContent);
+    L.push("系统: 网页演示环境（本演示不采集任何本机信息）");
+    L.push("日志文件: 不适用（HTML 演示不落盘）");
+    L.push("");
+    L.push("--- 界面参数 ---");
+    [["显示模式", $("rbSpec").checked ? "频谱" : "时域"],
+    ["中心频率", $("edCenter").value], ["频宽 SPAN", $("edSpan").value],
+    ["起始频率", $("edStart").value], ["终止频率", $("edStop").value],
+    ["RBW", $("edRbw").value + (rbwAuto() ? " (自动)" : "")],
+    ["VBW", $("edVbw").value + (vbwAuto() ? " (自动)" : "")],
+    ["参考电平", $("edRlev").value + " dBm"],
+    ["衰减", $("edAtt").value + " dB" + ($("cbAttAuto").checked ? " (自动)" : "")],
+    ["扫描点数", $("spPoints").value], ["扫描时间", $("edSwt").value],
+    ["连续扫描", $("cbCont").checked ? "开" : "关"]].forEach(function (kv) {
+        L.push(kv[0] + ": " + kv[1]);
+    });
+    if (extra) { L.push(""); L.push("--- 诊断结果 ---"); L.push(extra); }
+    L.push("");
+    L.push("--- 通信日志（最近 200 条） ---");
+    L = L.concat(logLines.slice(-200));
+    return L.join("\n");
+}
+function saveReport(extra) {
+    var text = reportText(extra);
+    download("KSW_VSA01_问题报告_" + stamp(new Date()) + ".txt", "text/plain;charset=utf-8", text);
+    log("问题报告已保存（浏览器下载）: KSW_VSA01_问题报告_" + stamp(new Date()) + ".txt");
+    msgBox("已保存", "问题报告已通过浏览器下载保存。\n\n请把该文件带回来，即可定位问题。\n（实机版由系统另存为对话框写入磁盘）");
+}
+function download(name, mime, text) {
+    try {
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob(["\ufeff" + text], { type: mime }));
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    } catch (e) { log("[!] 导出失败: " + e.message); }
+}
+
+/* ---- 导出 CSV：_on_export() ---- */
+function onExport() {
+    if (!lastY || !lastX) { msgBox("提示", "暂无可导出的数据"); return; }
+    var head = $("rbSpec").checked ? "X,Y(dBm)" : "Time(s),Y(dBm)";
+    var rows = [head];
+    for (var i = 0; i < lastY.length; i++) rows.push(gsig(lastX[i], 9) + "," + gsig(lastY[i], 6));
+    var name = "KSW-VSA01_" + stamp(new Date()) + ".csv";
+    download(name, "text/csv;charset=utf-8", rows.join("\r\n"));
+    log("已导出 " + lastY.length + " 点 → " + name + "（浏览器下载）");
+    status("已导出 " + name);
+}
+
+/* ---- 打开日志：_on_open_log() 的页内等价 ---- */
+function onOpenLog() {
+    if (!logLines.length) { msgBox("日志", "日志文件尚未生成。"); return; }
+    $("dlgTitle").textContent = "日志（演示：页内缓冲区，不落盘）";
+    var b = $("dlgBody");
+    b.className = "";
+    b.innerHTML = "";
+    var pre = document.createElement("pre");
+    pre.textContent = logText();
+    b.appendChild(pre);
+    var f = $("dlgFoot");
+    f.innerHTML = "";
+    var btn = document.createElement("button");
+    btn.className = "b"; btn.type = "button"; btn.textContent = "关闭";
+    btn.addEventListener("click", function () { $("mask").classList.remove("show"); });
+    var sp = document.createElement("span"); sp.className = "grow";
+    f.appendChild(sp); f.appendChild(btn);
+    $("mask").classList.add("show");
+}
+
+/* ---- 帮助：_on_help()（示例 IP 地址已按隐私要求略去） ---- */
+function onHelp() {
+    msgBox("使用帮助",
+        "【三步连接】\n" +
+        "1. 仪器 [设置] > 网络+远程：设静态 IP，启用「远程控制」\n" +
+        "2. 电脑与仪器网线直连（或同一局域网），电脑 IP 与仪器同网段\n" +
+        "3. 本软件输入仪器 IP（端口 5025）→ 点【连接】\n\n" +
+        "【常用操作】\n" +
+        "• 看频谱：设中心频率/频宽 → 应用参数\n" +
+        "• 看波形：切「时域模式」（零扫宽），设观察窗口\n" +
+        "• 调幅度：参考电平 / 衰减（自动/手动）\n" +
+        "• 测功率：点【通道功率】（CPOW）\n\n" +
+        "【出问题怎么办】\n" +
+        "1. 点【诊断】分步体检（网络→识别→参数→数据）\n" +
+        "2. 点【读取错误】，或看仪器 [设置]>网络+远程>远程错误 页\n" +
+        "3. 点【保存问题报告】，把报告/日志带回来分析\n" +
+        "4. 数据不动：点【断开】再【连接】；无效可点【仪器复位】\n\n" +
+        "【本演示】无实机无后端：端口 15025 即内置页内模拟器（相当于 python main.py --demo）。");
+}
+
+/* ==========================================================================
+   4. 绘图区（对应 _build_plot_panel 的 pyqtgraph PlotWidget）
+   ========================================================================== */
+var cv = $("plot"), ctx = cv.getContext("2d");
+var M = { l: 62, r: 14, t: 16, b: 40 };
+var dragY = null;
+
+function resize() {
+    var dpr = window.devicePixelRatio || 1;
+    var w = cv.clientWidth, h = cv.clientHeight;
+    cv.width = Math.max(1, Math.round(w * dpr));
+    cv.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+}
+function niceTicks(lo, hi, want) {
+    var span = hi - lo;
+    if (!(span > 0)) return [lo];
+    var raw = span / want, mag = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), norm = raw / mag;
+    var step = (norm >= 5 ? 5 : norm >= 2 ? 2 : 1) * mag;
+    var out = [], v = Math.ceil(lo / step) * step;
+    for (; v <= hi + step * 1e-6; v += step) out.push(Math.abs(v) < step * 1e-9 ? 0 : v);
+    return out;
+}
+function draw() {
+    var w = cv.clientWidth, h = cv.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#10101a";
+    ctx.fillRect(0, 0, w, h);
+    var pw = w - M.l - M.r, ph = h - M.t - M.b;
+    if (pw <= 10 || ph <= 10) return;
+
+    var scope = currentMode === MODE_SCOPE;
+    var xmin = scope ? 0 : sim.start, xmax = scope ? sim.sweepTime : sim.stop;
+    if (lastX && lastX.length) { xmin = lastX[0]; xmax = lastX[lastX.length - 1]; }
+    if (!(xmax > xmin)) { xmax = xmin + 1; }
+
+    /* 网格：showGrid(x=True, y=True, alpha=0.25) */
+    ctx.strokeStyle = "rgba(160,165,190,0.22)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    var xt = niceTicks(xmin, xmax, 10), yt = niceTicks(yBottom, yTop, 10);
+    for (var i = 0; i < xt.length; i++) {
+        var px = Math.round(M.l + (xt[i] - xmin) / (xmax - xmin) * pw) + .5;
+        ctx.moveTo(px, M.t); ctx.lineTo(px, M.t + ph);
+    }
+    for (var j = 0; j < yt.length; j++) {
+        var py = Math.round(M.t + ph - (yt[j] - yBottom) / (yTop - yBottom) * ph) + .5;
+        ctx.moveTo(M.l, py); ctx.lineTo(M.l + pw, py);
+    }
+    ctx.stroke();
+
+    /* 坐标轴文字 */
+    ctx.fillStyle = "#b8b8c8";
+    ctx.font = "11px Consolas, 'Microsoft YaHei UI', monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (var a = 0; a < xt.length; a++) {
+        var x = M.l + (xt[a] - xmin) / (xmax - xmin) * pw;
+        ctx.fillText(scope ? gsig(xt[a], 3) : fmtFreq(xt[a]), x, M.t + ph + 5);
+    }
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (var b = 0; b < yt.length; b++) {
+        var y = M.t + ph - (yt[b] - yBottom) / (yTop - yBottom) * ph;
+        ctx.fillText(String(Math.round(yt[b] * 10) / 10), M.l - 6, y);
+    }
+    ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    ctx.fillText(scope ? "时间 (s)" : "频率 (Hz)", M.l + pw / 2, h - 4);
+    ctx.save();
+    ctx.translate(12, M.t + ph / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textBaseline = "top";
+    ctx.fillText(scope ? "幅度 (dBm)" : "幅度 (dBm)", 0, 0);
+    ctx.restore();
+
+    /* 迹线：pen #00e5ff width 1.5 */
+    if (lastX && lastY && lastY.length > 1) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(M.l, M.t, pw, ph);
+        ctx.clip();
+        ctx.strokeStyle = "#00e5ff";
+        ctx.lineWidth = 1.5;
+        ctx.lineJoin = "round";
+        var n = lastY.length;
+        function pxAt(i) { return M.l + (lastX[i] - xmin) / (xmax - xmin) * pw; }
+        function pyAt(v) { return M.t + ph - (v - yBottom) / (yTop - yBottom) * ph; }
+        ctx.beginPath();
+        if (n <= pw * 2) {
+            ctx.moveTo(pxAt(0), pyAt(lastY[0]));
+            for (var k = 1; k < n; k++) ctx.lineTo(pxAt(k), pyAt(lastY[k]));
+        } else {
+            /* 密点数超过像素宽：按列取 min/max 包络（大点数下的观感与 pyqtgraph 一致） */
+            var step = n / Math.ceil(pw), started = false;
+            for (var col = 0; col * step < n; col++) {
+                var i0 = Math.floor(col * step), i1 = Math.min(n - 1, Math.floor((col + 1) * step));
+                var hiV = -1e9, loV = 1e9;
+                for (var q = i0; q <= i1; q++) { if (lastY[q] > hiV) hiV = lastY[q]; if (lastY[q] < loV) loV = lastY[q]; }
+                var cx = pxAt(i0);
+                if (!started) { ctx.moveTo(cx, pyAt(hiV)); started = true; } else ctx.lineTo(cx, pyAt(hiV));
+                ctx.lineTo(cx, pyAt(loV));
+            }
+        }
+        ctx.stroke();
+
+        /* 参考电平锚定线：仅关闭“Y 轴自动缩放”时出现（演示扩展 4e） */
+        if (!$("cbAutoY").checked) {
+            var ry = pyAt(refLevel);
+            if (ry >= M.t && ry <= M.t + ph) {
+                ctx.save();
+                ctx.setLineDash([5, 4]);
+                ctx.strokeStyle = "#EF9F27";
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(M.l, ry + .5); ctx.lineTo(M.l + pw, ry + .5); ctx.stroke();
+                ctx.fillStyle = "#EF9F27";
+                ctx.font = "10px Consolas, 'Microsoft YaHei UI', monospace";
+                ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+                ctx.fillText("REF " + gsig(refLevel, 6) + " dBm", M.l + 6, ry - 2);
+                ctx.restore();
+            }
+        }
+        ctx.restore();
+    }
+
+    /* 图例：addLegend(offset=(10,10)) */
+    var lgx = M.l + 12, lgy = M.t + 12;
+    ctx.fillStyle = "rgba(20,20,28,.85)";
+    ctx.strokeStyle = "rgba(160,165,190,.3)";
+    ctx.fillRect(lgx, lgy, 84, 22);
+    ctx.strokeRect(lgx + .5, lgy + .5, 84, 22);
+    ctx.strokeStyle = "#00e5ff"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(lgx + 6, lgy + 11); ctx.lineTo(lgx + 26, lgy + 11); ctx.stroke();
+    ctx.fillStyle = "#d8d8e0"; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    ctx.fillText("Trace1", lgx + 32, lgy + 11);
+
+    /* 峰值标记：ScatterPlotItem #ff5252 + TextItem */
+    if (marker) {
+        var mx = M.l + (marker.x - xmin) / (xmax - xmin) * pw;
+        var my = M.t + ph - (marker.y - yBottom) / (yTop - yBottom) * ph;
+        if (mx >= M.l - 2 && mx <= M.l + pw + 2 && my >= M.t - 2 && my <= M.t + ph + 2) {
+            ctx.fillStyle = "#ff5252";
+            ctx.beginPath(); ctx.arc(mx, my, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+            ctx.fillText("峰值 " + fmtFreq(marker.x) + "Hz", mx + 7, my - 14);
+            ctx.fillText(marker.y.toFixed(2) + " dBm", mx + 7, my - 2);
+        }
+    }
+}
+
+/* ==========================================================================
+   5. 事件接线（源程序用 clicked.connect / editingFinished，这里等价实现）
+   ========================================================================== */
+function bind() {
+    $("btnConnect").addEventListener("click", onConnect);
+    $("btnDiag").addEventListener("click", onDiag);
+    $("btnHelp").addEventListener("click", onHelp);
+    $("btnApply").addEventListener("click", onApply);
+    $("btnAuto").addEventListener("click", onAutoAdjust);
+    $("btnSingle").addEventListener("click", onSingle);
+    $("btnPeak").addEventListener("click", onPeak);
+    $("btnExport").addEventListener("click", onExport);
+    $("btnErr").addEventListener("click", onReadError);
+    $("btnCpow").addEventListener("click", onCpow);
+    $("btnRst").addEventListener("click", onRst);
+    $("btnReport").addEventListener("click", function () { saveReport(null); });
+    $("btnOpenLog").addEventListener("click", onOpenLog);
+
+    $("rbSpec").addEventListener("change", function () { if (this.checked) switchMode(MODE_SPEC); });
+    $("rbScope").addEventListener("change", function () { if (this.checked) switchMode(MODE_SCOPE); });
+
+    $("edCenter").addEventListener("change", updateStartStop);
+    $("edSpan").addEventListener("change", updateStartStop);
+    $("edStart").addEventListener("change", updateCenter);
+    $("edStop").addEventListener("change", updateCenter);
+
+    $("cbRate").addEventListener("change", function () {
+        interval = parseFloat(this.value);
+        if (pollTimer) startPoll();
+    });
+    $("cbAutoY").addEventListener("change", function () {
+        if (this.checked) { if (lastY) onData(lastX, lastY, currentMode); }
+        else applyRefRange();
+        draw();
+    });
+
+    /* 关闭自动缩放后，滚轮/拖拽改 Y 范围（pyqtgraph 的手动缩放） */
+    cv.addEventListener("wheel", function (e) {
+        if ($("cbAutoY").checked) return;
+        e.preventDefault();
+        var c = (yTop + yBottom) / 2, span = (yTop - yBottom) * (e.deltaY > 0 ? 1.15 : 0.87);
+        span = clamp(span, 10, 400);
+        yTop = c + span / 2; yBottom = c - span / 2;
+        draw();
+    }, { passive: false });
+    cv.addEventListener("pointerdown", function (e) {
+        if ($("cbAutoY").checked) return;
+        dragY = { y: e.clientY, top: yTop, bot: yBottom };
+        cv.setPointerCapture(e.pointerId);
+    });
+    cv.addEventListener("pointermove", function (e) {
+        if (!dragY) return;
+        var h = cv.clientHeight - M.t - M.b;
+        var d = (e.clientY - dragY.y) / Math.max(h, 1) * (dragY.top - dragY.bot);
+        yTop = dragY.top + d; yBottom = dragY.bot + d;
+        draw();
+    });
+    cv.addEventListener("pointerup", function () { dragY = null; });
+
+    /* QSplitter 的等价：拖动改变面板宽度（默认尺寸 330 / 900） */
+    var dragging = false;
+    $("split").addEventListener("pointerdown", function (e) {
+        dragging = true; $("split").setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    $("split").addEventListener("pointermove", function (e) {
+        if (!dragging) return;
+        var w = clamp(e.clientX - $("panel").getBoundingClientRect().left, 240, 520);
+        $("panel").style.width = w + "px";
+        resize();
+    });
+    $("split").addEventListener("pointerup", function () { dragging = false; });
+
+    window.addEventListener("resize", resize);
+}
+
+/* ==========================================================================
+   6. 启动（对应 main.py：--demo 时端口填 15025 并提示）
+   ========================================================================== */
+function boot() {
+    bind();
+    applyModeUi();
+    resize();
+    var auto = /[?&]autostart=1/.test(location.search);
+    log("软件已启动（" + VERSION + "）。请连接仪器（仪器 IP + 端口 5025）");
+    log(logPathText());
+    $("lblLogPath").textContent = logPathText();
+    log("演示模式：内置模拟器已启动（端口 15025），点击【连接】即可体验");
+    if (auto) setTimeout(function () { onConnect(); }, 600);
+}
+document.addEventListener("DOMContentLoaded", boot);
+</script>
+</body>
+</html>

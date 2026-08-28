@@ -6,6 +6,7 @@ const path = require('path');
 const zlib = require('zlib');
 const PII = require('./_pii-rules.js');
 const root = path.resolve(__dirname, '..');
+const ACCEPTED = PII.loadAccepted(root);
 
 const TARGETS = [
   // 检测器内不含任何真实号码字面量：一律用大陆手机号通用形态。
@@ -72,13 +73,19 @@ for (const p of list) {
     const ms = [...scoped.matchAll(re)].map(x => x[0]);
     // 输出脱敏，避免 CI 日志再次落入号码明文
     const mask = s => { const dd = String(s).replace(/\D/g, ''); return dd.length === 11 ? dd.slice(0, 3) + '****' + dd.slice(7) : s; };
-    if (ms.length) found.push(name + ': ' + [...new Set(ms)].slice(0, 4).map(mask).join(', '));
+    if (ms.length) found.push({ name, shown: name + ': ' + [...new Set(ms)].slice(0, 4).map(mask).join(', ') });
   }
+  // 按「文件 + 命中类型」套用已登记接受的豁免，与文本扫描器同一份清单
+  const ack = found.filter(f => PII.isAccepted(ACCEPTED, rel, f.name));
+  const bad = found.filter(f => !PII.isAccepted(ACCEPTED, rel, f.name));
   const pdfVer = /%PDF-(\d\.\d)/.exec(buf.toString('latin1').slice(0, 32));
-  console.log((found.length ? 'HIT   ' : 'ok    ') + rel.padEnd(42) +
+  const tag = bad.length ? 'HIT   ' : ack.length ? 'ACK   ' : 'ok    ';
+  console.log(tag + rel.padEnd(42) +
     (pdfVer ? pdfVer[1] + '  ' : '') + (all.length + ' 流 / 文本流 ' + all.filter(printableRatioTest).length + '  ') +
-    (found.length ? '→ ' + found.join(' | ') : '未见目标敏感串'));
-  hits += found.length;
+    (bad.length ? '→ ' + bad.map(f => f.shown).join(' | ')
+      : ack.length ? '→ 已登记接受: ' + ack.map(f => f.shown).join(' | ')
+      : '未见目标敏感串'));
+  hits += bad.length;
 }
 function printableRatioTest(b) { return printableRatio(b) > 0.75; }
 console.log('\n' + (hits
