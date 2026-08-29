@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>程锦阳 · 射频 / 天线 / 电磁场</title>
-    <meta name="description" content="程锦阳 · 射频 / 天线工程师，上海大学通信与信息系统硕士。车载 5G MIMO 天线与多频段集成，Python 驱动 HFSS 的仿真自动优化，整星 EMC 与可靠性试验。IEEE AWPL 第一作者，3 项发明专利，简历 / 论文 / 学位论文可下载。">
+    <title>程锦阳 · 射频 · 天线 · 试验 · AI + 电磁场</title>
+    <meta name="description" content="程锦阳，上海大学通信与信息系统硕士。技术方向为射频与天线、EMC 与环境可靠性试验、AI 驱动的电磁场仿真优化：车载 5G MIMO 天线与多频段集成，Python 驱动 HFSS 的仿真自动优化，整星与单机 EMC 及可靠性试验。IEEE AWPL 第一作者，3 项发明专利，简历 / 论文 / 学位论文可下载。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -16,10 +16,11 @@
 
         /* 共享小组件 */
         /* 分段切换（中文 / EN、能力分组） */
-        .seg { display: inline-flex; gap: 1px; border: 1px solid var(--line); background: var(--line); padding: 1px; }
-        .seg button { cursor: pointer; font-family: var(--mono); font-size: 0.8rem; letter-spacing: .06em; color: var(--dim); background: var(--ink-1); border: 0; padding: 6px 13px; transition: color .3s, background .3s; }
+        .seg { display: inline-flex; border: 1px solid var(--line); background: transparent; }
+        .seg button { cursor: pointer; font-family: var(--mono); font-size: 0.8rem; letter-spacing: .06em; color: var(--dim); background: transparent; border: 0; border-left: 1px solid var(--line); padding: 7px 15px; transition: color .3s, background .3s; }
+        .seg button:first-child { border-left: 0; }
         .seg button:hover { color: var(--text); }
-        .seg button.on { color: var(--ink-0); background: var(--cu); }
+        .seg button.on { color: var(--cu); background: rgba(207, 138, 82, .07); box-shadow: inset 0 -2px 0 var(--cu); }
         /* 内联键值对：取代竖排多行表，一行排不下再换行 */
         .kv { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
         .kv span { display: inline-flex; align-items: baseline; gap: 7px; font-family: var(--mono); font-size: 0.8rem; }
@@ -27,7 +28,7 @@
         .kv b { font-weight: 500; color: var(--sig); }
 
         .hero { position: relative; padding: 168px 0 0; overflow: hidden; }
-        .hero-glow { position: absolute; top: -30%; right: -10%; width: 1100px; height: 900px; z-index: 0; background: radial-gradient(circle at 50% 50%, rgba(207, 138, 82, .10), transparent 62%); pointer-events: none; }
+        .hero-glow { position: absolute; top: -30%; right: -10%; width: 1100px; height: 900px; z-index: 0; background: radial-gradient(circle at 50% 50%, rgba(207, 138, 82, .06), transparent 62%); pointer-events: none; }
         .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 64px; align-items: center; position: relative; z-index: 1; }
         .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; font-family: var(--mono); font-size: 0.8rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
         .eyebrow .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--sig); box-shadow: 0 0 0 0 rgba(79, 209, 192, .5); animation: pulse 2.4s infinite; }
@@ -36,12 +37,15 @@
             70% { box-shadow: 0 0 0 9px rgba(79, 209, 192, 0); }
             100% { box-shadow: 0 0 0 0 rgba(79, 209, 192, 0); }
         }
-        .hero h1 { font-size: clamp(3.2rem, 7.2vw, 5.4rem); font-weight: 600; line-height: .96; letter-spacing: -.035em; margin-bottom: 26px; }
+        .hero h1 { font-size: clamp(3rem, 6.2vw, 4.75rem); font-weight: 500; line-height: .98; letter-spacing: -.03em; margin-bottom: 30px; }
         .hero h1 .lat { display: block; font-size: .28em; font-weight: 400; letter-spacing: .28em; color: var(--dim); font-family: var(--mono); margin-top: 18px; }
-        .role-line { font-family: var(--mono); font-size: clamp(.85rem, 1.4vw, 1rem); color: var(--muted); min-height: 1.8em; margin-bottom: 22px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .role-line .caret { display: inline-block; width: 7px; height: 1.05em; background: var(--cu); animation: blink 1.05s step-end infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-        .role-fixed { color: var(--text); font-weight: 500; letter-spacing: -.01em; }
+        /* 技术方向：取代原职业头衔行，静态、无解码动效 */
+        .focus { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 10px; }
+        .focus-k { font-family: var(--mono); font-size: 0.8rem; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); white-space: nowrap; }
+        .focus-list { display: flex; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .focus-list li { display: flex; align-items: center; gap: 15px; font-size: 1.04rem; font-weight: 500; letter-spacing: -.01em; color: var(--text); }
+        .focus-list li + li::before { content: ''; width: 3px; height: 3px; flex-shrink: 0; background: var(--cu); transform: rotate(45deg); }
+        .focus-en { font-family: var(--mono); font-size: 0.8rem; letter-spacing: .12em; color: var(--dim); margin-bottom: 24px; }
         .hero-lede { color: var(--muted); font-size: .95rem; max-width: 52ch; font-weight: 400; }
         .hero-lede b { color: var(--text); font-weight: 500; }
         .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
@@ -76,10 +80,10 @@
 
         /* 指标账本 */
         .ledger { margin-top: 92px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); }
-        .ledger div { padding: 26px 4px 24px 18px; border-right: 1px solid var(--line); }
-        .ledger div:last-child { border-right: 0; }
+        .ledger > div { padding: 26px 4px 24px 18px; border-right: 1px solid var(--line); }
+        .ledger > div:last-child { border-right: 0; }
         .ledger .v { font-family: var(--mono); font-size: clamp(1.7rem, 3.4vw, 2.5rem); font-weight: 500; letter-spacing: -.03em; color: var(--text); line-height: 1; }
-        .ledger .v em { font-style: normal; color: var(--cu); }
+        .ledger .v em { font-style: normal; color: var(--text); }
         .ledger .v small { font-size: .42em; color: var(--dim); letter-spacing: .02em; }
         .ledger .k { margin-top: 12px; font-family: var(--mono); font-size: 0.8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
         .ledger .s { margin-top: 4px; font-size: 0.8rem; color: var(--muted); font-weight: 400; }
@@ -106,12 +110,12 @@
         .edu-row .courses { grid-column: 1 / -1; font-size: 0.95rem; color: var(--muted); font-weight: 400; }
         .edu-row .courses u { text-decoration: none; color: var(--dim); font-family: var(--mono); font-size: 0.8rem; letter-spacing: .06em; margin-right: 8px; }
 
-        /* 研究方向 */
-        .domains { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
-        .domain { background: var(--ink-1); padding: 34px 30px 30px; position: relative; transition: background .45s var(--ease); }
+        /* 研究方向：2×2 四象限 */
+        .domains { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+        .domain { background: var(--ink-1); padding: 38px 36px 32px; position: relative; transition: background .45s var(--ease); }
         .domain:hover { background: var(--ink-2); }
         .domain .gl { width: 30px; height: 30px; stroke: var(--cu); fill: none; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 26px; }
-        .domain .no { position: absolute; top: 30px; right: 30px; font-family: var(--mono); font-size: 0.8rem; color: var(--line-3); letter-spacing: .08em; }
+        .domain .no { position: absolute; top: 34px; right: 36px; font-family: var(--mono); font-size: 0.8rem; color: var(--line-3); letter-spacing: .08em; }
         .domain:hover .no { color: var(--cu); }
         .domain h3 { font-size: 1.06rem; font-weight: 500; letter-spacing: -.012em; margin-bottom: 10px; }
         .domain h3 em { font-style: normal; display: block; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); letter-spacing: .14em; text-transform: uppercase; margin-top: 5px; }
@@ -177,7 +181,7 @@
         .filters { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
         .filters button { cursor: pointer; font-family: var(--mono); font-size: 0.8rem; letter-spacing: .05em; color: var(--dim); background: transparent; border: 1px solid var(--line); padding: 7px 13px; border-radius: 1px; transition: color .3s, border-color .3s, background .3s; }
         .filters button:hover { color: var(--text); border-color: var(--line-2); }
-        .filters button.on { color: var(--ink-0); background: var(--cu); border-color: var(--cu); }
+        .filters button.on { color: var(--cu); border-color: var(--cu-dim); background: rgba(207, 138, 82, .07); }
         .filters .count { margin-left: auto; align-self: center; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); }
         .prj { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
         .prj-card { display: flex; flex-direction: column; padding: 26px 24px 22px; }
@@ -203,8 +207,8 @@
         .blk-h .n { font-family: var(--mono); font-size: 0.8rem; color: var(--cu); }
         .paper { padding: 22px 24px; margin-bottom: 12px; }
         .paper .venue { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono); font-size: 0.8rem; margin-bottom: 13px; }
-        .paper .venue .rank { color: var(--ink-0); background: var(--cu); padding: 2px 7px; letter-spacing: .05em; }
-        .paper .venue .rank.thesis { background: var(--sig); }
+        .paper .venue .rank { color: var(--cu); border: 1px solid var(--cu-dim); padding: 2px 7px; letter-spacing: .05em; }
+        .paper .venue .rank.thesis { color: var(--sig); border-color: rgba(79, 209, 192, .28); background: transparent; }
         .paper .venue .jr { color: var(--muted); }
         .paper .venue .yr { color: var(--dim); margin-left: auto; }
         .paper h4 { font-size: 1rem; font-weight: 500; line-height: 1.5; letter-spacing: -.012em; margin-bottom: 10px; }
@@ -258,7 +262,7 @@
         .hon-card .x-list li { display: flex; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: 0.8rem; color: var(--muted); border-left: 1px solid var(--line); padding-left: 10px; }
         .hon-card .x-list li em { font-style: normal; color: var(--dim); }
 
-        .ft { padding: 96px 0 40px; }
+        .ft { padding: 112px 0 44px; }
         .ft-cta { max-width: 640px; }
         .ft-cta h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); }
 
@@ -276,7 +280,7 @@
 
         /* ===== 阅读舒适度覆写：正文放大一档，小标签保底 11px ===== */
         .eyebrow { font-size: 0.8rem; }
-        .role-line { font-size: clamp(.92rem, 1.5vw, 1.06rem); }
+        .focus-list li { font-size: 1.1rem; }
         .hero-lede { font-size: 1.06rem; max-width: 56ch; line-height: 1.9; }
         .contact-strip { font-size: 0.95rem; }
         .scope-cap { font-size: 0.8rem; }
@@ -338,8 +342,8 @@
         @media (max-width: 860px) {
             .hero { padding-top: 130px; }
             .ledger { margin-top: 64px; grid-template-columns: 1fr 1fr; }
-            .ledger div:nth-child(2) { border-right: 0; }
-            .ledger div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+            .ledger > div:nth-child(2) { border-right: 0; }
+            .ledger > div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
             .about { grid-template-columns: 1fr; gap: 40px; }
             .portrait { position: static; max-width: 232px; }
             .domains, .prj, .pubs { grid-template-columns: 1fr; }
@@ -359,8 +363,8 @@
         }
         @media (max-width: 520px) {
             .ledger { grid-template-columns: 1fr; }
-            .ledger div { border-right: 0; border-bottom: 1px solid var(--line); }
-            .ledger div:last-child { border-bottom: 0; }
+            .ledger > div { border-right: 0; border-bottom: 1px solid var(--line); }
+            .ledger > div:last-child { border-bottom: 0; }
             .cap-tabs button { flex: 1 1 50%; }
             .sp-axis .maj.alt { display: none; }
             /* 窄屏一行放不下一对「名称 + 频段」，频段交给上方读数行显示 */
@@ -400,20 +404,22 @@
         <div class="wrap">
             <div class="hero-grid">
                 <div>
-                    <p class="eyebrow rv in"><span class="pulse"></span> Shanghai · 上海航天体系 · 在职</p>
+                    <p class="eyebrow rv in"><span class="pulse"></span> 上海 · 航天试验体系 · 在职</p>
                     <h1 class="rv in">
                         <span>程锦阳</span>
                         <span class="lat">CHENG&nbsp;JINYANG</span>
                     </h1>
-                    <p class="role-line rv in rv-d1">
-                        <span class="role-fixed">射频 / 天线工程师</span>
-                        <span aria-hidden="true">·</span>
-                        <span id="scramble" class="cu" aria-live="off">&nbsp;</span><span class="caret" aria-hidden="true"></span>
-                    </p>
+                    <div class="focus rv in rv-d1">
+                        <span class="focus-k">方向</span>
+                        <ul class="focus-list">
+                            <li>射频</li><li>天线</li><li>试验</li><li>AI + 电磁场</li>
+                        </ul>
+                    </div>
+                    <p class="focus-en rv in rv-d1">RF &amp; ANTENNA · EMC TEST · COMPUTATIONAL EM</p>
                     <p class="hero-lede rv rv-d2">
-                        上海大学通信与信息系统硕士，现任<b>整星与单机 EMC 试验工程师</b>。
+                        上海大学通信与信息系统硕士，现从事<b>整星与单机 EMC 及环境可靠性试验</b>。
                         硕士期间完成多款车载 5G / GNSS 天线从指标拆解、全波仿真到暗室实测的完整交付，
-                        并以 <b>Python 驱动 HFSS</b> 把参数寻优交给算法。
+                        并以 <b>Python 驱动 HFSS</b> 把参数寻优交给算法 —— 研究问题与工程交付并重。
                     </p>
                     <div class="hero-actions rv rv-d3">
                         <a href="#projects" class="btn solid"><span class="t">代表项目</span><span class="arw" aria-hidden="true">→</span></a>
@@ -530,31 +536,31 @@
 
                     <div id="bio-zh" role="tabpanel" aria-labelledby="tab-zh">
                         <p class="lead rv">
-                            <b>程锦阳 · 射频 / 天线 / 电磁场。</b>
+                            <b>程锦阳 · 射频、天线、试验与 AI + 电磁场。</b>
                             上海大学通信与信息系统硕士，现任上海利正卫星 EMC 试验工程师；
                             第一作者发表 IEEE AWPL 论文 1 篇，公开发明专利 3 项。
                         </p>
                         <p class="rv rv-d1">
-                            技术主线两条。<b>其一，车载天线与射频链路的工程化</b>——低剖面 5G MIMO 天线、
+                            三条主线。<b>其一，车载天线与射频链路的工程化</b>——低剖面 5G MIMO 天线、
                             多通道集成天线盒、GNSS 有源天线与全向阵列天线，独立完成需求拆解、指标分配、
                             全波仿真、公差协同与暗室实测。<b>其二，仿真优化自动化</b>——Python 驱动 HFSS
                             完成参数化建模与多目标寻优（MOPSO / NSGA-II / 贝叶斯），以贝叶斯神经网络代理模型压缩全波仿真次数。
                         </p>
                         <p class="rv rv-d2">
-                            现从事整星与单机 EMC（GJB 151B/C）及磁、力学、真空热环境试验，
+                            <b>其三，系统级试验验证。</b>现从事整星与单机 EMC（GJB 151B/C）及磁、力学、真空热环境试验，
                             参与实验室 CNAS 认可与试验产线建设。
                         </p>
                     </div>
 
                     <div id="bio-en" role="tabpanel" aria-labelledby="tab-en" hidden>
                         <p class="lead rv in">
-                            <b>Cheng Jinyang · RF / Antenna / EMC.</b>
+                            <b>Cheng Jinyang · RF, antenna, test &amp; AI-driven computational EM.</b>
                             M.Eng. in Communication and Information Systems, Shanghai University.
                             EMC test engineer in the Shanghai satellite programme; first author of one IEEE AWPL paper,
                             three invention patents published.
                         </p>
                         <p class="rv in">
-                            Two technical threads. <b>Productisation of vehicular antennas and RF chains</b> —
+                            Three threads. <b>Productisation of vehicular antennas and RF chains</b> —
                             low-profile 5G MIMO antennas, multi-channel integrated antenna boxes, active GNSS and
                             omnidirectional array antennas — with end-to-end ownership of requirement decomposition,
                             spec allocation, full-wave simulation, tolerance review and chamber measurement.
@@ -562,8 +568,9 @@
                             (MOPSO / NSGA-II / Bayesian), accelerated by BNN surrogate models.
                         </p>
                         <p class="rv in">
-                            Currently responsible for system- and unit-level EMC (GJB 151B/C) together with magnetic,
-                            mechanical and thermal-vacuum qualification, and for CNAS accreditation of the laboratory.
+                            <b>System-level qualification testing.</b> Currently responsible for satellite- and unit-level
+                            EMC (GJB 151B/C) together with magnetic, mechanical and thermal-vacuum qualification,
+                            and for CNAS accreditation of the laboratory.
                         </p>
                     </div>
 
@@ -599,12 +606,24 @@
                 <span class="sec-idx">02</span>
                 <h2 class="sec-t">研究方向<em>/ Domains</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">以电磁场与微波技术为核心，向智能优化算法与系统级可靠性延伸。</p>
+                <p class="sec-note">从器件指标与链路预算，到整星级试验验证，再到以算法驱动的仿真优化。</p>
             </div>
 
             <div class="domains">
                 <article class="domain rv">
                     <span class="no">D-01</span>
+                    <svg class="gl" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 16h4l3-9 4 22 4-17 3 8h10"/></svg>
+                    <h3>射频工程<em>RF &amp; Microwave</em></h3>
+                    <p>射频链路设计与链路预算，有源 GNSS 模块调试，匹配网络与低噪声放大器级联，功分/移相网络；暗室与仪器化测试。</p>
+                    <div class="kv">
+                        <span><i>链路增益</i><b>&gt; 32 ±3 dB</b></span>
+                        <span><i>NF</i><b>&lt; 2.5 dB</b></span>
+                        <span><i>带外抑制</i><b>&gt; 25 dB</b></span>
+                    </div>
+                </article>
+
+                <article class="domain rv rv-d1">
+                    <span class="no">D-02</span>
                     <svg class="gl" viewBox="0 0 32 32" aria-hidden="true">
                         <path d="M16 27V13"/><path d="M16 13 6 22"/><path d="M16 13l10 9"/>
                         <path d="M9 9a10 10 0 0 1 14 0"/><path d="M5.5 5.5a15 15 0 0 1 21 0"/>
@@ -619,20 +638,24 @@
                     </div>
                 </article>
 
-                <article class="domain rv rv-d1">
-                    <span class="no">D-02</span>
-                    <svg class="gl" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 16h4l3-9 4 22 4-17 3 8h10"/></svg>
-                    <h3>射频工程<em>RF &amp; Microwave</em></h3>
-                    <p>射频链路设计与链路预算，有源 GNSS 模块调试，匹配网络与低噪声放大器级联，功分/移相网络；暗室与仪器化测试。</p>
+                <article class="domain rv rv-d2">
+                    <span class="no">D-03</span>
+                    <svg class="gl" viewBox="0 0 32 32" aria-hidden="true">
+                        <rect x="3" y="6" width="26" height="20" rx="1"/>
+                        <path d="M7 11l3 3 3-3 3 3 3-3 3 3"/>
+                        <rect x="13" y="18" width="6" height="5"/>
+                    </svg>
+                    <h3>试验 · EMC 与环境可靠性<em>Test &amp; Reliability</em></h3>
+                    <p>整星与单机级电磁兼容与环境可靠性试验；磁试验、力学试验与真空热试验；试验产线建设与实验室 CNAS 认可。</p>
                     <div class="kv">
-                        <span><i>链路增益</i><b>&gt; 32 ±3 dB</b></span>
-                        <span><i>NF</i><b>&lt; 2.5 dB</b></span>
-                        <span><i>带外抑制</i><b>&gt; 25 dB</b></span>
+                        <span><i>标准</i><b>GJB 151B/C</b></span>
+                        <span><i>科目</i><b>CE · CS · RE · RS</b></span>
+                        <span><i>体系</i><b>CNAS</b></span>
                     </div>
                 </article>
 
-                <article class="domain rv rv-d2">
-                    <span class="no">D-03</span>
+                <article class="domain rv rv-d3">
+                    <span class="no">D-04</span>
                     <svg class="gl" viewBox="0 0 32 32" aria-hidden="true">
                         <circle cx="16" cy="6" r="2.4"/><circle cx="6" cy="16" r="2.4"/><circle cx="26" cy="16" r="2.4"/><circle cx="16" cy="26" r="2.4"/>
                         <path d="M16 8.4v4.4M13.6 16H8.4M23.6 16h-5.2M16 12.8 12 16l4 3.2 4-3.2Z"/>
@@ -1112,8 +1135,8 @@
     <div class="wrap">
         <div class="ft-top">
             <div class="ft-cta rv">
-                <h2>聊聊你的天线<br>或者那个跑不动的优化。</h2>
-                <p>车载天线与 MIMO 集成、射频链路调试、HFSS 自动化与代理模型优化，以及整星 / 单机环境与可靠性试验，都可以直接找我。</p>
+                <h2>关于天线、试验与仿真优化<br>的问题，欢迎来信。</h2>
+                <p>车载天线与 MIMO 集成、射频链路调试、HFSS 自动化与代理模型优化，以及整星 / 单机 EMC 与环境可靠性试验 —— 学术合作与工程问题都可以来信。</p>
                 <a class="ft-mail" href="mailto:aeayang@163.com">
                     aeayang@163.com
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -1248,7 +1271,7 @@
         }
         (function tick(now) {
             var dt = Math.min((now - last) / 1000, .05); last = now;
-            angle = follow === null ? (angle + dt * 42) % 360 : angle + (follow - angle) * Math.min(dt * 9, 1);
+            angle = follow === null ? (angle + dt * 24) % 360 : angle + (follow - angle) * Math.min(dt * 9, 1);
             var g = gE(angle);
             sweep.setAttribute('transform', 'rotate(' + angle.toFixed(2) + ' 200 200)');
             if (tip) tip.setAttribute('cx', (CX + rOf(g)).toFixed(1));
@@ -1382,34 +1405,6 @@
             }, 180);
         });
         build();
-    }
-
-    /* ---------- 角色解码 ---------- */
-    var scr = $('#scramble');
-    if (scr) {
-        var roles = ['MIMO 解耦', 'GNSS 有源天线', '链路预算', 'HFSS 自动化', 'BNN 代理模型', '整星 EMC'];
-        var glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&@/\\<>≡≈';
-        var ri = 0;
-        function scramble(text) {
-            var q = text.split('').map(function (c) {
-                return { c: c, s: Math.floor(Math.random() * 12), e: Math.floor(Math.random() * 16) + 12 };
-            });
-            var fr = 0;
-            (function run() {
-                var out = '', done = 0;
-                q.forEach(function (o) {
-                    if (fr >= o.e) { out += o.c; done++; }
-                    else if (fr >= o.s) out += '<span style="opacity:.55">' + glyphs[Math.floor(Math.random() * glyphs.length)] + '</span>';
-                    else out += '<span style="opacity:.2">' + glyphs[Math.floor(Math.random() * glyphs.length)] + '</span>';
-                });
-                scr.innerHTML = out;
-                if (done < q.length) { fr++; requestAnimationFrame(run); }
-            })();
-        }
-        if (reduce) scr.textContent = roles[0];
-        else {
-            (function cycle() { scramble(roles[ri]); ri = (ri + 1) % roles.length; setTimeout(cycle, 3400); })();
-        }
     }
 
     /* ---------- 简介语言切换（中文 / EN） ---------- */

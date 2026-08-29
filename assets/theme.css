@@ -8,6 +8,12 @@
    · 标题保留 Space Grotesk 展示个性
    · muted / dim 灰阶整体提亮一档，小字号标签整体 +0.5～1px
    · 噪点与网格背景大幅降低存在感，保证文字一眼可读
+
+   克制减法（v3）：面向研发 / 学术展示的降噪
+   · 背景栅格只留 120px 一层，噪点叠层 .045 → .015
+   · 铜色光晕（卡片聚光、页头辉光）整体压一档
+   · 区块留白 96 → 112px，页脚 72 → 96px，节奏放慢
+   · 强调色只留给编号、链接与数据；实心橙色块改为描线
    ============================================================ */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -55,18 +61,16 @@ h1, h2, h3, h4, h5 { font-family: var(--disp); }
 body::before {
     content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background-image:
-        linear-gradient(rgba(255, 255, 255, .016) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, .016) 1px, transparent 1px),
-        linear-gradient(rgba(255, 255, 255, .028) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, .028) 1px, transparent 1px);
-    background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+        linear-gradient(rgba(255, 255, 255, .022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .022) 1px, transparent 1px);
+    background-size: 120px 120px, 120px 120px;
     background-position: -1px -1px;
-    mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 20%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse 110% 70% at 50% 0%, #000 12%, transparent 68%);
+    -webkit-mask-image: radial-gradient(ellipse 110% 70% at 50% 0%, #000 12%, transparent 68%);
 }
 body::after {
     content: ''; position: fixed; inset: 0; z-index: 9998; pointer-events: none;
-    opacity: .045; mix-blend-mode: overlay; background-size: 200px 200px;
+    opacity: .015; mix-blend-mode: overlay; background-size: 200px 200px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -87,7 +91,7 @@ button { font: inherit; }
 
 /* ---------- 顶部标尺 + 滚动进度 ---------- */
 .ruler { position: fixed; top: 0; left: 0; right: 0; height: 5px; z-index: 200; background: var(--ink-1); border-bottom: 1px solid var(--line); }
-.ruler::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(90deg, var(--line-2) 0 1px, transparent 1px 12px); }
+.ruler::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 16px); }
 .ruler-fill { position: absolute; inset: 0 auto 0 0; width: 0; background: linear-gradient(90deg, rgba(207, 138, 82, .35), var(--cu)); box-shadow: 0 0 10px var(--cu-glow); }
 
 /* ---------- 导航 ---------- */
@@ -148,7 +152,7 @@ button { font: inherit; }
 }
 .card::before {
     content: ''; position: absolute; inset: 0; border-radius: 2px; pointer-events: none; opacity: 0;
-    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(207, 138, 82, .09), transparent 65%);
+    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(207, 138, 82, .055), transparent 65%);
     transition: opacity .4s var(--ease);
 }
 .card:hover::before { opacity: 1; }
@@ -212,7 +216,7 @@ button { font: inherit; }
 .pg-head { padding: 152px 0 0; position: relative; overflow: hidden; }
 .pg-head::before {
     content: ''; position: absolute; top: -34%; right: -8%; width: 900px; height: 760px; z-index: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(207, 138, 82, .09), transparent 62%); pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, rgba(207, 138, 82, .05), transparent 62%); pointer-events: none;
 }
 .crumb { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 0.8rem; color: var(--dim); margin-bottom: 26px; letter-spacing: .04em; }
 .crumb a { color: var(--dim); transition: color .3s; }
@@ -230,9 +234,9 @@ button { font: inherit; }
 .pg-meta .v.live { color: var(--sig); }
 
 /* ---------- 通用 section ---------- */
-.sec { padding: 96px 0; position: relative; }
+.sec { padding: 112px 0; position: relative; }
 .sec + .sec { border-top: 1px solid var(--line); }
-.sec-head { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 48px; }
+.sec-head { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 56px; }
 .sec-idx { font-family: var(--mono); font-size: 0.8rem; color: var(--cu); letter-spacing: .1em; padding-bottom: 6px; white-space: nowrap; }
 .sec-t { font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 600; letter-spacing: -.028em; line-height: 1.15; white-space: nowrap; }
 .sec-t em { font-style: normal; color: var(--dim); font-weight: 400; font-size: .58em; margin-left: 12px; letter-spacing: .04em; font-family: var(--mono); }
@@ -416,7 +420,7 @@ button { font: inherit; }
 .pg-nav a.rt { text-align: right; }
 
 /* ---------- 页脚 ---------- */
-.ft { border-top: 1px solid var(--line); padding: 72px 0 40px; position: relative; overflow: hidden; }
+.ft { border-top: 1px solid var(--line); padding: 96px 0 44px; position: relative; overflow: hidden; }
 .ft::before {
     content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
     width: 800px; height: 400px; background: radial-gradient(ellipse at 50% 0%, rgba(207, 138, 82, .07), transparent 65%);
@@ -492,7 +496,7 @@ button { font: inherit; }
 }
 @media (max-width: 860px) {
     :root { --pad: 22px; }
-    .sec { padding: 68px 0; }
+    .sec { padding: 80px 0; }
     .sec-head { flex-wrap: wrap; gap: 12px; margin-bottom: 34px; }
     .sec-rule { display: none; }
     .sec-note { max-width: none; }
