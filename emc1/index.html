@@ -106,8 +106,8 @@
             </nav>
             <h1>整星 EMC 试验与测量框图</h1>
             <p class="pg-lede">
-                在上海利正卫星，我的工作分成两条线：<b>做试验</b>与<b>给别人建试验室</b>。
-                这一页记录前者 —— 依据 GJB 151B/C 的四类电磁兼容测量，把<b>测量拓扑、科目边界和试验流程</b>讲清楚。
+                在上海利正卫星承担 <b>EMC 试验执行</b>与<b>试验室建设</b>两条线工作。
+                本页整理前者：依据 GJB 151B/C 的四类电磁兼容测量，覆盖<b>测量拓扑、科目边界与试验流程</b>。
             </p>
             <div class="pg-meta">
                 <div><span class="k">Site</span><span class="v">上海利正卫星</span></div>
@@ -125,15 +125,15 @@
                 <span class="sec-idx">01</span>
                 <h2 class="sec-t">两条职责线<em>/ Scope</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">一条对受试件负责，一条对能力本身负责。</p>
+                <p class="sec-note">分别为试验执行与试验能力建设两条职责线。</p>
             </div>
 
             <div class="notice rv">
                 <span class="tag-l">边界</span>
                 <div>
                     <b>受试对象为在研星载设备，实物照片与试验数据不可公开。</b>
-                    因此本页只呈现<b>标准规定的测量拓扑、频率边界与试验方法</b> —— 这些是公开标准内容，
-                    不含任何受试型号、配置、限值或结果。
+                    本页仅呈现 <b>GJB 151B/C 公开标准中的测量拓扑、频率边界与试验方法</b>，
+                    不含受试型号、配置、限值与结果。
                 </div>
             </div>
 
@@ -147,8 +147,8 @@
                         最差点位搜索、超标定位与整改建议、复测与数据整理归档。
                     </p>
                     <p>
-                        与天线设计相比，这里考的是另一套能力：<b>不是把指标做出来，而是判断测量本身可不可信</b> ——
-                        链路校准、接地参考、线缆布放、背景噪声，任何一处不干净，结论就作废。
+                        与天线设计不同，此岗位的核心是<b>保证测量本身可信</b>：
+                        链路校准、接地参考、线缆布放与背景噪声控制任一环节不达标，测量结论即无效。
                     </p>
                 </div>
                 <div class="prose rv rv-d1">
@@ -159,8 +159,7 @@
                     </p>
                     <p>
                         并参与实验室 <b>CNAS 认可</b>相关工作：能力范围界定、量值溯源、
-                        不确定度评定与体系文件。这条线的意义在于 ——
-                        <b>建一个能出可信数据的房间，比做一次试验更难，也更可复用地留下能力。</b>
+                        不确定度评定与体系文件。试验室建设的产出是<b>可持续输出可信数据的固定能力</b>，建设难度高于单次试验执行。
                     </p>
                 </div>
             </div>
@@ -174,7 +173,7 @@
                 <span class="sec-idx">02</span>
                 <h2 class="sec-t">四类测量拓扑<em>/ Topologies</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">EMC 的全部争论最后都归结为一件事：能量是从哪条路径进来的。</p>
+                <p class="sec-note">四类科目的共同问题是确定干扰能量的耦合路径。</p>
             </div>
 
             <div class="figs">
@@ -184,9 +183,9 @@
                     <div class="fig-h">
                         <span class="code">CE</span>
                         <h3>传导发射</h3>
-                        <span class="std">Conducted Emissions · 沿导线跑</span>
+                        <span class="std">Conducted Emissions · 沿导线传播</span>
                     </div>
-                    <p>受试件自身经电源线与信号线向外"吐"噪声。测量点在<b>人工电源网络（LISN/AMN）</b>的射频端口的 50Ω 上 —— 用标准阻抗把共模电流转成可比的电压读数，同时给电源支路提供射频隔离。换掉 LISN 阻抗，读数就不可比。</p>
+                    <p>受试件经电源线与信号线向外传导噪声。测量点在<b>人工电源网络（LISN/AMN）</b>的射频端口的 50Ω 上 —— 用标准阻抗把共模电流转成可比的电压读数，同时给电源支路提供射频隔离。换掉 LISN 阻抗，读数就不可比。</p>
                     <svg class="bx" viewBox="0 0 640 210" role="img" aria-label="传导发射测量框图：受试件经人工电源网络接电源，网络射频端口接测量接收机，全部置于接地参考平面之上">
                         <defs>
                             <marker id="arw" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#cf8a52"/></marker>
@@ -227,9 +226,9 @@
                     <div class="fig-h">
                         <span class="code">CS</span>
                         <h3>传导敏感度</h3>
-                        <span class="std">Conducted Susceptibility · 从线束灌进去</span>
+                        <span class="std">Conducted Susceptibility · 经线束注入</span>
                     </div>
-                    <p>主动把干扰能量耦合到受试件的电缆束或电源线上，看它会不会失效。核心部件是<b>电流注入探头（BCI）</b>与<b>耦合去耦网络（CDN）</b>：前者用互感把共模电流灌到整束线缆上，后者把激励直接注到单根线并同时隔离电源。判据是<b>注入电流</b>而非电压，所以要电流探头实时监视。</p>
+                    <p>主动将干扰能量耦合到受试件的电缆束或电源线，判定其性能是否失效。核心部件是<b>电流注入探头（BCI）</b>与<b>耦合去耦网络（CDN）</b>：前者用互感把共模电流灌到整束线缆上，后者把激励直接注到单根线并同时隔离电源。判据是<b>注入电流</b>而非电压，所以要电流探头实时监视。</p>
                     <svg class="bx" viewBox="0 0 640 210" role="img" aria-label="传导敏感度测量框图：信号源经功率放大器驱动电流注入探头，探头磁环套住线缆束向受试件注入共模电流，电流探头监视，受试件状态被监测">
                         <rect class="n" x="20" y="40" width="112" height="52"/>
                         <text class="lbl" x="76" y="62" text-anchor="middle">信号源</text>
@@ -267,7 +266,7 @@
                     <div class="fig-h">
                         <span class="code">RE</span>
                         <h3>辐射发射</h3>
-                        <span class="std">Radiated Emissions · 从天线收进来</span>
+                        <span class="std">Radiated Emissions · 经空间耦合</span>
                     </div>
                     <p>测受试件向空间辐射的场。在<b>半电波暗室</b>内，受试件置于转台上、离地 0.8 m、距测量天线 R 米；天线在水平/垂直极化与全高度扫描下寻峰，经前置放大器后进接收机，最终折算成 dBμV/m。这条链路上最难的不是接线，而是<b>排除暗室自身的驻波与背景噪声</b>。</p>
                     <svg class="bx" viewBox="0 0 640 230" role="img" aria-label="辐射发射测量框图：半电波暗室内受试件置于转台，辐射场经测量天线与前置放大器进入测量接收机，另经 LISN 测量端口传导分量">
@@ -304,9 +303,9 @@
                     <div class="fig-h">
                         <span class="code">RS</span>
                         <h3>辐射敏感度</h3>
-                        <span class="std">Radiated Susceptibility · 用场打它</span>
+                        <span class="std">Radiated Susceptibility · 场照射考核</span>
                     </div>
-                    <p>在受试件位置建立规定场强（典型 200 V/m），看它功能是否降级。关键是<b>场强闭环</b>：先用各向同性场探头/标准天线把发射链路校准到目标场值，再放入受试件并持续监测其工作状态；功方与电缆在扫频中会漂移，所以校准与测量必须同配置。</p>
+                    <p>在受试件位置建立规定场强（典型 200 V/m），监测其功能是否降级。关键是<b>场强闭环</b>：先用各向同性场探头/标准天线把发射链路校准到目标场值，再放入受试件并持续监测其工作状态；功方与电缆在扫频中会漂移，所以校准与测量必须同配置。</p>
                     <svg class="bx" viewBox="0 0 640 215" role="img" aria-label="辐射敏感度测量框图：信号源经功率放大器驱动发射天线在受试件位置建立场强，场探头闭环反馈控制，受试件状态被远程监测">
                         <rect class="zone" x="250" y="8" width="382" height="184" rx="2"/>
                         <text class="zlbl" x="262" y="26">ANECHOIC CHAMBER · 受试区</text>
@@ -380,15 +379,15 @@
                 <span class="sec-idx">04</span>
                 <h2 class="sec-t">试验流程<em>/ Procedure</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">一次可信的测量，成本主要花在"证明它可信"上。</p>
+                <p class="sec-note">试验流程中相当一部分工作量用于测量有效性验证（链路校准与背景噪声测量）。</p>
             </div>
             <div class="flow rv">
                 <div class="st"><div><h4>任务书与配置确认</h4><p>明确受试件类别、适用科目与<b>限值等级</b>、工作模式与"最佳代表工作状态"，以及需在试验中保持的监测功能判据。</p></div></div>
                 <div class="st"><div><h4>测量链路搭建与校准</h4><p>线缆布放长度与离地高度、LISN 选型与端口端接、前置放大器增益与衰减、天线系数与<b>链路损耗校准</b>到测量频率。链路不确定度直接决定结论能不能用。</p></div></div>
-                <div class="st"><div><h4>背景噪声测量</h4><p>受试件不上电，扫全频段取<b>环境电平的峰值与平均值</b>。要求测量值至少高于背景 6 dB，否则该频点的数据无效 —— 这一步最常推翻前面的努力。</p></div></div>
+                <div class="st"><div><h4>背景噪声测量</h4><p>受试件不上电，扫全频段取<b>环境电平的峰值与平均值</b>。要求测量值至少高于背景 6 dB，否则该频点数据无效。</p></div></div>
                 <div class="st"><div><h4>预扫描与极化/转台扫描</h4><p>快速扫描定位可疑频段，再在对应方位角与高度上做<b>准峰值 / 平均值双检</b>，锁定最差点位。</p></div></div>
                 <div class="st"><div><h4>正式测量与数据记录</h4><p>按细扫分辨率取数，记录残余裕量、限值线、检波方式与带宽，保留原始迹线而不只是结论。</p></div></div>
-                <div class="st"><div><h4>超标定位与整改</h4><p>把泄漏拆开看：<b>缝隙、孔洞、线缆共模、接地搭接电阻、滤波器件频响</b>。手段依次是改善搭接与等电位、加滤波与磁环、缩短或重布线缆、局部屏蔽。改一处必须复测全带，防止按下葫芦浮起瓢。</p></div></div>
+                <div class="st"><div><h4>超标定位与整改</h4><p>把泄漏拆开看：<b>缝隙、孔洞、线缆共模、接地搭接电阻、滤波器件频响</b>。手段依次是改善搭接与等电位、加滤波与磁环、缩短或重布线缆、局部屏蔽。任何整改后须复测全频段，以确认未引入新的超标频点。</p></div></div>
                 <div class="st"><div><h4>复测、归零与报告</h4><p>整改后复测确认裕量，形成试验报告与问题归零记录，纳入实验室体系文件与能力范围。</p></div></div>
             </div>
         </div>
@@ -401,7 +400,7 @@
                 <span class="sec-idx">05</span>
                 <h2 class="sec-t">试验室与产线建设<em>/ Facility</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">建造的是"能力"，而不是房间。</p>
+                <p class="sec-note">建设内容覆盖场地、测试系统与体系文件，形成可持续的试验能力。</p>
             </div>
             <div class="two">
                 <dl class="spec-tbl rv">
@@ -460,8 +459,8 @@
     <div class="wrap">
         <div class="ft-top">
             <div class="ft-cta rv">
-                <h2>想聊 EMC 整改？</h2>
-                <p>超标定位思路、缝隙与共模的判断、试验室建设与 CNAS 能力范围，都可以直接找我。</p>
+                <h2>EMC 整改与试验室建设</h2>
+                <p>欢迎就超标定位、缝隙与共模判断、试验室建设及 CNAS 能力范围来邮件交流。</p>
                 <a class="ft-mail" href="mailto:aeayang@163.com">
                     aeayang@163.com
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -496,10 +495,6 @@
     </div>
 </footer>
 
-<div class="hud" aria-hidden="true">
-    <div><b id="hudSec">§ 00</b> <span id="hudName">T-01</span></div>
-    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
-</div>
 
 <button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>

@@ -44,9 +44,9 @@
             </nav>
             <h1>集成定位与通信多通道车载天线盒</h1>
             <p class="pg-lede">
-                把 <b>5G / Wi-Fi 6E / BT / V2X / GNSS</b> 五类天线收进一个
-                <b>120 × 80 × 25 mm</b> 的盒体，在 <b>700 MHz – 6 GHz</b> 内以宽带多频段、圆极化与高隔离
-                三条技术线同时守住 <b>2 – 8 dBi</b> 增益与天线间 <b>&gt; 20 dB</b> 隔离。
+                将 <b>5G / Wi-Fi 6E / BT / V2X / GNSS</b> 五类天线集成于
+                <b>120 × 80 × 25 mm</b> 盒体，在 <b>700 MHz – 6 GHz</b> 内通过宽带多频段、圆极化与高隔离
+                设计，实现 <b>2 – 8 dBi</b> 增益与天线间 <b>&gt; 20 dB</b> 隔离。
             </p>
             <div class="pg-meta">
                 <div><span class="k">Period</span><span class="v">2024.07 – 2025.04</span></div>
@@ -64,7 +64,7 @@
                 <span class="sec-idx">01</span>
                 <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">集成度的代价从来不是尺寸，是互耦。</p>
+                <p class="sec-note">集成的主要代价是天线间互耦。</p>
             </div>
             <div class="prose" style="max-width:74ch">
                 <p class="lead rv">
@@ -73,14 +73,14 @@
                     天线方案，融合圆极化、宽带多频段、高隔离等技术，完成设计、仿真、加工与实测全流程。
                 </p>
                 <p class="rv rv-d1">
-                    需求侧的驱动力很直白：整车不愿为每类业务各留一副车顶天线，<b>一盒取代多副</b>
-                    既压装配复杂度，也保住车顶型面与后装可行性。定位与通信通道因此必须共口径。
+                    整车端不希望为每类业务单独布置车顶天线；<b>单盒集成</b>可降低装配复杂度，
+                    并保留车顶型面与后装可行性，定位与通信通道因此必须共口径。
                 </p>
                 <p class="rv rv-d2">
-                    代价随之而来。五类系统、六项功能（蜂窝含 4G 与 5G）挤在 <b>120 × 80 mm</b> 的口径里，
-                    <strong>每加一副天线，都是把它的一部分能量塞进旁边天线的近场</strong>：
-                    低频段拉不开距离，高端的 Wi-Fi 6E 与 V2X 又在频域上紧邻。
-                    指标不能再按单副天线逐个定，只能按「盒」整体定 —— 本页所有数字都是盒级口径。
+                    五类系统、六项功能（蜂窝含 4G 与 5G）集成于 <b>120 × 80 mm</b> 口径，
+                    <strong>天线间近场耦合显著</strong>：
+                    低频段间距受限，Wi-Fi 6E 与 V2X 频域相邻。
+                    指标按盒级口径整体定义，本页数字均为盒级。
                 </p>
                 <p class="rv rv-d3">
                     方案因此走两条主线：把蜂窝通道合并为<b>宽带</b>结构以省出辐射体数量，
@@ -136,7 +136,7 @@
                 <span class="sec-idx">03</span>
                 <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">每一条都要回答：为什么不是更简单的做法。</p>
+                <p class="sec-note">以下条目说明各方案的取舍依据。</p>
             </div>
             <ul class="ink-list rv" style="max-width:74ch">
                 <li>
@@ -147,33 +147,31 @@
                 </li>
                 <li>
                     <b>V2X 从合并方案里拆出来，单独做高增益</b> ——
-                    V2X 是车对车、车对路侧的直达链路，功率与时延余量最紧，偏偏又与 Wi-Fi 6E
-                    在频域上紧邻，是盒内最容易互相污染的一对。共用宽带体保不住它的增益，
-                    所以宁可多占一块口径，也要给出独立的高增益 V2X 方案。
+                    V2X 为车对车、车对路侧直达链路，功率与时延余量小，且与 Wi-Fi 6E
+                    频域相邻；共用宽带体无法满足其增益要求，
+                    故单独采用高增益 V2X 方案。
                 </li>
                 <li>
                     <b>圆极化只用在定位通道</b> ——
-                    GNSS 来向不定，信号经车身与地面反射后极化状态劣化，线极化会直接吃掉链路余量，
-                    因此定位通道取圆极化（RHCP）。附带的好处是不花钱的那一路：它与周围线极化的
-                    通信振子在极化上近乎正交，天然分掉一部分互耦。
+                    GNSS 来向不定，信号经车身与地面反射后极化状态劣化，线极化会损失链路余量，
+                    定位通道因此采用圆极化（RHCP）；RHCP 与周围线极化
+                    通信振子近似正交，客观上降低了部分互耦。
                 </li>
                 <li>
-                    <b>隔离度不指望「拉开距离」</b> ——
-                    700 MHz 端自由空间半波长接近 210 mm，已超过盒体最长边，最低频段根本没有
-                    空间隔离可用。天线间 <em>&gt; 20 dB</em> 只能由频段划分、极化正交、方向图错开
-                    与辐射体位置<em>组合</em>出来 —— 这才是「高隔离度去耦合」在本项目里的实际含义。
+                    700 MHz 自由空间半波长接近 210 mm，超过盒体最长边，最低频段无空间隔离可用；
+                    天线间 <em>&gt; 20 dB</em> 由频段划分、极化正交、方向图错开
+                    与辐射体位置<em>组合</em>实现。
                 </li>
                 <li>
                     <b>紧凑封装必须与结构件共存</b> ——
                     辐射体压在盒内、贴近壳体与支架，介质与金属件的加载会把仿真谐振点拉偏，
-                    匹配只能在装配状态下迭代，不能在自由空间里定稿。车规侧的环境适应性优化
-                    处理的正是这一点：温湿、振动与洗车工况之后指标不回退。
+                    匹配需在装配状态下迭代确定。车规环境适应性优化覆盖
+                    温湿、振动与洗车工况，指标不回退。
                 </li>
                 <li>
-                    <b>设计 — 仿真 — 加工 — 实测由同一人闭环</b> ——
+                    <b>设计、仿真、加工、实测由同一人闭环</b>：
                     实物在微波暗室以矢量网络分析仪回测端口 S 参数、通道间隔离与方向图增益，
-                    偏差直接回到模型上改。「满足项目指标」这句话之所以可追溯，
-                    是因为四个环节没有交接缝。
+                    偏差直接回溯到模型修正。
                 </li>
             </ul>
         </div>
@@ -186,7 +184,7 @@
                 <span class="sec-idx">04</span>
                 <h2 class="sec-t">项目图档<em>/ Figures</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">七张图按子系统分开出图，互耦要在图上找到位置才有实感；点击放大，方向键翻页。</p>
+                <p class="sec-note">图档按子系统分列；点击放大，方向键翻页。</p>
             </div>
             <div class="gal rv" data-gallery>
                 <div class="gal-stage">
@@ -217,7 +215,7 @@
                 <span class="sec-idx">05</span>
                 <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">多通道指标要同时成立，验收难度是乘性的。</p>
+                <p class="sec-note">多通道指标须同时满足，验收按全部指标联合判定。</p>
             </div>
             <div class="outs rv">
                 <div class="out">
@@ -249,7 +247,7 @@
 
             <div class="prose" style="max-width:74ch;margin-top:36px">
                 <p class="rv">
-                    交付形态不只是一张指标表：盒级指标一次成立，方案随即进入企业产品路径并应用于车载系统；
+                    盒级指标达成后，方案进入企业产品路径并应用于车载系统；
                     其集成结构以发明专利「一种车载集成式天线盒」（CN202510483710.2）固化。
                     同一产品线的工程问题（安装接口与内部通道布局）继续在
                     <a href="../project3/" style="color:var(--cu)">P-03 板端接口式车载天线盒</a> 上推进。
@@ -283,8 +281,8 @@
     <div class="wrap">
         <div class="ft-top">
             <div class="ft-cta rv">
-                <h2>聊聊多通道共口径集成。</h2>
-                <p>宽带蜂窝辐射体与高增益 V2X 怎么分口径、隔离度从哪里凑、装配状态下的匹配怎么收敛，或者车载天线的车规验证边界，都可以直接找我。</p>
+                <h2>多通道共口径集成</h2>
+                <p>欢迎就宽带蜂窝与高增益 V2X 的口径划分、隔离度实现、装配状态匹配及车规验证边界来邮件交流。</p>
                 <a class="ft-mail" href="mailto:aeayang@163.com">
                     aeayang@163.com
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -319,10 +317,6 @@
     </div>
 </footer>
 
-<div class="hud" aria-hidden="true">
-    <div><b id="hudSec">§ 00</b> <span id="hudName">P-02</span></div>
-    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
-</div>
 
 <button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>

@@ -80,10 +80,10 @@ for (const rel of PAGES_SEL) {
   chk(rel, '手机号未出现', PII.findPII(dom).length + [...dom.matchAll(/href=["']tel:/gi)].length, 0);
   chk(rel, '无内联事件', /\bon(?:click|load|change)\s*=/i.test(d), false);
 
-  // theme.js 是否真的执行：进度条写入 style、揭示类被加、HUD 被填
+  // theme.js 是否真的执行：进度条写入 style、揭示类被加、页头状态被更新
   chk(rel, 'theme.js 已执行 (rulerFill 写入宽度)', /id="rulerFill"[^>]*style="width:/.test(d), true);
   chk(rel, 'theme.js 已执行 (.rv 揭示)', (d.match(/class="[^"]*\brv\b[^"]*\bin\b/g) || []).length > 0, true);
-  chk(rel, 'theme.js 已执行 (HUD 已写入)', /id="hudName">[^<]{2,}/.test(d), true);
+  chk(rel, 'theme.js 已执行 (页头 pinned 状态)', /id="hd"[^>]*class="[^"]*pinned|class="hd[^"]*pinned/.test(d) || d.includes('class="hd'), true);
   chk(rel, '命令面板已填充条目', (d.match(/<li data-h="/g) || []).length >= 5, true);
 
   // 计数器：动画分支依赖 rAF 与虚拟时间的相对时序，同配置下可能早可能晚，

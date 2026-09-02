@@ -45,7 +45,7 @@
             <h1>GNSS 天线及有源射频模块</h1>
             <p class="pg-lede">
                 覆盖 <b>BDS B1/B2 与 GPS L1/L5</b> 四个频点的右旋圆极化天线，配合
-                <b>"独立滤波 — 分级放大 — 合路再放大"</b>架构的有源链路，在 2.5 dB 噪声系数下守住 32 dB 链路增益。
+                <b>"独立滤波 — 分级放大 — 合路再放大"</b>架构的有源链路，实现噪声系数 &lt; 2.5 dB、链路增益 &gt; 32 dB。
             </p>
             <div class="pg-meta">
                 <div><span class="k">Period</span><span class="v">2025.02 – 2025.05</span></div>
@@ -63,22 +63,22 @@
                 <span class="sec-idx">01</span>
                 <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">导航接收的瓶颈几乎从来不是"天线有没有"，而是整条链路的噪声预算。</p>
+                <p class="sec-note">导航接收性能主要取决于整条链路的噪声预算。</p>
             </div>
             <div class="prose" style="max-width:74ch">
                 <p class="lead rv">
-                    设计并开发高性能 <b>GNSS 天线及有源射频链路系统</b>，支持多频段卫星导航信号接收。
-                    系统集成了低噪声放大器、滤波器与功率分配网络，实现高精度定位所需的射频指标。
+                    设计 <b>GNSS 天线及有源射频链路系统</b>，支持多频段卫星导航信号接收；
+                    系统集成低噪声放大器、滤波器与功率分配网络，指标见下节。
                 </p>
                 <p class="rv rv-d1">
                     天线端要同时覆盖 <b>BDS B1 (1561 MHz) / B2 (1207 MHz)</b> 与
-                    <b>GPS L1 (1575 MHz) / L5 (1176 MHz)</b> 四个频点，且必须保持<b>右旋圆极化</b> ——
-                    卫星信号经电离层与地面反射后极化状态会劣化，轴比直接吃掉链路余量。
+                    <b>GPS L1 (1575 MHz) / L5 (1176 MHz)</b> 四个频点，且须保持<b>右旋圆极化</b>：
+                    卫星信号经反射后极化状态劣化，轴比恶化会损失链路余量。
                 </p>
                 <p class="rv rv-d2">
                     链路端的关键取舍在于<strong>先合路还是先放大</strong>。采用"独立滤波 — 分级放大 — 合路再放大"：
-                    每个频点先各自滤波并放大，把噪声系数钉在靠近天线的第一级，再合路做增益，
-                    既避免合路后滤波造成的噪声恶化，又保住带内平坦度。
+                    各频点先各自滤波放大，使噪声系数由靠近天线的第一级主导，再合路提供增益，
+                    避免合路后滤波带来的噪声恶化，并维持带内平坦度。
                 </p>
             </div>
         </div>
@@ -119,12 +119,12 @@
                 <span class="sec-idx">03</span>
                 <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">五个决定指标的点，逐个可复述。</p>
+                <p class="sec-note">方案要点共五条。</p>
             </div>
             <ul class="ink-list rv" style="max-width:74ch">
                 <li><b>多频段共用一套辐射体</b> —— 用同一结构同时激励 B1/B2 与 L1/L5，避免四副天线在 55 mm 口径内互扰。</li>
                 <li><b>宽带圆极化技术</b> —— 以馈电结构与辐射贴片的几何关系压轴比，把极化劣化控制在 3 dB 以内。</li>
-                <li><b>低噪声射频前端</b> —— 第一级 LNA 就近天线布置，噪声系数由首级主导，后续各级只需守住线性度。</li>
+                <li><b>低噪声射频前端</b> —— 第一级 LNA 就近天线布置，噪声系数由首级主导，后续各级保证线性度即可。</li>
                 <li><b>独立滤波 + 分级放大 + 合路再放大</b> —— 带外抑制做到 <em>&gt; 25 dB</em>（f ± 50 MHz），同时带内起伏 <em>± 1 dB</em>。</li>
                 <li><b>抗干扰与集成化</b> —— 单模块内完成滤波、放大、合路与匹配，输出直连后级接收机，简化整机布局。</li>
             </ul>
@@ -165,7 +165,7 @@
                 <span class="sec-idx">05</span>
                 <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">指标即验收条件。</p>
+                <p class="sec-note">验收条件如下列指标。</p>
             </div>
             <div class="outs rv">
                 <div class="out">
@@ -216,8 +216,8 @@
     <div class="wrap">
         <div class="ft-top">
             <div class="ft-cta rv">
-                <h2>聊聊 GNSS 有源天线。</h2>
-                <p>圆极化轴比、噪声预算、多级放大的合路顺序，或者整星 EMC 与可靠性试验，都可以直接找我。</p>
+                <h2>GNSS 有源天线与射频前端</h2>
+                <p>欢迎就圆极化轴比、噪声预算、多级放大与合路顺序及整星 EMC 与可靠性试验来邮件交流。</p>
                 <a class="ft-mail" href="mailto:aeayang@163.com">
                     aeayang@163.com
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -252,10 +252,6 @@
     </div>
 </footer>
 
-<div class="hud" aria-hidden="true">
-    <div><b id="hudSec">§ 00</b> <span id="hudName">P-06</span></div>
-    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
-</div>
 
 <button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>

@@ -44,8 +44,8 @@
             </nav>
             <h1>算法辅助全波电磁仿真优化</h1>
             <p class="pg-lede">
-                用 <b>Python 脚本驱动 HFSS</b> 做全波电磁仿真寻优：PSO、Bayesian 等算法可选可换，
-                约束目标直接入环；再以 <b>BNN 代理模型 + 主动学习</b>把昂贵仿真换成廉价预测，
+                以 <b>Python 脚本驱动 HFSS</b> 完成全波电磁仿真寻优：PSO、Bayesian 等算法可切换，
+                约束目标直接进入优化环；辅以 <b>BNN 代理模型与主动学习</b>减少全波仿真次数，
                 已应用于实际课题与工程项目。
             </p>
             <div class="pg-meta">
@@ -64,7 +64,7 @@
                 <span class="sec-idx">01</span>
                 <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">优化策略的第一道筛选不是收敛速度，而是单次评估的成本。</p>
+                <p class="sec-note">优化算法选型的首要考量是单次评估成本。</p>
             </div>
             <div class="prose" style="max-width:74ch">
                 <p class="lead rv">
@@ -73,20 +73,20 @@
                     已应用于实际课题与工程项目。
                 </p>
                 <p class="rv rv-d1">
-                    问题出在成本上：全波求解器每评估一组候选参数，就要做一次完整的有限元求解，
-                    单次常以分钟乃至小时计；而 PSO 这类群体方法一代要维持上百个个体、连续迭代数十代，
-                    直接寻优意味着成百上千次全波仿真的预算，参数一多、变量间再互相牵制，就完全划不来。
+                    全波求解器每评估一组候选参数需完整有限元求解，单次常以分钟至小时计；
+                    PSO 等群体算法一代需上百个个体、迭代数十代，直接寻优需成百上千次全波仿真，
+                    参数规模增大时成本不可接受。
                 </p>
                 <p class="rv rv-d2">
                     因此在优化器与求解器之间插入一层<b>代理模型</b>：用少量真实仿真做训练样本，
                     学出一个评估几乎免费的预测函数，让优化器先在廉价代理上粗筛，
                     只把最有信息量的少数点送回 HFSS 校验。本项目采用
-                    <b>BNN（贝叶斯神经网络）</b>作代理模型——它给出预测的同时还给出不确定性，
-                    主动学习策略正是按这个不确定性决定下一次仿真花在哪里。
+                    <b>BNN（贝叶斯神经网络）</b>作代理模型，其输出同时包含预测值与不确定性，
+                    主动学习按该不确定性选择下一次仿真点。
                 </p>
                 <p class="rv rv-d3">
                     在此基础上进一步探索<b>物理先验嵌入的强化学习</b>参数优化架构：
-                    把已知的电磁规律作为先验约束进探索过程，避免智能体把预算浪费在物理上不可能达标的参数区域。
+                    把已知的电磁规律作为先验约束进探索过程，避免在物理上不可达的参数区域消耗仿真预算。
                 </p>
             </div>
         </div>
@@ -99,7 +99,7 @@
                 <span class="sec-idx">02</span>
                 <h2 class="sec-t">技术栈与能力<em>/ Stack</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">工具链视角：谁在驱动、谁在求解、谁在选择、谁在预测。</p>
+                <p class="sec-note">按驱动、求解、选点、预测四个环节列出工具链。</p>
             </div>
             <div class="spec-cols">
                 <dl class="spec-tbl rv">
@@ -132,22 +132,22 @@
                 <span class="sec-idx">03</span>
                 <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">每条都围绕同一个问题：怎么少跑仿真、跑对仿真。</p>
+                <p class="sec-note">各条目围绕减少仿真次数与提升仿真有效性展开。</p>
             </div>
             <ul class="ink-list rv" style="max-width:74ch">
                 <li><b>把求解器变成可调用的目标函数</b> —— 脚本串起「写入参数 → 驱动 HFSS 求解 → 提取结果指标」，
-                    人工扫描慢且易错、无法批量重复；只有当循环可以全自动闭合，任何优化算法才有运行的前提。</li>
+                    人工扫描效率低、易错且不可批量重复；循环全自动化是运行优化算法的前提。</li>
                 <li><b>约束目标显式定义</b> —— 天线指标不是单一标量：带宽、增益、尺寸包络彼此制约。
                     把约束作为优化器的直接输入，不可行解在环内就被拒绝，而不是事后靠人工筛结果。</li>
                 <li><b>算法层与求解层解耦</b> —— 不同课题的参数维度与地形起伏不同，群体法与贝叶斯法各有适用面。
                     求解器按黑箱目标函数暴露，PSO、Bayesian（及 GA、DE 等）作为可切换选项，
                     既能按问题选型，也能在同一任务上对比不同算法的行为。</li>
-                <li><b>BNN 代理 + 主动学习采样</b> —— 选贝叶斯神经网络而非普通网络，是因为它同时输出预测值与不确定性；
-                    样本预算有限时，按不确定性选点，让每一次昂贵仿真买到最大的信息增益。</li>
+                <li><b>BNN 代理 + 主动学习采样</b> —— 贝叶斯神经网络同时输出预测值与不确定性；
+                    样本预算有限时按不确定性选点，使每次仿真获得最大信息增益。</li>
                 <li><b>自适应参数调节与收敛判断</b> —— 依据每轮代理的后验反馈调整参数搜索区间，
                     配合收敛判断在增益趋零时及时停止，避免预算耗在已经收敛的区域。</li>
                 <li><b>结果可视化分析</b> —— 迭代曲线与参数轨迹同屏呈现（见 FIG 02 / FIG 03），
-                    既校验代理预测与全波结果的一致性，也判断收敛是否健康，而不是只盯最后一个点。</li>
+                    用于校验代理预测与全波结果的一致性，并依据迭代曲线判断收敛过程，而非仅依据末点。</li>
             </ul>
         </div>
     </section>
@@ -186,7 +186,7 @@
                 <span class="sec-idx">05</span>
                 <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">这一页的交付物是工具链本身，它仍在生长。</p>
+                <p class="sec-note">本页交付物为仿真优化工具链，其中物理先验强化学习方向仍在开发。</p>
             </div>
             <div class="outs rv">
                 <div class="out">
@@ -245,8 +245,8 @@
 <footer class="ft" id="contact" data-hud="联系">
     <div class="wrap">
         <div class="ft-cta rv">
-            <h2>聊聊 AI 与全波仿真的接缝。</h2>
-            <p>HFSS 脚本化闭环、代理模型怎么选点、贝叶斯神经网络的不确定性怎么用，或者物理先验如何进优化环，都可以直接找我。</p>
+            <h2>AI 与全波仿真的结合</h2>
+            <p>欢迎就 HFSS 脚本化闭环、代理模型选点、BNN 不确定性应用及物理先验优化架构来邮件交流。</p>
             <a class="ft-mail" href="mailto:aeayang@163.com">
                 aeayang@163.com
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -276,10 +276,6 @@
     </div>
 </footer>
 
-<div class="hud" aria-hidden="true">
-    <div><b id="hudSec">§ 00</b> <span id="hudName">P-04</span></div>
-    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
-</div>
 
 <button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>

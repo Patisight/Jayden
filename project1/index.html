@@ -44,7 +44,7 @@
             </nav>
             <h1>紧凑型低剖面车载 5G MIMO 天线</h1>
             <p class="pg-lede">
-                四端口（<b>主天线 · 副天线 · 2 支 MIMO 分集</b>）压进 <b>74 × 74 × 11 mm</b> 的印制结构：
+                四端口（<b>主天线 · 副天线 · 2 支 MIMO 分集</b>）集成于 <b>74 × 74 × 11 mm</b> 印制结构：
                 以<b>「单极子枝节 + 类缝隙结构地板」</b>在不同频段制造极化方向差异，用极化失配换隔离度，
                 全频段端口隔离优于 10 dB。
             </p>
@@ -65,7 +65,7 @@
                 <span class="sec-idx">01</span>
                 <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">车载 MIMO 的难点从来不是把天线做小，而是在 74 mm 口径里让四端口彼此不相关。</p>
+                <p class="sec-note">难点在于在 74 mm 口径内实现四端口低相关性。</p>
             </div>
             <div class="prose" style="max-width:74ch">
                 <p class="lead rv">
@@ -78,8 +78,8 @@
                     同一块板子上既要有蜂窝低频、又要有 5G FR1 中高频，是尺寸与隔离度冲突最直接的场景。
                 </p>
                 <p class="rv rv-d2">
-                    约束首先来自物理：<strong>700 MHz 的半波长接近 210 mm</strong>，远大于 74 mm 的安装口径 ——
-                    靠拉开端口间距解耦在低频段根本做不到。方案的落点因此从空间域移到<strong>极化域</strong>：
+                    约束首先来自物理：<strong>700 MHz 的半波长接近 210 mm</strong>，远大于 74 mm 的安装口径，
+                    低频段无法通过拉开端口间距解耦。方案因此由空间域转向<strong>极化域</strong>：
                     用「单极子枝节 + 类缝隙结构地板」让同一套金属在不同频段呈现<strong>差异化的极化方向</strong>，
                     使相邻端口在任一工作频段内近似极化正交，以极化失配压低互耦合，
                     同时形成<strong>图形分集与极化分集</strong>，改善链路的分集增益与 MIMO 信道稳定性。
@@ -106,7 +106,7 @@
                 <span class="sec-idx">02</span>
                 <h2 class="sec-t">技术规格<em>/ Specifications</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">低频段看匹配与效率，中高频段看隔离与相关性 —— 两组指标的难点不在同一处。</p>
+                <p class="sec-note">低频段考核匹配与效率，中高频段考核隔离与相关性。</p>
             </div>
             <div class="spec-cols">
                 <dl class="spec-tbl rv">
@@ -136,15 +136,15 @@
                 <span class="sec-idx">03</span>
                 <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">一句话：间距做不到的解耦，用极化去换。六条逐个可复述。</p>
+                <p class="sec-note">方案要点共六条。</p>
             </div>
             <ul class="ink-list rv" style="max-width:74ch">
-                <li><b>低频段交给单极子枝节</b> —— 枝节的垂直电流分量相对车体金属面呈近全向，在 11 mm 剖面内就能拿到 <em>700–960 MHz</em> 的匹配；若改用贴片，低频需要的大口径会直接顶破尺寸预算。</li>
+                <li><b>低频段交给单极子枝节</b> —— 枝节的垂直电流分量相对车体金属面呈近全向，在 11 mm 剖面内实现 <em>700–960 MHz</em> 匹配；若改用贴片，低频所需口径将超出尺寸约束。</li>
                 <li><b>中高频由地板上的类缝隙结构承担</b> —— 在同一地板上开窄槽与宽槽，使低 / 中 / 高频段分别以<em>金属枝、窄槽、宽槽</em>三种机理辐射，一套金属覆盖 <em>1710–6000 MHz</em>，避免为每个频段另起一副天线互相干扰。</li>
-                <li><b>频段相关的极化方向做解耦</b> —— 让相邻端口在同一频段内极化近似正交，用极化失配换取隔离度。这是唯一可行的路：700 MHz 的 <em>λ/2 ≈ 210 mm</em>，在 74 mm 口径里靠间距解耦无从谈起。</li>
-                <li><b>图形分集 + 极化分集双通道</b> —— 低频段靠方向图差异、中高频段靠极化正交，把包络相关系数压到 <em>ECC &lt; 0.5</em>。车载信道是强多径环境，相关系数降不下来，四端口只是四路相同的信号。</li>
+                <li><b>频段相关的极化方向做解耦</b> —— 让相邻端口在同一频段内极化近似正交，用极化失配换取隔离度。在 74 mm 口径内间距解耦不可行（700 MHz 的 <em>λ/2 ≈ 210 mm</em>），极化失配是主要解耦手段。</li>
+                <li><b>图形分集 + 极化分集双通道</b> —— 低频段靠方向图差异、中高频段靠极化正交，把包络相关系数压到 <em>ECC &lt; 0.5</em>。车载信道为强多径环境，相关系数过高会削弱 MIMO 分集效果。</li>
                 <li><b>FR4 印制而非特种工艺</b> —— 选 FR4 是量产成本与加工一致性的取舍；代价是板材与铜损吃掉部分效率，这也是效率下限按<em>实测 &gt; 40%</em>给出、而把仿真的 <em>64.8%</em> 单列为参考值的原因。</li>
-                <li><b>隔离度按频段分档验收</b> —— 全频段 <em>&gt; 10 dB</em>、高频段 <em>&gt; 15 dB</em>，而不是取一个平均值：频段越高越容易解耦，把难易两档合并成一条指标会掩盖真实的工程难度。</li>
+                <li><b>隔离度按频段分档验收</b> —— 全频段 <em>&gt; 10 dB</em>、高频段 <em>&gt; 15 dB</em>，不取平均值：频段越高越容易解耦，按频段分档给出才反映真实难度。</li>
             </ul>
         </div>
     </section>
@@ -276,7 +276,7 @@
                 <span class="sec-idx">05</span>
                 <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">论文与专利同源：同一套结构，一次发表、一次权利化。</p>
+                <p class="sec-note">论文与专利基于同一套结构方案。</p>
             </div>
             <div class="outs rv">
                 <div class="out">
@@ -345,8 +345,8 @@
     <div class="wrap">
         <div class="ft-top">
             <div class="ft-cta rv">
-                <h2>聊聊车载 MIMO 天线。</h2>
-                <p>极化解耦、端口隔离与 ECC 的取舍、低剖面下的多频段覆盖，或者从仿真到实测的偏差怎么解释，都可以直接找我。</p>
+                <h2>车载 MIMO 天线</h2>
+                <p>欢迎就极化解耦、端口隔离与 ECC 取舍、低剖面多频段覆盖及仿真实测偏差分析来邮件交流。</p>
                 <a class="ft-mail" href="mailto:aeayang@163.com">
                     aeayang@163.com
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -381,10 +381,6 @@
     </div>
 </footer>
 
-<div class="hud" aria-hidden="true">
-    <div><b id="hudSec">§ 00</b> <span id="hudName">P-01</span></div>
-    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
-</div>
 
 <button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>

@@ -45,7 +45,7 @@
             <h1>高增益全向车载阵列天线</h1>
             <p class="pg-lede">
                 工作在 <b>5.9–7.2 GHz</b> 的车载阵列天线：在水平面维持 <b>360° 全向覆盖</b> 的前提下，
-                用<b>交错阵列排布</b>把增益换到 <b>7 dBi</b>，带内 VSWR 守在 1.5 以下。企业实习产出，方案<b>专利申请中</b>。
+                通过<b>交错阵列排布</b>实现 <b>7 dBi</b> 增益，带内 VSWR &lt; 1.5。企业实习产出，方案<b>专利申请中</b>。
             </p>
             <div class="pg-meta">
                 <div><span class="k">Period</span><span class="v">2025.03 – 2025.09</span></div>
@@ -63,7 +63,7 @@
                 <span class="sec-idx">01</span>
                 <h2 class="sec-t">项目概述<em>/ Overview</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">「全向」和「高增益」共用同一份能量预算，本页记录这笔交换怎么做。</p>
+                <p class="sec-note">增益提升受全向覆盖约束，本页说明两者的折中。</p>
             </div>
             <div class="prose" style="max-width:74ch">
                 <p class="lead rv">
@@ -72,14 +72,13 @@
                     用于车顶受限高度下的宽带无线链路。
                 </p>
                 <p class="rv rv-d1">
-                    难点不在「能不能变高增益」，而在<strong>增益从哪里来</strong>。车装天线要求任何行驶方向都不出盲区，
-                    水平面必须 360° 平坦；而增益的定义恰恰是把功率收进更小的立体角。全向条件下唯一可动的杠杆是
-                    <b>垂直面</b> —— 增益只能靠压窄垂直波束换取，两个面之间没有同时变好的余地。
+                    车装天线要求任何行驶方向都不出盲区，水平面必须 360° 平坦；
+                    而增益来自将功率集中到更小的立体角。全向条件下增益只能通过压窄<b>垂直面</b>波束获得，
+                    两个面无法同时改善。
                 </p>
                 <p class="rv rv-d2">
-                    第二重约束来自安装本身：车顶高度限制阵面可占的剖面，可用面积限制阵元可拉开的距离，
-                    而间距本身还要同时满足栅瓣与互耦两端的要求。阵列形式（交错排布）正是在这几个上限之间求得的折中 ——
-                    <strong>用排布方式换增益，而不是用尺寸换</strong>。
+                    第二重约束来自安装：车顶高度限制阵面剖面，可用面积限制阵元间距，
+                    间距还须兼顾栅瓣与互耦；交错排布为上述约束下的折中方案。
                 </p>
                 <p class="rv rv-d3">
                     设计之外的工作同样由企业侧交付要求决定：完成<b>天线性能测试与数据分析</b>，
@@ -96,7 +95,7 @@
                 <span class="sec-idx">02</span>
                 <h2 class="sec-t">技术规格<em>/ Specifications</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">按带内最差情况验收，不以中心频点单点定成败。</p>
+                <p class="sec-note">按带内最差情况验收，不以中心频点单点判定。</p>
             </div>
             <div class="spec-cols">
                 <dl class="spec-tbl rv">
@@ -123,16 +122,16 @@
                 <span class="sec-idx">03</span>
                 <h2 class="sec-t">技术方案<em>/ Approach</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">每条说的是为什么这么做，而不只是做了什么。</p>
+                <p class="sec-note">以下条目说明设计依据。</p>
             </div>
             <ul class="ink-list rv" style="max-width:74ch">
-                <li><b>增益只从垂直面换</b> —— 水平面越平，可支配的立体角越少，增益只能来自垂直波束收窄；先在指标里承认这条守恒关系，再谈设计，避免用「全向 + 高增益」两个词互相抵消。
+                <li><b>增益只从垂直面换</b> —— 水平面越平，可支配的立体角越少，增益只能来自垂直波束收窄；指标定义须先明确该约束关系，避免「全向」与「高增益」表述冲突。
                 </li>
                 <li><b>交错阵列排布</b> —— 车顶可布置面积有限，规则排布会让阵元在某些方位靠得过近，互耦随方位角起伏，全向圆随之变形；交错排布用同样的外接尺寸换取更均匀的等效间距，代价是馈电路径更长、布局更难对齐。
                 </li>
                 <li><b>间距按带宽两端定</b> —— 间距过密互耦强、过疏出现栅瓣；1.3 GHz 带宽意味着同一间距要在带高端避免栅瓣、在带低端避免耦合塌陷，因此间距取两端都能接受的区间，而不是按中心频点优化。
                 </li>
-                <li><b>匹配与馈电一致性同批收敛</b> —— VSWR &lt; 1.5 只在中心频点达标没有意义：带内任何残余失配都会以幅度滚降的形式破坏水平平坦度，所以匹配网络与阵元馈电一起按带内最差情况设计。
+                <li><b>匹配与馈电一致性同批收敛</b> —— VSWR &lt; 1.5 仅在中心频点达标不足以保证带内性能：残余失配会以幅度滚降影响水平面平坦度，故匹配网络与阵元馈电按带内最差情况设计。
                 </li>
                 <li><b>安装面参与设计，与结构团队同步联调</b> —— 车顶金属面本身就是方向图的一部分，支架、开孔与邻接结构会改写实测结果；因此工程集成问题不等到装配阶段才处理，测试与结构方案并行推进。
                 </li>
@@ -174,7 +173,7 @@
                 <span class="sec-idx">05</span>
                 <h2 class="sec-t">项目成果<em>/ Outcomes</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">指标之外，留下的是可交接的文档与专利申请文本。</p>
+                <p class="sec-note">交付物包括设计文档、测试报告与专利申请文件。</p>
             </div>
             <div class="outs rv">
                 <div class="out">
@@ -225,8 +224,8 @@
     <div class="wrap">
         <div class="ft-top">
             <div class="ft-cta rv">
-                <h2>聊聊全向条件下的增益取舍。</h2>
-                <p>阵列排布与互耦、栅瓣与间距的边界、带内平坦度和方向图一起收敛的匹配策略，或者车载安装面的集成配合，都可以直接找我。</p>
+                <h2>全向条件下的增益折中</h2>
+                <p>欢迎就阵列排布与互耦、栅瓣与间距约束、带内平坦度匹配策略及车载安装面集成配合来邮件交流。</p>
                 <a class="ft-mail" href="mailto:aeayang@163.com">
                     aeayang@163.com
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -261,10 +260,6 @@
     </div>
 </footer>
 
-<div class="hud" aria-hidden="true">
-    <div><b id="hudSec">§ 00</b> <span id="hudName">P-05</span></div>
-    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
-</div>
 
 <button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>

@@ -45,7 +45,6 @@
         .focus-list { display: flex; align-items: center; flex-wrap: wrap; gap: 15px; }
         .focus-list li { display: flex; align-items: center; gap: 15px; font-size: 1.04rem; font-weight: 500; letter-spacing: -.01em; color: var(--text); }
         .focus-list li + li::before { content: ''; width: 3px; height: 3px; flex-shrink: 0; background: var(--cu); transform: rotate(45deg); }
-        .focus-en { font-family: var(--mono); font-size: 0.8rem; letter-spacing: .12em; color: var(--dim); margin-bottom: 24px; }
         .hero-lede { color: var(--muted); font-size: .95rem; max-width: 52ch; font-weight: 400; }
         .hero-lede b { color: var(--text); font-weight: 500; }
         .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
@@ -91,7 +90,6 @@
         /* 关于 */
         .about { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: 64px; align-items: start; }
         .bio-top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 26px; }
-        .bio-hint { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); letter-spacing: .04em; }
         .portrait { position: sticky; top: 108px; }
         .portrait .pf { position: relative; border: 1px solid var(--line-2); padding: 7px; background: var(--ink-1); }
         /* 人像一律保持原始色彩：不加灰度、不加压暗遮罩 */
@@ -415,11 +413,10 @@
                             <li>射频</li><li>天线</li><li>试验</li><li>AI + 电磁场</li>
                         </ul>
                     </div>
-                    <p class="focus-en rv in rv-d1">RF &amp; ANTENNA · EMC TEST · COMPUTATIONAL EM</p>
                     <p class="hero-lede rv rv-d2">
-                        上海大学通信与信息系统硕士，现从事<b>整星与单机 EMC 及环境可靠性试验</b>。
-                        硕士期间完成多款车载 5G / GNSS 天线从指标拆解、全波仿真到暗室实测的完整交付，
-                        并以 <b>Python 驱动 HFSS</b> 把参数寻优交给算法 —— 研究问题与工程交付并重。
+                        上海大学通信与信息系统硕士，现任上海利正卫星 EMC 试验工程师，从事<b>整星与单机 EMC 及环境可靠性试验</b>。
+                        硕士期间完成多款车载 5G / GNSS 天线的指标拆解、全波仿真与暗室实测，
+                        并以 <b>Python 驱动 HFSS</b> 实现参数自动寻优。
                     </p>
                     <div class="hero-actions rv rv-d3">
                         <a href="#projects" class="btn solid"><span class="t">代表项目</span><span class="arw" aria-hidden="true">→</span></a>
@@ -430,10 +427,6 @@
                         <a href="mailto:aeayang@163.com">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="1"/><path d="m2 6 10 7 10-7"/></svg>
                             aeayang@163.com
-                        </a>
-                        <a href="https://patisight.github.io/Jayden/" target="_blank" rel="noopener">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>
-                            patisight.github.io/Jayden
                         </a>
                         <span>
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>
@@ -483,12 +476,12 @@
                 <div>
                     <div class="v"><em data-count="3">0</em></div>
                     <div class="k">发明专利</div>
-                    <div class="s">已公开申请号 · 另有在审多项</div>
+                    <div class="s">已公开 · 多项在审</div>
                 </div>
                 <div>
                     <div class="v"><em data-count="10">0</em><small>+</small></div>
                     <div class="k">天线产品</div>
-                    <div class="s">累计设计并交付验证</div>
+                    <div class="s">设计并交付验证</div>
                 </div>
                 <div>
                     <div class="v"><em data-count="1176">0</em><small>–7125&nbsp;MHz</small></div>
@@ -531,7 +524,6 @@
                             <button type="button" role="tab" id="tab-zh" class="on" aria-selected="true" aria-controls="bio-zh" data-bio="bio-zh">中文</button>
                             <button type="button" role="tab" id="tab-en" aria-selected="false" aria-controls="bio-en" data-bio="bio-en" tabindex="-1">EN</button>
                         </div>
-                        <span class="bio-hint">中英双语 · 完整履历见简历 PDF</span>
                     </div>
 
                     <div id="bio-zh" role="tabpanel" aria-labelledby="tab-zh">
@@ -541,13 +533,14 @@
                             第一作者发表 IEEE AWPL 论文 1 篇，公开发明专利 3 项。
                         </p>
                         <p class="rv rv-d1">
-                            三条主线。<b>其一，车载天线与射频链路的工程化</b>——低剖面 5G MIMO 天线、
-                            多通道集成天线盒、GNSS 有源天线与全向阵列天线，独立完成需求拆解、指标分配、
-                            全波仿真、公差协同与暗室实测。<b>其二，仿真优化自动化</b>——Python 驱动 HFSS
-                            完成参数化建模与多目标寻优（MOPSO / NSGA-II / 贝叶斯），以贝叶斯神经网络代理模型压缩全波仿真次数。
+                            <b>车载天线与射频链路</b>：低剖面 5G MIMO 天线、多通道集成天线盒、
+                            GNSS 有源天线与全向阵列天线，独立完成需求拆解、指标分配、
+                            全波仿真、公差协同与暗室实测。<b>仿真优化自动化</b>：Python 驱动 HFSS
+                            完成参数化建模与多目标寻优（MOPSO / NSGA-II / 贝叶斯），
+                            以贝叶斯神经网络代理模型减少全波仿真次数。
                         </p>
                         <p class="rv rv-d2">
-                            <b>其三，系统级试验验证。</b>现从事整星与单机 EMC（GJB 151B/C）及磁、力学、真空热环境试验，
+                            <b>系统级试验验证</b>：现从事整星与单机 EMC（GJB 151B/C）及磁、力学、真空热环境试验，
                             参与实验室 CNAS 认可与试验产线建设。
                         </p>
                     </div>
@@ -560,17 +553,17 @@
                             three invention patents published.
                         </p>
                         <p class="rv in">
-                            Three threads. <b>Productisation of vehicular antennas and RF chains</b> —
-                            low-profile 5G MIMO antennas, multi-channel integrated antenna boxes, active GNSS and
-                            omnidirectional array antennas — with end-to-end ownership of requirement decomposition,
-                            spec allocation, full-wave simulation, tolerance review and chamber measurement.
-                            <b>Automation of EM optimisation</b> — Python-driven HFSS with multi-objective solvers
+                            <b>Vehicular antennas and RF chains</b> — low-profile 5G MIMO antennas,
+                            multi-channel integrated antenna boxes, active GNSS and omnidirectional array
+                            antennas, with end-to-end ownership of requirement decomposition, spec allocation,
+                            full-wave simulation, tolerance review and chamber measurement.
+                            <b>EM simulation automation</b> — Python-driven HFSS with multi-objective solvers
                             (MOPSO / NSGA-II / Bayesian), accelerated by BNN surrogate models.
                         </p>
                         <p class="rv in">
-                            <b>System-level qualification testing.</b> Currently responsible for satellite- and unit-level
-                            EMC (GJB 151B/C) together with magnetic, mechanical and thermal-vacuum qualification,
-                            and for CNAS accreditation of the laboratory.
+                            <b>System-level qualification testing</b> — currently responsible for satellite- and
+                            unit-level EMC (GJB 151B/C) together with magnetic, mechanical and thermal-vacuum
+                            qualification, and for CNAS accreditation of the laboratory.
                         </p>
                     </div>
 
@@ -585,14 +578,6 @@
                             <span class="when">2019.09 – 2023.07</span>
                             <p class="courses"><u>COURSEWORK</u>电磁场理论 · 模拟电子技术 · 高频电子线路</p>
                         </div>
-                    </div>
-
-                    <div class="chips rv">
-                        <span class="chip">HFSS</span><span class="chip">CST</span><span class="chip">ADS</span>
-                        <span class="chip">Altium Designer</span><span class="chip">AutoCAD</span>
-                        <span class="chip">矢量网络分析仪</span><span class="chip">噪声系数分析仪</span><span class="chip">微波暗室</span>
-                        <span class="chip">Python</span><span class="chip">MATLAB</span><span class="chip">C</span><span class="chip">Java</span>
-                        <span class="chip">Origin</span><span class="chip">EMC 试验</span><span class="chip">CNAS 认证</span>
                     </div>
                 </div>
             </div>
@@ -691,7 +676,7 @@
                 <span class="sec-idx">03</span>
                 <h2 class="sec-t">工作经历<em>/ Experience</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">两家公司：车载天线的产品化，到整星级环境与可靠性验证。</p>
+                <p class="sec-note">从车载天线产品化到整星级 EMC 与环境可靠性试验。</p>
             </div>
 
             <div>
@@ -699,7 +684,7 @@
                     <div class="tl-when">2025.11 – 至今<b>现在</b></div>
                     <div class="tl-body">
                         <h3>EMC 试验工程师 <span>· 上海利正卫星</span></h3>
-                        <p class="tl-org">连续在岗：实习入职 2025.11 → 转正 2026.07</p>
+                        <p class="tl-org">2025.11 实习入职 · 2026.07 转正</p>
                         <ul class="tl-list">
                             <li><b>试验</b>：整星与单机级电磁兼容与环境可靠性试验 —— <b>GJB 151B/C 的 CE / CS / RE / RS 系列科目</b>，以及磁试验、力学试验、真空热试验。</li>
                             <li><b>试验产线建设</b>：为外部建造试验室 —— 屏蔽与场地条件、测试系统配置、工装与流程落地。</li>
@@ -738,7 +723,7 @@
                 <span class="sec-idx">04</span>
                 <h2 class="sec-t">代表性项目<em>/ Projects</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">每一项都走完"设计 — 仿真 — 加工 — 实测"，指标为实测或仿真交付值。</p>
+                <p class="sec-note">指标均为实测或仿真交付值，完整过程见各项目页。</p>
             </div>
 
             <div class="filters rv" id="filters">
@@ -844,12 +829,12 @@
                 <span class="sec-idx">05</span>
                 <h2 class="sec-t">软件与工具<em>/ Tools</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">把重复的工程劳动写成可复用的工具。</p>
+                <p class="sec-note">自研工具，均附可运行的界面演示。</p>
             </div>
 
             <div class="notice rv">
                 <span class="tag-l">演示</span>
-                <div>三个工具均为<b>内嵌前端演示，无后端</b>；可运行程度已在各卡片右下角标注。</div>
+                <div>以下演示为<b>纯前端实现，无后端</b>；运行状态见各卡片右下角标注。</div>
             </div>
 
             <div class="prj">
@@ -857,7 +842,7 @@
                     <span class="brk"></span>
                     <div class="prj-top"><span class="prj-no">S-01</span><span class="prj-time">2025.07 – 至今</span></div>
                     <h3>HFSS 天线自动化优化系统</h3>
-                    <p>用 PyAEDT 驱动 HFSS 完成"参数写入 — 求解 — 取值 — 评估"闭环，把多目标寻优从人工扫描中解放出来；支持多 HFSS 实例并行评估，结果输出 Pareto 前沿与收敛曲线。</p>
+                    <p>用 PyAEDT 驱动 HFSS 完成"参数写入 — 求解 — 取值 — 评估"闭环，支持多 HFSS 实例并行评估，输出 Pareto 前沿与收敛曲线。</p>
                     <div class="kv">
                         <span><i>算法（界面可选）</i><b>MOPSO · NSGA-II/III · CMA-ES · MOEA/D · RVEA</b></span>
                         <span><i>代理模型（配置启用）</i><b>高斯过程 GPFlow SVG-P · Matérn-5/2</b></span>
@@ -874,7 +859,7 @@
                     <span class="brk"></span>
                     <div class="prj-top"><span class="prj-no">S-02</span><span class="prj-time">2026 上半年</span></div>
                     <h3>KSW-VSA01 频谱仪上位机</h3>
-                    <p>为坤恒顺为频谱仪自写的控制上位机：以太网 SCPI 指令通信，频谱与零扫宽时域双模式显示，远端参数控制与迹线导出，并内置模拟器可在无仪器条件下演示。</p>
+                    <p>坤恒顺为频谱仪的控制上位机：以太网 SCPI 指令通信，频谱与零扫宽时域双模式显示，支持远端参数控制与迹线导出，内置模拟器可在无仪器条件下演示。</p>
                     <div class="kv">
                         <span><i>技术栈</i><b>Python · PySide6 · pyqtgraph</b></span>
                         <span><i>通信</i><b>TCP + ASCII SCPI</b></span>
@@ -914,7 +899,7 @@
                 <span class="sec-idx">06</span>
                 <h2 class="sec-t">论文与专利<em>/ Publications &amp; Patents</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">技术方案与知识产权一一对应，论文与学位论文均可下载 PDF。</p>
+                <p class="sec-note">论文与学位论文提供 PDF 下载，三项专利均已公开。</p>
             </div>
 
             <div class="pubs">
@@ -948,7 +933,7 @@
                             <span>下载学位论文 PDF</span><span class="sz">7.2 MB ↓</span>
                         </a>
                     </article>
-                    <p class="fnote">IEEE AWPL 为天线与传播领域快报类期刊，以短文与工程新颖性见长；学位论文为最终归档版本。</p>
+                    <p class="fnote">IEEE AWPL 为天线领域快报期刊；学位论文为最终归档版本。</p>
                 </div>
 
                 <div class="rv rv-d1">
@@ -987,7 +972,7 @@
                 <span class="sec-idx">07</span>
                 <h2 class="sec-t">成果与荣誉<em>/ Honors</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">仅列主要奖项；合并项可点击「展开明细」查看逐条清单。</p>
+                <p class="sec-note">主要奖项如下，合并项可展开明细。</p>
             </div>
 
             <div class="hon-grid">
@@ -1053,7 +1038,7 @@
                 <span class="sec-idx">08</span>
                 <h2 class="sec-t">能力矩阵<em>/ Capability</em></h2>
                 <span class="sec-rule"></span>
-                <p class="sec-note">按能独立交付的程度自评，切换上方标签查看四个方向。</p>
+                <p class="sec-note">按可独立交付程度自评，分四个方向。</p>
             </div>
 
             <div class="cap rv">
@@ -1135,8 +1120,8 @@
     <div class="wrap">
         <div class="ft-top">
             <div class="ft-cta rv">
-                <h2>关于天线、试验与仿真优化<br>的问题，欢迎来信。</h2>
-                <p>车载天线与 MIMO 集成、射频链路调试、HFSS 自动化与代理模型优化，以及整星 / 单机 EMC 与环境可靠性试验 —— 学术合作与工程问题都可以来信。</p>
+                <h2>天线 · 试验 · 仿真优化，<br>欢迎来信交流。</h2>
+                <p>车载天线与 MIMO 集成、HFSS 自动化优化、整星 / 单机 EMC 与环境可靠性试验等方向，学术合作与工程交流均可来信。</p>
                 <a class="ft-mail" href="mailto:aeayang@163.com">
                     aeayang@163.com
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -1168,15 +1153,11 @@
         </div>
         <div class="ft-bot">
             <span>© 2026 程锦阳 · CHENG JINYANG</span>
-            <span>Built for precision · 共享设计系统 assets/theme.css</span>
+            <span>RF · ANTENNA · EMC TEST · SHANGHAI</span>
         </div>
     </div>
 </footer>
 
-<div class="hud" aria-hidden="true">
-    <div><b id="hudSec">§ 00</b> <span id="hudName">HOME</span></div>
-    <div><span class="pct" id="hudPct">000</span>% · SCROLL</div>
-</div>
 
 <button class="top-btn" id="topBtn" type="button" aria-label="回到顶部">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
