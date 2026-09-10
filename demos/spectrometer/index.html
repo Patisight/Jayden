@@ -42,17 +42,15 @@
             </nav>
             <h1>KSW-VSA01 频谱仪上位机 · 界面复刻演示</h1>
             <p class="pg-lede">
-                一台 PySide6 桌面程序的界面被完整搬进浏览器：<b>面板划分、控件文字、默认值、深色配色逐项照抄源码</b>，
-                迹线与 SCPI 报文由页内模拟器按真实格式收发——<b>改 SPAN / RBW / VBW / 衰减，画面上真的会变</b>。
+                一台 PySide6 桌面程序的界面完整搬进浏览器：<b>面板、控件、默认值逐项照抄源码</b>，
+                迹线由页内模拟器按真实 SCPI 报文格式收发——<b>改 SPAN / RBW / 衰减，画面上真的会变</b>。
             </p>
 
             <div class="demo-bar">
                 <span class="dot"></span>
                 <span><b>界面按真实程序复刻 · 数据为模拟</b>
-                    无实机、无后端：iframe 复刻的是 KSW-VSA01 频谱仪上位机 v1.2.1 的主窗口，分组、控件、
-                    取值范围与配色取自 <code>src/main_window.py</code>；迹线由页内 SCPI 模拟器按
-                    <code>src/simulator.py</code> 的信号模型生成，指令串按 <code>src/scpi_client.py</code>
-                    的报文格式（ASCII 行 / IEEE488.2 二进制块）真实发出后再解析——不是写死的台词。</span>
+                    无实机、无后端：分组、控件与取值范围取自源码 <code>main_window.py</code>，
+                    迹线由页内 SCPI 模拟器按真实报文格式（ASCII 行 / IEEE488.2 二进制块）收发，不是写死的台词。</span>
                 <span class="ext"><a href="app/index.html" target="_blank" rel="noopener">单独全屏打开 <span aria-hidden="true">→</span></a></span>
             </div>
 
@@ -62,13 +60,8 @@
             </div>
 
             <p class="fnote" style="font-family:var(--mono);font-size:.84rem;color:var(--dim);margin-top:16px">
-                操作提示：点【应用参数】改中心频率 / SPAN / RBW / VBW / 衰减，迹线形状与底噪立即响应；
-                参考电平在源程序里只下发给仪器（Y 轴由 pyqtgraph 自动定标），故勾选「Y 轴自动缩放」时画面不变，
-                取消勾选后顶格栅线才锚到参考电平。点【峰值标记】在迹线真实最高点落标记；
-                切「时域模式 (零扫宽)」面板会自动收起 SPAN 与起止频率、禁用峰值与通道功率；
-                点【诊断】跑四步体检；【保存问题报告】把界面参数与通信日志打包成 txt 下载。
-                端口填 15025 即连上页内模拟器（等价于源程序的 <code>python main.py --demo</code>），
-                填其他端口会走真实的连接失败分支并给出排查建议。
+                操作提示：端口填 15025 连上页内模拟器，点【应用参数】改频率 / SPAN / RBW / 衰减即见迹线响应；
+                【峰值标记】【通道功率】【诊断】【保存问题报告】均可点。详细对照关系见下节。
             </p>
         </div>
     </div>
@@ -84,24 +77,19 @@
             </div>
             <div class="spec-cols">
                 <dl class="spec-tbl rv">
-                    <div><dt>顶部连接栏</dt><dd>仪器 IP / 端口 / 连接 / 诊断 / 设备信息 / 帮助 / 状态灯<u>对应 _build_ui()</u></dd></div>
-                    <div><dt>连接流程</dt><dd>TCP 连接 → <code>*IDN?</code> 识别 → <code>FORM:DATA REAL,32</code> → <code>INIT:CONT ON</code> → 参数回填<u>对应 _on_connect()</u></dd></div>
-                    <div><dt>显示模式</dt><dd>频谱模式 / 时域模式 (零扫宽)；模式感知面板<u>对应 _switch_mode() / _apply_mode_ui()</u></dd></div>
-                    <div><dt>频率组</dt><dd>中心频率 1 GHz、频宽 SPAN 100 MHz、起止频率（自动）双向联动<u>对应 _build_control_panel()</u></dd></div>
-                    <div><dt>带宽组</dt><dd>RBW / VBW 各带「自动」，默认 1 MHz<u>同上</u></dd></div>
-                    <div><dt>幅度组</dt><dd>参考电平 (dBm) = 0、衰减 (dB) = 10 带「自动」<u>同上</u></dd></div>
-                    <div><dt>扫描组</dt><dd>扫描时间（含橙色提示行）、扫描点数 101~100001 步进 500 默认 1001、连续扫描、Y 轴自动缩放<u>同上</u></dd></div>
-                    <div><dt>操作组</dt><dd>应用参数 / 自动调整 / 单次扫描 / 峰值标记 / 导出 CSV / 读取错误 / 通道功率 / 仪器复位 + 刷新率三档<u>同上</u></dd></div>
+                    <div><dt>顶部连接栏</dt><dd>IP / 端口 / 连接 / 诊断 / 状态灯<u>对应 _build_ui()</u></dd></div>
+                    <div><dt>连接流程</dt><dd>TCP → <code>*IDN?</code> → 二进制传输 → 连续扫描 → 参数回填<u>对应 _on_connect()</u></dd></div>
+                    <div><dt>显示模式</dt><dd>频谱 / 时域 (零扫宽)，面板随模式感知<u>对应 _switch_mode()</u></dd></div>
+                    <div><dt>频率 / 带宽组</dt><dd>中心频率 · SPAN · RBW / VBW（带「自动」）<u>对应 _build_control_panel()</u></dd></div>
+                    <div><dt>幅度 / 扫描组</dt><dd>参考电平 · 衰减 · 扫描时间 · 扫描点数 · Y 轴自动缩放<u>同上</u></dd></div>
+                    <div><dt>操作组</dt><dd>应用参数 · 峰值标记 · 导出 CSV · 通道功率 · 仪器复位等<u>同上</u></dd></div>
                 </dl>
                 <dl class="spec-tbl rv rv-d1">
-                    <div><dt>绘图区</dt><dd>pyqtgraph 外观复刻：底 <code>#10101a</code>、网格、Trace1 图例 <code>#00e5ff</code>、峰值散点 <code>#ff5252</code> 与文字<u>对应 _build_plot_panel()</u></dd></div>
-                    <div><dt>配色与字体</dt><dd>深色样式表与 Microsoft YaHei UI 9pt<u>对应 _apply_dark_theme() / main.py</u></dd></div>
-                    <div><dt>底部通信日志</dt><dd>时间戳 + 指令行 <code>→ SWE:POIN 1001</code>，含【保存问题报告】【打开日志】<u>对应 log() / _save_report()</u></dd></div>
-                    <div><dt>状态栏</dt><dd>频谱 | 1001 点 | 范围 9.5e+08 ~ 1.05e+09Hz | 峰值 -12.4 dBm<u>对应 _on_data()</u></dd></div>
-                    <div><dt>输入校验</dt><dd>中心频率非负、SPAN&gt;0、起始频率不为负时 SPAN 自动钳位到 2×中心频率并弹窗<u>对应 _on_apply()</u></dd></div>
-                    <div><dt>四步诊断</dt><dd>TCP 连通性 → <code>*IDN?</code> → 六项参数查询 → 迹线读取，逐行留痕并出结论<u>对应 _on_diag()</u></dd></div>
-                    <div><dt>报文层</dt><dd>指令以 <code>\n</code> 结尾；迹线按 <code>#&lt;N&gt;&lt;len&gt;&lt;data&gt;</code> 小端 float32 解析，非 <code>#</code> 开头自动按 ASCII 逗号解析<u>对应 scpi_client.py</u></dd></div>
-                    <div><dt>信号模型</dt><dd>中心主峰 + ±0.28/0.32 SPAN 处的两个谱线 + 半中频杂散 + 底噪 <code>-95+ATT*0.5</code><u>对应 simulator.py</u></dd></div>
+                    <div><dt>绘图区</dt><dd>pyqtgraph 外观复刻：网格、Trace1 配色、峰值散点与标注<u>对应 _build_plot_panel()</u></dd></div>
+                    <div><dt>通信日志 / 状态栏</dt><dd>时间戳 + 指令行；频谱 | 点数 | 范围 | 峰值实时刷新<u>对应 log() / _on_data()</u></dd></div>
+                    <div><dt>输入校验</dt><dd>中心频率非负、SPAN&gt;0、SPAN 自动钳位并弹窗<u>对应 _on_apply()</u></dd></div>
+                    <div><dt>四步诊断</dt><dd>连通性 → 识别 → 参数查询 → 迹线读取，逐行留痕<u>对应 _on_diag()</u></dd></div>
+                    <div><dt>报文 / 信号层</dt><dd>IEEE488.2 二进制块解析；主峰 + 谱线 + 杂散 + 底噪模型<u>对应 scpi_client / simulator</u></dd></div>
                 </dl>
             </div>
         </div>
@@ -119,14 +107,9 @@
             <div class="notice rv">
                 <span class="tag-l">诚实声明</span>
                 <div>
-                    <b>这是界面演示，不是测量结果。</b>数值全部由页内 JavaScript 按 <code>src/simulator.py</code>
-                    的模型生成，SCPI 指令串按源码格式合成后再由页面自己的解析器读回；
-                    识别串里的序列号是模拟器占位符，不涉及任何真实设备。<br/>
-                    为了让 RBW / VBW / 参考电平在画面上「看得见反应」，演示按真实频谱仪的规律补了几条
-                    <code>simulator.py</code> 并未实现的模型（底噪随 RBW 平移、VBW 对相邻扫描做视频平滑、
-                    关闭 Y 轴自动缩放后顶格栅线锚定参考电平）；逐条列在 <code>app/index.html</code>
-                    顶部的注释块里，未列出的界面行为一律照源码实现。源程序自带的 78 项闭环测试
-                    （<code>test_closure.py</code>）是 Python 测试套件，与界面无关，本演示不复刻。
+                    <b>这是界面演示，不是测量结果。</b>数值全部由页内模拟器按源码信号模型生成，不涉及任何真实设备。
+                    为让 RBW / 衰减等参数「看得见反应」，演示补了几条源程序未实现的显示规律，
+                    逐条列在 <code>app/index.html</code> 顶部注释；未列出的界面行为一律照源码实现。
                 </div>
             </div>
             <div class="spec-cols">
@@ -149,8 +132,8 @@
     <div class="wrap">
         <div class="ft-top">
             <div class="ft-cta rv">
-                <h2>聊聊仪器上位机。</h2>
-                <p>SCPI 报文适配、pyqtgraph 大数据量迹线、现场对接的问题回收闭环，都可以直接找我。</p>
+                <h2>仪器上位机</h2>
+                <p>欢迎就 SCPI 报文适配、pyqtgraph 大数据量迹线及现场对接问题回收来邮件交流。</p>
                 <a class="ft-mail" href="mailto:aeayang@163.com">
                     aeayang@163.com
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
